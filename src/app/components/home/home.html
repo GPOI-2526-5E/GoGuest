@@ -1,0 +1,65 @@
+<div class="container-fluid vh-100 d-flex flex-column justify-content-between main-bg">
+
+  <header class="row py-4 align-items-center">
+    <div class="col-4 ps-4">
+      <div class="lang-selector shadow-sm">
+        <img src="assets/italy-flag.png" alt="Italiano" class="flag-icon">
+      </div>
+    </div>
+    <div class="col-4 text-center">
+      <h1 class="company-logo mb-0">GoGuest</h1>
+      <small class="text-muted">IIS G. Vallauri 5E INFO</small>
+    </div>
+    <div class="col-4 text-end pe-4">
+      <button class="btn btn-link text-dark">
+        <i class="bi bi-box-arrow-right fs-1"></i>
+      </button>
+    </div>
+  </header>
+
+  <main class="row justify-content-center align-items-center flex-grow-1">
+   
+    <div class="col-12 col-md-4 text-center mb-4 mb-md-0">
+      <div class="circle-btn-wrapper" (click)="handleAction('entrata')">
+        <div class="circle-btn green-btn">
+          <span class="btn-title">ENTRATA</span>
+          <span class="btn-subtitle">ENTRY</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4 text-center mb-4 mb-md-0">
+      <div class="circle-btn-wrapper" (click)="handleAction('uscita')">
+        <div class="circle-btn blue-btn">
+          <span class="btn-title">USCITA</span>
+          <span class="btn-subtitle">EXIT</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4 text-center">
+      <div class="circle-btn-wrapper" (click)="handleAction('qrcode')">
+        <div class="circle-btn purple-btn">
+          <i class="bi bi-qr-code fs-1 mb-1"></i>
+          <span class="btn-subtitle">QR CODE</span>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="row py-3 bg-white border-top align-items-center">
+    <div class="col-4 ps-4 text-muted small">
+      Powered by GoGuest
+    </div>
+    <div class="col-4 text-center">
+      <div class="fw-bold d-flex align-items-center justify-content-center">
+        REGISTRO <span class="badge bg-danger ms-1">PRO</span>
+      </div>
+    </div>
+    <div class="col-4 text-end pe-4 text-muted small">
+      {{ currentTime$ | async | date:'dd/MM/yyyy HH:mm:ss' }}
+    </div>  
+  </footer>
+
+</div>
