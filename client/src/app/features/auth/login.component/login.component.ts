@@ -1,24 +1,22 @@
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { AuthService } from '../../../core/auth.service';
+import { CommonModule } from '@angular/common';
+import { Observable, timer } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-login.component',
-  imports: [FormsModule],
+  selector: 'app-login',
+  imports: [CommonModule],
   standalone: true,
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
+
 export class LoginComponent {
-  email = '';
-  password = '';
+  currentTime$: Observable<Date> = timer(0, 1000).pipe(
+    map(() => new Date())
+  );
 
-  constructor(private auth: AuthService, private route: Router){
-    
-  }
-
-  login(){
-
+  handleAction(type: string): void {
+    console.log('Azione selezionata:', type);
   }
 }
