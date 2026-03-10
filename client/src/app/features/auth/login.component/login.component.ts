@@ -18,5 +18,12 @@ export class LoginComponent {
 
   handleAction(type: string): void {
     console.log('Azione selezionata:', type);
+    if(type == "entrata") {
+
+    } else if (type == "uscita") {
+
+    } else { //QRCODE
+
+    }
   }
 }
