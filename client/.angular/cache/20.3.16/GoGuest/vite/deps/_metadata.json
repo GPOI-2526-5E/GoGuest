@@ -1,43 +1,43 @@
 {
-  "hash": "1ea657f9",
-  "configHash": "12f14897",
+  "hash": "8a77af90",
+  "configHash": "2771b40e",
   "lockfileHash": "27fdf7f3",
-  "browserHash": "d2deb77b",
+  "browserHash": "28615126",
   "optimized": {
     "@angular/common": {
       "src": "../../../../../../node_modules/@angular/common/fesm2022/common.mjs",
       "file": "@angular_common.js",
-      "fileHash": "f64bbe1d",
+      "fileHash": "4ccc4c0b",
       "needsInterop": false
     },
     "@angular/core": {
       "src": "../../../../../../node_modules/@angular/core/fesm2022/core.mjs",
       "file": "@angular_core.js",
-      "fileHash": "f9dba8c7",
+      "fileHash": "945cf334",
       "needsInterop": false
     },
     "@angular/platform-browser": {
       "src": "../../../../../../node_modules/@angular/platform-browser/fesm2022/platform-browser.mjs",
       "file": "@angular_platform-browser.js",
-      "fileHash": "d9835880",
+      "fileHash": "90e17a6a",
       "needsInterop": false
     },
     "@angular/router": {
       "src": "../../../../../../node_modules/@angular/router/fesm2022/router.mjs",
       "file": "@angular_router.js",
-      "fileHash": "fa9a1bbd",
+      "fileHash": "48cef07d",
       "needsInterop": false
     },
     "rxjs": {
       "src": "../../../../../../node_modules/rxjs/dist/esm5/index.js",
       "file": "rxjs.js",
-      "fileHash": "6c6e9c9c",
+      "fileHash": "95c15bb2",
       "needsInterop": false
     },
     "rxjs/operators": {
       "src": "../../../../../../node_modules/rxjs/dist/esm5/operators/index.js",
       "file": "rxjs_operators.js",
-      "fileHash": "503ae2fd",
+      "fileHash": "290ede32",
       "needsInterop": false
     }
   },
@@ -51,11 +51,11 @@
     "chunk-CIJKGOMD": {
       "file": "chunk-CIJKGOMD.js"
     },
-    "chunk-4YCCEXQQ": {
-      "file": "chunk-4YCCEXQQ.js"
-    },
     "chunk-J46EEYGT": {
       "file": "chunk-J46EEYGT.js"
+    },
+    "chunk-4YCCEXQQ": {
+      "file": "chunk-4YCCEXQQ.js"
     },
     "chunk-U7EDC2PH": {
       "file": "chunk-U7EDC2PH.js"
