@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Observable, timer } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   standalone: true,
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
@@ -18,12 +19,5 @@ export class LoginComponent {
 
   handleAction(type: string): void {
     console.log('Azione selezionata:', type);
-    if(type == "entrata") {
-
-    } else if (type == "uscita") {
-
-    } else { //QRCODE
-
-    }
   }
 }

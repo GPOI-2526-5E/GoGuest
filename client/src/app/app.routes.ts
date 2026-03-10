@@ -1,10 +1,15 @@
 import { Routes } from '@angular/router';
+import { LoginComponent } from './features/auth/login.component/login.component';
+import { EntryFormComponent } from './features/auth/entry-form.component/entry-form.component';
 
 export const routes: Routes = [
-    {
-        path: 'login',
-        //loadComponent: () => 
-        //import ('./features/auth/login.component').then(m => m.LoginComponent)
-    },
-    
+    //Route di default che manda a /home
+    { path: '', redirectTo: '/home', pathMatch: 'full' },
+    { path: 'home', component: LoginComponent },
+    //Route per form di entrata
+    { path: 'entry', component: EntryFormComponent }, 
+    //Route per form di uscita
+    //{ path: 'entry', component: ExitFormComponent }, 
+    //Route per lettore di qrcode
+    //{ path: 'entry', component: QrCodeComponent }, 
 ];

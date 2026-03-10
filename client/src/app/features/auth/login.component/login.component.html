@@ -17,7 +17,7 @@
   <main class="row justify-content-center align-items-center flex-grow-1">
    
     <div class="col-12 col-md-4 text-center mb-4 mb-md-0">
-      <div class="circle-btn-wrapper" (click)="handleAction('entrata')">
+      <div class="circle-btn-wrapper" (click)="handleAction('entrata')" [routerLink]="['/entry']">
         <div class="circle-btn green-btn">
           <span class="btn-title">ENTRATA</span>
           <span class="btn-subtitle">ENTRY</span>
@@ -26,7 +26,7 @@
     </div>
 
     <div class="col-12 col-md-4 text-center mb-4 mb-md-0">
-      <div class="circle-btn-wrapper" (click)="handleAction('uscita')">
+      <div class="circle-btn-wrapper" (click)="handleAction('uscita')" [routerLink]="['/exit']">
         <div class="circle-btn blue-btn">
           <span class="btn-title">USCITA</span>
           <span class="btn-subtitle">EXIT</span>
@@ -35,7 +35,7 @@
     </div>
 
     <div class="col-12 col-md-4 text-center">
-      <div class="circle-btn-wrapper" (click)="handleAction('qrcode')">
+      <div class="circle-btn-wrapper" (click)="handleAction('qrcode')" [routerLink]="['/qrcode']">
         <div class="circle-btn purple-btn">
           <i class="bi bi-qr-code fs-1 mb-1"></i>
           <span class="btn-subtitle">QR CODE</span>

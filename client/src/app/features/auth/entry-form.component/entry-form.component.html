@@ -1,1 +1,62 @@
-<p>entry-form.component works!</p>
+<div class="form-container">
+    <a href="javascript:history.back()" class="back-button" aria-label="Torna indietro">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+    </a>
+
+    <form action="/il-tuo-endpoint-api" method="POST">
+       
+        <div class="input-row">
+            <input type="text" name="firstName" placeholder="Nome / First Name *" required>
+            <input type="text" name="lastName" placeholder="Cognome / Last Name *" required>
+        </div>
+
+        <div class="input-row">
+            <input type="text" name="company" placeholder="Azienda / Company *" required>
+            <input type="text" name="referent" placeholder="Referente / Referent *" required>
+        </div>
+
+        <div class="input-row">
+            <input type="text" name="custom1" placeholder="Campo Custom 1 / Custom Field 1 *" required>
+            <input type="text" name="custom2" placeholder="Campo Custom 2 / Custom Field 2 *" required>
+        </div>
+
+        <div class="input-row">
+            <input type="text" name="custom3" class="full-width" placeholder="Campo Custom 3 / Custom Field 3 *" required>
+        </div>
+
+        <div class="privacy-section">
+            <label class="toggle-switch">
+                <input type="checkbox" name="privacyConsent" required>
+                <span class="slider round"></span>
+            </label>
+            <label class="privacy-text">
+                <strong><u>Confermo di aver preso visione dell'informativa privacy</u></strong> / <u>I confirm that I have read the privacy information</u>
+            </label>
+        </div>
+
+        <button type="submit" class="submit-button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            PROCEDI ALLA FIRMA / PROCEED TO SIGN
+        </button>
+
+    </form>
+
+    <footer class="row py-3 bg-white border-top align-items-center">
+    <div class="col-4 ps-4 text-muted small">
+      Powered by www.GoGuest.it
+    </div>
+    <div class="col-4 text-center">
+      <div class="fw-bold d-flex align-items-center justify-content-center">
+        <span class="badge bg-danger fs-3">GoGuest</span>
+      </div>
+    </div>
+    <div class="col-4 text-end pe-4 text-muted small">
+  {{ currentTime$ | async | date:'dd/MM/yyyy HH:mm:ss' }}
+</div>
+  </footer>
+</div>
