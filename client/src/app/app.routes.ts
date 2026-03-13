@@ -1,7 +1,8 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './features/auth/login.component/login.component';
-import { EntryFormComponent } from './features/auth/entry-form.component/entry-form.component';
-import { SignComponent } from './features/sign.component/sign.component';
+import { LoginComponent } from './features/login/login.component';
+import { EntryFormComponent } from './features/entry-form/entry-form.component';
+import { ExitFormComponent } from './features/exit-form/exit-form.component';
+import { SignComponent } from './features/sign/sign.component';
 
 export const routes: Routes = [
     //Route di default che manda a /home
@@ -10,7 +11,7 @@ export const routes: Routes = [
     //Route per form di entrata
     { path: 'entry', component: EntryFormComponent }, 
     //Route per form di uscita
-    //{ path: 'entry', component: ExitFormComponent }, 
+    { path: 'exit', component: ExitFormComponent }, 
     //Route per lettore di qrcode
     //{ path: 'entry', component: QrCodeComponent }, 
     
