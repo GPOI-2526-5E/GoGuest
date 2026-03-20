@@ -1,27 +1,52 @@
-/* Sfondo generale con gradiente leggero */
+/* 1. SFONDO BIANCO CON GEOMETRIE DELICATE (Tema Chiaro) */
 .main-bg {
-  background: radial-gradient(circle at center, #f8f9fa 0%, #e9ecef 100%);
+  /* Colore di base bianco/grigio chiarissimo */
+  background-color: #f8f9fa; 
+  /* Pattern geometrico leggerissimo generato in codice (opacità al 3%) */
+  background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='0.03' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
 }
 
-/* Stile Logo */
+/* 2. HEADER E FOOTER PER IL TEMA CHIARO */
+header, footer {
+  background: rgba(255, 255, 255, 0.7) !important; /* Bianco semitrasparente */
+  backdrop-filter: blur(10px); /* Leggera sfocatura */
+  -webkit-backdrop-filter: blur(10px);
+  border: none !important;
+  border-top: 1px solid rgba(0, 0, 0, 0.05) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Ripristiniamo i testi scuri per un'ottima leggibilità sul bianco */
+header h1, header small, footer div, footer span, header .btn-link i {
+  color: #333333 !important;
+}
+
 .company-logo {
   font-family: 'Arial Black', sans-serif;
   letter-spacing: -1px;
   text-transform: uppercase;
 }
 
-/* Wrapper per l'effetto anello argentato esterno */
+/* 3. EFFETTI PER I PULSANTI */
+/* Wrapper per l'effetto anello argentato esterno in stile vetro */
 .circle-btn-wrapper {
   display: inline-block;
-  padding: 8px;
+  padding: 12px;
   border-radius: 50%;
-  background: linear-gradient(145deg, #ffffff, #dcdcdc);
-  box-shadow: 5px 5px 15px rgba(0,0,0,0.2), -5px -5px 15px rgba(255,255,255,0.8);
+  background: linear-gradient(145deg, rgba(255,255,255,0.3), rgba(255,255,255,0.05));
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
   cursor: pointer;
-  transition: transform 0.2s;
+  transition: all 0.3s ease; /* Aggiunge un'animazione fluida */
 }
 
-/* Effetto al click (questo sostituisce la & di prima) */
+/* Effetto al passaggio del mouse (Hover) */
+.circle-btn-wrapper:hover {
+  transform: translateY(-10px) scale(1.05);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+}
+
+/* Effetto al click */
 .circle-btn-wrapper:active {
   transform: scale(0.95);
 }
@@ -36,28 +61,28 @@
   justify-content: center;
   align-items: center;
   color: white;
-  box-shadow: inset 0px 5px 15px rgba(255,255,255,0.4), inset 0px -5px 15px rgba(0,0,0,0.2);
-  border: 4px solid rgba(255,255,255,0.2);
+  box-shadow: inset 0px 5px 15px rgba(255,255,255,0.5), inset 0px -5px 15px rgba(0,0,0,0.5);
+  border: 3px solid rgba(255,255,255,0.4);
 }
 
-/* Varianti Colore con effetto gradiente 3D */
+/* Varianti Colore con effetto gradiente 3D più vivido */
 .green-btn {
-  background: radial-gradient(circle at 30% 30%, #76c938, #3e8e12);
+  background: radial-gradient(circle at 30% 30%, #82d940, #3e8e12);
 }
 
 .blue-btn {
-  background: radial-gradient(circle at 30% 30%, #38aec9, #0d5c96);
+  background: radial-gradient(circle at 30% 30%, #40c4e3, #0d5c96);
 }
 
 .purple-btn {
-  background: radial-gradient(circle at 30% 30%, #b838c9, #7a128e);
+  background: radial-gradient(circle at 30% 30%, #d140e3, #7a128e);
 }
 
-/* Tipografia Pulsanti */
+/* Tipografia Pulsanti - Aggiunta ombra per leggibilità extra */
 .btn-title {
   font-size: 1.8rem;
   font-weight: 700;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
   line-height: 1;
 }
 
@@ -65,9 +90,10 @@
   font-size: 1rem;
   font-style: italic;
   opacity: 0.9;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
 }
 
-/* Bandierina */
+/* Bandierina (mantenuta uguale nel caso tu voglia usarla in futuro) */
 .lang-selector {
   width: 50px;
   height: 35px;

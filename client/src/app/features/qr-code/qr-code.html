@@ -6,8 +6,7 @@
     <div class="camera-wrapper mb-4 border rounded overflow-hidden">
       <zxing-scanner 
         (scanSuccess)="onCodeResult($event)"
-        [formats]="['QR_CODE']">
-      </zxing-scanner>
+        [formats]="allowedFormats"> </zxing-scanner>
     </div>
 
     <p class="text-muted small mb-4">

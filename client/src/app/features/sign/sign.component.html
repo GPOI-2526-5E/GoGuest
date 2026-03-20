@@ -1,5 +1,5 @@
-<div class="main-container container-fluid d-flex flex-column py-3 px-md-5 bg-white min-vh-100">
-    <a href="javascript:history.back()" class="back-button" aria-label="Torna indietro">
+<div class="main-container container-fluid d-flex flex-column py-3 px-md-5 bg-white min-vh-100 main-bg vh-100">
+    <a href="javascript:history.back()" class="back-button align-self-start" aria-label="Torna indietro">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
             stroke-linejoin="round">
             <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -25,7 +25,6 @@
                         Firma
                     }
                 }
-
             </h1>
             <p class="instr-text text-muted mb-0 small">Firma utilizzando la penna o il dito</p>
             <p class="instr-text text-muted mb-0 small">Clicca su 'CONFERMA' per registrare l'ingresso</p>
@@ -59,5 +58,21 @@
             </button>
         </div>
     </div>
+
+    <footer class="container-fluid py-3 bg-white border-top">
+        <div class="row align-items-center">
+            <div class="col-4 ps-4 text-muted small">
+                Powered by www.GoGuest.it
+            </div>
+            <div class="col-4 text-center">
+                <div class="fw-bold d-flex align-items-center justify-content-center">
+                    <span class="badge bg-danger fs-3">GoGuest</span>
+                </div>
+            </div>
+            <div class="col-4 text-end pe-4 text-muted small">
+                {{ currentTime$ | async | date:'dd/MM/yyyy HH:mm:ss' }}
+            </div>
+        </div>
+    </footer>
 
 </div>

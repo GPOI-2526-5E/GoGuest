@@ -1,4 +1,4 @@
-<div class="main-wrapper">
+<div class="main-wrapper main-bg">
     <main class="content-area">
         <div class="form-container">
             <a href="javascript:history.back()" class="back-button" aria-label="Torna indietro">
@@ -27,19 +27,19 @@
                     </label>
                     <label class="privacy-text">
                         <strong>
-                            <a href="privacy-policy.pdf" target="_blank" style="color: inherit; text-decoration: underline;">
+                            <a href="/assets/privacy-policy.pdf" target="_blank" style="color: inherit; text-decoration: underline;">
                                 Confermo di aver preso visione dell'informativa privacy
                             </a>
                         </strong> /
                         <u>
-                            <a href="privacy-policy.pdf" target="_blank" style="color: inherit; text-decoration: none;">
+                            <a href="/assets/privacy-policy-eng.pdf" target="_blank" style="color: inherit; text-decoration: none;">
                                 I confirm that I have read the privacy information
                             </a>
                         </u>
                     </label>
                 </div>
 
-                <button type="submit" class="submit-button">
+                <button type="submit" class="submit-button" [disabled]="entryForm.invalid">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
@@ -50,7 +50,7 @@
         </div>
     </main>
 
-    <footer class="container-fluid py-3 bg-white border-top">
+    <footer class="container-fluid py-3 border-top">
         <div class="row align-items-center">
             <div class="col-4 ps-4 text-muted small">
                 Powered by www.GoGuest.it

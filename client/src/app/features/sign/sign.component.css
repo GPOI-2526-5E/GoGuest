@@ -6,6 +6,23 @@
   --confirmation-red: #E21D37; 
 }
 
+.main-bg {
+    background-color: #f8f9fa;
+    /* Pattern geometrico a linee diagonali ondulate delicatissimo (opacità 3%) */
+    background-image: url("data:image/svg+xml,%3Csvg width='70' height='70' viewBox='0 0 70 70' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-opacity='0.03' fill-rule='evenodd'%3E%3Cpath d='M0 0h35v70H0V0zm35 35h35v35H35V35zM0 35h35v35H0V35zm35-35h35v35H35V0z'/%3E%3C/g%3E%3C/svg%3E");
+    /* Sfondo fisso per un effetto più stabile su totem */
+    background-attachment: fixed;
+}
+
+header, footer {
+  background: rgba(255, 255, 255, 0.7) !important; /* Bianco semitrasparente */
+  backdrop-filter: blur(10px); /* Leggera sfocatura */
+  -webkit-backdrop-filter: blur(10px);
+  border: none !important;
+  border-top: 1px solid rgba(0, 0, 0, 0.05) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+
 /* --- STILI GENERALI --- */
 
 .back-icon-circle {
@@ -19,6 +36,24 @@
   background-color: transparent;
   color: #333;
   transition: all 0.2s ease-in-out;
+}
+
+.back-button {
+    background: none;
+    border: 2px solid #333;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-bottom: 30px;
+    text-decoration: none;
+    color: #333;
+    transition: all 0.2s ease;
+    
+    flex-shrink: 0; 
 }
 
 .back-icon-circle:hover {

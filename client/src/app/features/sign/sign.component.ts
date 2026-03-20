@@ -1,14 +1,24 @@
 import { Component, ElementRef, ViewChild, AfterViewInit, HostListener } from '@angular/core';
+import { Observable, timer } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router'; 
 import SignaturePad from 'signature_pad';
 
 @Component({
   selector: 'app-sign.component',
-  imports: [],
+  imports: [CommonModule],
   standalone: true,
   templateUrl: './sign.component.html',
   styleUrl: './sign.component.css',
 })
 export class SignComponent implements AfterViewInit {
+  
+
+  currentTime$: Observable<Date> = timer(0, 1000).pipe(
+        map(() => new Date())
+      );
+
   // @ViewChild recupera l'elemento <canvas #signatureCanvas> dall'HTML
   @ViewChild('signatureCanvas', { static: true }) canvasRef!: ElementRef<HTMLCanvasElement>;
   
@@ -18,7 +28,7 @@ export class SignComponent implements AfterViewInit {
   cognomeUtente: string = '';
   source: string = '';
 
-  constructor() {
+  constructor(private router: Router) {
     const state = history.state;
     this.source = history.state.sorgente;
 
@@ -67,6 +77,7 @@ export class SignComponent implements AfterViewInit {
     console.log("Pronto per il DB:", base64Data);
     
     // TODO: Chiama un tuo Service Angular per inviare "base64Data" al backend
+    this.router.navigate(['/home']);
   }
 }
 

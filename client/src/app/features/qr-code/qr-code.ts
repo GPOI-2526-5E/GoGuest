@@ -2,6 +2,7 @@ import { Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
+import { BarcodeFormat } from '@zxing/library'; // 1. NUOVA IMPORTAZIONE AGGIUNTA QUI
 
 @Component({
   selector: 'app-qr-code',
@@ -11,6 +12,9 @@ import { ZXingScannerModule } from '@zxing/ngx-scanner';
   standalone: true
 })
 export class QrCode {
+  // 2. NUOVA VARIABILE AGGIUNTA QUI per risolvere l'errore HTML
+  allowedFormats = [ BarcodeFormat.QR_CODE ];
+
   // Variabile per salvare il risultato della scansione
   scannedResult: string | null = null;
 
@@ -37,7 +41,6 @@ export class QrCode {
       return;
     }
 
-    // Aggiungiamo il carattere digitato al nostro buffer
     this.barcodeBuffer += event.key;
 
     // I lettori USB digitano molto velocemente (pochi millisecondi tra un tasto e l'altro).
