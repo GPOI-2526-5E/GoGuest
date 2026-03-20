@@ -1,1 +1,63 @@
-<p>TO DO</p>
+<div class="main-container container-fluid d-flex flex-column py-3 px-md-5 bg-white min-vh-100">
+    <a href="javascript:history.back()" class="back-button" aria-label="Torna indietro">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+    </a>
+
+    <div class="header-section d-flex justify-content-between align-items-center mb-4">
+
+        <div class="instructions-column flex-grow-1 text-center px-2">
+            <h1 class="firma-title fw-bold mb-1 text-uppercase">
+                @if(source == 'entry') {
+                    @if(nomeUtente && cognomeUtente) {
+                        Benvenuto {{ nomeUtente }} {{ cognomeUtente }}
+                    } @else {
+                        Firma
+                    }
+                }
+                @else {
+                    @if(nomeUtente && cognomeUtente) {
+                        Arrivederci {{ nomeUtente }} {{ cognomeUtente }}
+                    } @else {
+                        Firma
+                    }
+                }
+
+            </h1>
+            <p class="instr-text text-muted mb-0 small">Firma utilizzando la penna o il dito</p>
+            <p class="instr-text text-muted mb-0 small">Clicca su 'CONFERMA' per registrare l'ingresso</p>
+        </div>
+    </div>
+
+    <div class="canvas-section row flex-grow-1 justify-content-center">
+        <div class="col-12 col-xl-11">
+            <div
+                class="canvas-wrapper shadow-lg border border-2 border-secondary rounded-3 position-relative overflow-hidden">
+
+                <canvas #signatureCanvas class="signature-canvas"></canvas>
+
+                <div class="clear-button-overlay position-absolute top-0 end-0 m-3">
+                    <button
+                        class="btn btn-sm btn-outline-secondary bg-white shadow-sm fw-bold rounded-1 px-3 text-uppercase"
+                        (click)="clear()" style="font-size: 0.75rem;">
+                        CANCELLA / CLEAR
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="confirmation-section row justify-content-center mt-5 mb-4">
+        <div class="col-auto text-center">
+            <button
+                class="btn btn-custom-conferma btn-lg shadow rounded-pill px-5 py-3 fw-bold text-white text-uppercase"
+                (click)="save()">
+                CONFERMA
+            </button>
+        </div>
+    </div>
+
+</div>

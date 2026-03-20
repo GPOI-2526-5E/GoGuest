@@ -1,0 +1,116 @@
+/* --- DEFINIZIONE COLORI E VARIABILI --- */
+:host {
+  /* Grigio chiaro per lo sfondo del riquadro firma */
+  --signature-gray-bg: #EAEAEA;
+  /* Rosso per il pulsante conferma e dettagli logo */
+  --confirmation-red: #E21D37; 
+}
+
+/* --- STILI GENERALI --- */
+
+.back-icon-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid #333;
+  background-color: transparent;
+  color: #333;
+  transition: all 0.2s ease-in-out;
+}
+
+.back-icon-circle:hover {
+  background-color: #f0f0f0;
+}
+
+.firma-title {
+  font-size: 1.8rem;
+  color: #333;
+}
+
+/* Stilizzazione del mockup del logo Registro Pro */
+.logo-mockup {
+  color: #333;
+  margin-top: 10px; /* piccolo offset */
+}
+
+.logo-checkmark {
+  top: -18px; /* posizionamento della spunta sopra il testo */
+  right: -2px;
+}
+
+/* --- STILI SPECIFICI PER IL CANVAS (GIGANTE) --- */
+
+.canvas-wrapper {
+  background-color: var(--signature-gray-bg);
+  /* Aggiungi padding per staccare il canvas dal bordo grigio */
+  padding: 8px;
+  cursor: crosshair;
+}
+
+.signature-canvas {
+  width: 100%;
+  /* ALTEZZA GIGANTE: L'abbiamo portata a 550px per darti molto spazio di scrittura */
+  min-height: 550px; 
+  display: block;
+  touch-action: none; /* Fondamentale per i dispositivi touch! */
+  background-color: #ffffff; /* Sfondo bianco per l'area di firma effettiva */
+  border-radius: 6px;
+}
+
+/* Stile per il pulsante Cancella sovrapposto */
+.clear-button-overlay button:hover {
+    background-color: #f8f9fa !important;
+    border-color: #999;
+}
+
+/* --- STILE PER IL BOTTONE CONFERMA (Inferiore) --- */
+
+.btn-custom-conferma {
+  background-color: var(--confirmation-red);
+  border-color: var(--confirmation-red);
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  min-width: 320px; /* Molto largo */
+}
+
+.btn-custom-conferma:hover {
+  background-color: #cc1a30; /* Versione leggermente più scura all'hover */
+  border-color: #cc1a30;
+  color: #ffffff;
+}
+
+/* Regola per i cellulari molto piccoli: riduci l'altezza del canvas */
+@media (max-width: 576px) {
+  .signature-canvas {
+      min-height: 350px; 
+  }
+  
+  .firma-title {
+      font-size: 1.4rem;
+  }
+}
+
+/* Modificato per il tag <a> */
+.back-button {
+    background: none;
+    border: 2px solid #000;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-bottom: 20px;
+    text-decoration: none;
+    /* Rimuove la sottolineatura del link */
+    color: #000;
+}
+
+.back-button svg {
+    width: 20px;
+    height: 20px;
+}

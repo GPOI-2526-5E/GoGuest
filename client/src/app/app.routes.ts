@@ -13,7 +13,7 @@ export const routes: Routes = [
     //Route per form di uscita
     { path: 'exit', component: ExitFormComponent }, 
     //Route per lettore di qrcode
-    //{ path: 'entry', component: QrCodeComponent }, 
+    //{ path: 'qrcode', component: QrCodeComponent }, 
     
     // route per la firma
     { path: 'sign', component: SignComponent }, 

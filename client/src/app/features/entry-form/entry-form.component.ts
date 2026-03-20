@@ -2,17 +2,19 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Observable, timer } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { RouterLink, RouterLinkActive } from '@angular/router'; 
+import { Router } from '@angular/router'; 
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms'; 
 
 @Component({
   selector: 'app-entry-form.component',
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './entry-form.component.html',
   styleUrl: './entry-form.component.css',
   standalone: true,
 })
 export class EntryFormComponent {
+
+  constructor(private router: Router){}
 
   currentTime$: Observable<Date> = timer(0, 1000).pipe(
       map(() => new Date())
@@ -35,6 +37,14 @@ export class EntryFormComponent {
     if (this.entryForm.valid) {
       // Se è valido, stampiamo i dati nella console del browser!
       console.log('Dati pronti per il database:', this.entryForm.value);
+
+      const firstName = this.entryForm.value.firstName;
+      const lastName = this.entryForm.value.lastName;
+
+      // Navighiamo verso /sign passando i dati nello "state"
+      this.router.navigate(['/sign'], { 
+        state: { nome: firstName, cognome: lastName, sorgente: "entry" },
+      });
       
       // Qui, in futuro, scriveremo il codice per inviare i dati al server/database
 
@@ -45,6 +55,7 @@ export class EntryFormComponent {
     } else {
       console.log('Attenzione: Il form non è compilato correttamente.');
       // Angular evidenzierà automaticamente in rosso i campi mancanti se impostiamo il CSS
+      this.entryForm.markAllAsTouched();
     }
   }
 }
