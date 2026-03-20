@@ -1,21 +1,25 @@
 <div class="container-fluid vh-100 d-flex flex-column justify-content-center align-items-center bg-light">
-  
-  <div class="card p-4 shadow-sm text-center" style="max-width: 500px; width: 100%;">
-    <h2 class="mb-4">Scansione QR Code</h2>
 
-    <div class="camera-wrapper mb-4 border rounded overflow-hidden">
-      <zxing-scanner 
-        (scanSuccess)="onCodeResult($event)"
-        [formats]="allowedFormats"> </zxing-scanner>
-    </div>
+  <div class="card p-4 shadow-sm text-center" style="max-width: 500px; width: 100%;">
+    <h2 class="mb-4">Registrazione Visitatore</h2>
+
+    <zxing-scanner (scanSuccess)="onCodeResult($event)" [formats]="allowedFormats" [tryHarder]="true"
+      (permissionResponse)="onHasDevices($event)" (camerasFound)="onCamerasFound($event)">
+    </zxing-scanner>
 
     <p class="text-muted small mb-4">
-      <i class="bi bi-usb-symbol"></i> Oppure usa il lettore USB (verrà rilevato in automatico)
+      <i class="bi bi-usb-symbol"></i> Inquadra il QR o usa il lettore USB
     </p>
 
-    <div *ngIf="scannedResult" class="alert alert-success mt-3">
-      <strong>Codice letto:</strong> {{ scannedResult }}
+    @if (scannedResult) {
+    <div class="alert alert-success mt-3">
+      <strong>Codice rilevato:</strong> {{ scannedResult }}
     </div>
+    } @else {
+    <div class="alert alert-info mt-3">
+      In attesa di scansione...
+    </div>
+    }
 
     <button class="btn btn-outline-secondary mt-3" [routerLink]="['/']">
       Torna alla Home

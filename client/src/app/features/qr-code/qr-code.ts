@@ -2,7 +2,7 @@ import { Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
-import { BarcodeFormat } from '@zxing/library'; // 1. NUOVA IMPORTAZIONE AGGIUNTA QUI
+import { BarcodeFormat } from '@zxing/library';
 
 @Component({
   selector: 'app-qr-code',
@@ -12,50 +12,60 @@ import { BarcodeFormat } from '@zxing/library'; // 1. NUOVA IMPORTAZIONE AGGIUNT
   standalone: true
 })
 export class QrCode {
-  // 2. NUOVA VARIABILE AGGIUNTA QUI per risolvere l'errore HTML
-  allowedFormats = [ BarcodeFormat.QR_CODE ];
+  // Definiamo i formati accettati (QR Code in questo caso)
+  allowedFormats = [BarcodeFormat.QR_CODE];
 
-  // Variabile per salvare il risultato della scansione
+  // Variabile per mostrare il risultato a video
   scannedResult: string | null = null;
 
-  // Variabili per gestire il lettore USB (emulazione tastiera)
+  // Variabili per il lettore USB
   private barcodeBuffer: string = '';
   private typingTimer: any;
 
-  // 1. GESTIONE FOTOCAMERA
-  // Questo metodo viene chiamato quando la fotocamera legge un QR con successo
+  // Metodo chiamato quando la fotocamera inquadra un QR
   onCodeResult(resultString: string) {
     this.processQrCode(resultString);
   }
 
-  // 2. GESTIONE LETTORE USB
-  // Questo 'decoratore' ascolta tutto ciò che viene digitato sulla tastiera
-  @HostListener('window:keypress', ['$event'])
+  // Gestione Lettore USB (Emulazione Tastiera)
+  @HostListener('window:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-    // Se il tasto premuto è "Invio", significa che il lettore USB ha finito di leggere
+    // Se premiamo Invio, il lettore ha finito la scansione
     if (event.key === 'Enter') {
       if (this.barcodeBuffer.length > 0) {
         this.processQrCode(this.barcodeBuffer);
-        this.barcodeBuffer = ''; // Svuotiamo il buffer dopo la lettura
+        this.barcodeBuffer = '';
       }
       return;
     }
 
-    this.barcodeBuffer += event.key;
+    // Evitiamo di aggiungere tasti di controllo come "Shift", "Control", ecc.
+    if (event.key.length === 1) {
+      this.barcodeBuffer += event.key;
+    }
 
-    // I lettori USB digitano molto velocemente (pochi millisecondi tra un tasto e l'altro).
-    // Se passa troppo tempo (es. 100ms), significa che è un umano a digitare, quindi cancelliamo.
+    // Reset del buffer se l'utente scrive lentamente (non è un lettore barcode)
     clearTimeout(this.typingTimer);
     this.typingTimer = setTimeout(() => {
       this.barcodeBuffer = '';
-    }, 100); 
+    }, 100);
   }
 
-  // 3. ELABORAZIONE FINALE
-  // Questo metodo unificato gestisce il risultato, indipendentemente da dove provenga
+  // Logica finale comune
   processQrCode(code: string) {
-    console.log('Codice QR Scansionato:', code);
+    console.log('Codice ricevuto:', code);
     this.scannedResult = code;
-    // Qui in futuro potrai aggiungere la logica per inviare il codice al tuo server
+    // Qui potrai aggiungere la chiamata al database/API
+    alert('Codice rilevato: ' + code);
   }
+
+  // Aggiungi questo metodo nella classe QrCode
+  onHasDevices(has: boolean) {
+    console.log('Dispositivi trovati:', has);
+  }
+
+  onCamerasFound(devices: MediaDeviceInfo[]) {
+    console.log('Telecamere disponibili:', devices);
+  }
+
 }
