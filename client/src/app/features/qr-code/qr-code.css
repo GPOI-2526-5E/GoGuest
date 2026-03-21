@@ -1,0 +1,171 @@
+/* =========================================
+   0. FIX PER LO SCROLL DELLA PAGINA
+   ========================================= */
+/* Trasformiamo l'altezza fissa in altezza minima per far apparire la barra di scorrimento */
+.vh-100 {
+    height: auto !important; 
+    min-height: 100vh !important; 
+    padding-top: 3rem !important; /* Spazio sopra */
+    padding-bottom: 3rem !important; /* Spazio sotto, così il bottone non tocca il fondo */
+}
+
+/* =========================================
+   1. STRUTTURA E ALLARGAMENTO LAYOUT
+   ========================================= */
+/* Ridefiniamo lo sfondo generale di Bootstrap */
+div.bg-light {
+    background-color: #F8F9FA !important; /* Un grigio chiarissimo molto pulito */
+}
+
+/* La Scheda Principale: molto più larga e professionale */
+.card {
+    border: none !important; 
+    border-radius: 12px !important; 
+    max-width: 1000px !important; /* Scheda bella larga */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important; 
+    padding: 4rem !important; /* Molto respiro interno */
+    background-color: #ffffff !important;
+    position: relative; 
+    overflow: hidden; 
+    margin-bottom: 2rem !important; /* Spazio extra sotto la scheda */
+}
+
+/* --- DETTAGLI SARTORIALI ---
+   Bordi decorativi verdi agli angoli
+*/
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 6px;
+    background-color: #2E7D32; /* Verde Istituzionale */
+    border-radius: 0 0 6px 0;
+}
+
+.card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 200px;
+    height: 6px;
+    background-color: #2E7D32;
+    border-radius: 6px 0 0 0;
+}
+
+/* =========================================
+   2. TIPOGRAFIA E ELEMENTI DI TESTO
+   ========================================= */
+/* Il Titolo Principale */
+h2 {
+    font-weight: 800; 
+    letter-spacing: -0.02em; 
+    color: #2E7D32; /* Verde Istituzionale */
+    text-transform: uppercase; 
+    font-size: 2rem;
+    border-bottom: 3px solid rgba(46, 125, 50, 0.1); /* Linea verde trasparente */
+    display: inline-block;
+    padding-bottom: 0.75rem;
+    margin-bottom: 3rem !important; 
+}
+
+/* Testo Istruzioni */
+.text-muted.small {
+    color: #495057 !important; 
+    font-weight: 500;
+    font-size: 0.95rem !important;
+    margin-bottom: 2.5rem !important;
+}
+
+/* Icona USB */
+.bi-usb-symbol {
+    color: #2E7D32; 
+    margin-right: 6px;
+    font-size: 1.1rem;
+}
+
+/* =========================================
+   3. STILIZZAZIONE SCANNER (TELECAMERA)
+   ========================================= */
+zxing-scanner {
+    display: block !important;
+    width: 100% !important;
+    max-width: 640px !important; /* Evita che diventi gigante su schermi grandi */
+    margin: 0 auto 2rem auto !important; /* Centra orizzontalmente */
+    border: 4px solid #2E7D32 !important; /* Cornice verde professionale */
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    background-color: #111111 !important; /* Sfondo scuro in attesa della cam */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+    aspect-ratio: 4 / 3 !important; /* Proporzione fissa per non schiacciare il video */
+    min-height: 300px !important;
+}
+
+/* Adatta il video interno al nostro riquadro */
+zxing-scanner video {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important; 
+}
+
+/* =========================================
+   4. AVVISI (ALERTS) E PULSANTI
+   ========================================= */
+/* Stile base degli avvisi */
+.alert {
+    border-radius: 8px !important;
+    border: 1px solid;
+    padding: 1.25rem !important;
+    font-size: 1rem !important;
+    text-align: left !important; 
+    font-weight: 500;
+}
+
+.alert strong {
+    display: block;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
+}
+
+/* Alert Successo (Codice rilevato) */
+.alert-success {
+    background-color: #F1FFF3 !important; 
+    border-color: #A3CFBB !important;
+    color: #146c43 !important;
+}
+
+.alert-success strong {
+    color: #146c43 !important;
+}
+
+/* Alert Info (In attesa) */
+.alert-info {
+    background-color: #F1F9FF !important; 
+    border-color: #9EC5FE !important;
+    color: #084298 !important;
+}
+
+/* Il Pulsante "Torna alla Home" */
+.btn-outline-secondary {
+    background-color: #ffffff !important;
+    color: #2E7D32 !important; /* Testo verde */
+    border: 2px solid #2E7D32 !important; /* Bordo verde */
+    border-radius: 30px !important; 
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 12px 28px !important;
+    font-size: 0.9rem !important;
+    transition: all 0.2s ease-in-out; 
+    margin-top: 3rem !important; 
+}
+
+.btn-outline-secondary:hover {
+    background-color: #2E7D32 !important; /* Sfondo verde al passaggio del mouse */
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2); /* Ombra verde */
+    transform: translateY(-2px); 
+}
