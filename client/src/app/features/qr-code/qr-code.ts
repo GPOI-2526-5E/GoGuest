@@ -27,39 +27,42 @@ export class QrCode {
     this.processQrCode(resultString);
   }
 
-  // Gestione Lettore USB (Emulazione Tastiera)
+  // L'HostListener ascolta l'intera finestra per la pressione dei tasti (pistola USB)
   @HostListener('window:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
-    // Se premiamo Invio, il lettore ha finito la scansione
+    
+    // 1. FINE DELLA LETTURA: La pistola preme sempre 'Enter' alla fine
     if (event.key === 'Enter') {
       if (this.barcodeBuffer.length > 0) {
         this.processQrCode(this.barcodeBuffer);
-        this.barcodeBuffer = '';
+        this.barcodeBuffer = ''; // Svuotiamo il contenitore per il prossimo QR code
       }
       return;
     }
 
-    // Evitiamo di aggiungere tasti di controllo come "Shift", "Control", ecc.
+    // 2. RACCOLTA DATI: Evitiamo di salvare tasti speciali come "Shift", "Control", ecc.
     if (event.key.length === 1) {
       this.barcodeBuffer += event.key;
     }
 
-    // Reset del buffer se l'utente scrive lentamente (non è un lettore barcode)
+    // 3. CONTROLLO VELOCITÀ: Distinguiamo la pistola da un essere umano
     clearTimeout(this.typingTimer);
+    
+    // Se passa più di 50 millisecondi, è un umano che digita: svuotiamo il buffer.
     this.typingTimer = setTimeout(() => {
       this.barcodeBuffer = '';
-    }, 100);
+    }, 50); 
   }
 
-  // Logica finale comune
+  // Logica finale comune (sia da webcam che da pistola USB)
   processQrCode(code: string) {
     console.log('Codice ricevuto:', code);
     this.scannedResult = code;
-    // Qui potrai aggiungere la chiamata al database/API
+    // Qui in futuro potrai aggiungere la chiamata al database/API
     alert('Codice rilevato: ' + code);
   }
 
-  // Aggiungi questo metodo nella classe QrCode
+  // Metodi per la gestione della fotocamera
   onHasDevices(has: boolean) {
     console.log('Dispositivi trovati:', has);
   }
@@ -67,5 +70,4 @@ export class QrCode {
   onCamerasFound(devices: MediaDeviceInfo[]) {
     console.log('Telecamere disponibili:', devices);
   }
-
 }
