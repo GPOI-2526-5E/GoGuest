@@ -1,34 +1,36 @@
-
 <header class="custom-header row py-3 align-items-center">
-    
+
     <div class="col-4 ps-4">
-      <div class="tip-box">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-lightbulb tip-icon flex-shrink-0" viewBox="0 0 16 16">
-          <path d="M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13a.5.5 0 0 1 0 1 .5.5 0 0 1 0 1l-.224.447a1 1 0 0 1-.894.553H6.618a1 1 0 0 1-.894-.553L5.5 15a.5.5 0 0 1 0-1 .5.5 0 0 1 0-1 .5.5 0 0 1-.46-.302l-.761-1.77a1.964 1.964 0 0 0-.453-.618A5.984 5.984 0 0 1 2 6zm6-5a5 5 0 0 0-3.479 8.592c.263.254.514.564.676.941L5.83 12h4.342l.632-1.467c.162-.377.413-.687.676-.941A5 5 0 0 0 8 1z"/>
-        </svg>
-        <span class="tip-text">
-          INSERISCI I TUOI DATI PER L'ENTRATA <br>
-          <span style="font-size: 0.6rem; color: #7f8c8d; font-weight: normal;">ENTER YOUR DATA FOR ENTRY</span>
-        </span>
-      </div>
+        <div class="tip-box">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                class="bi bi-lightbulb tip-icon flex-shrink-0" viewBox="0 0 16 16">
+                <path
+                    d="M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13a.5.5 0 0 1 0 1 .5.5 0 0 1 0 1l-.224.447a1 1 0 0 1-.894.553H6.618a1 1 0 0 1-.894-.553L5.5 15a.5.5 0 0 1 0-1 .5.5 0 0 1 0-1 .5.5 0 0 1-.46-.302l-.761-1.77a1.964 1.964 0 0 0-.453-.618A5.984 5.984 0 0 1 2 6zm6-5a5 5 0 0 0-3.479 8.592c.263.254.514.564.676.941L5.83 12h4.342l.632-1.467c.162-.377.413-.687.676-.941A5 5 0 0 0 8 1z" />
+            </svg>
+            <span class="tip-text">
+                INSERISCI I TUOI DATI PER L'ENTRATA <br>
+                <span style="font-size: 0.6rem; color: #7f8c8d; font-weight: normal;">ENTER YOUR DATA FOR ENTRY</span>
+            </span>
+        </div>
     </div>
 
-    <div class="col-4 text-center">
-      <h1 class="company-logo-new mb-0">GoGuest</h1>
-      <small class="company-subtitle">DIGITAL TECHNOLOGY COMPANY</small>
+    <div class="col-4 text-center" [routerLink]="['/home']">
+        <h1 class="company-logo-new mb-0">GoGuest</h1>
+        <small class="company-subtitle">DIGITAL TECHNOLOGY COMPANY</small>
     </div>
 
     <div class="col-4 pe-4 text-end">
-      <span class="welcome-text fw-bold">BENVENUTI</span>
+        <span class="welcome-text fw-bold">BENVENUTI</span>
     </div>
 
-  </header>
+</header>
 
 <div class="main-wrapper main-bg">
     <main class="content-area">
         <div class="form-container">
             <a href="javascript:history.back()" class="back-button" aria-label="Torna indietro">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
                     <line x1="19" y1="12" x2="5" y2="12"></line>
                     <polyline points="12 19 5 12 12 5"></polyline>
                 </svg>
@@ -53,12 +55,14 @@
                     </label>
                     <label class="privacy-text">
                         <strong>
-                            <a href="/assets/privacy-policy.pdf" target="_blank" style="color: inherit; text-decoration: underline;">
+                            <a href="/assets/privacy-policy.pdf" target="_blank"
+                                style="color: inherit; text-decoration: underline;">
                                 Confermo di aver preso visione dell'informativa privacy
                             </a>
                         </strong> /
                         <u>
-                            <a href="/assets/privacy-policy-eng.pdf" target="_blank" style="color: inherit; text-decoration: none;">
+                            <a href="/assets/privacy-policy-eng.pdf" target="_blank"
+                                style="color: inherit; text-decoration: none;">
                                 I confirm that I have read the privacy information
                             </a>
                         </u>
@@ -66,7 +70,8 @@
                 </div>
 
                 <button type="submit" class="submit-button" [disabled]="entryForm.invalid">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
                         <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
                     PROCEDI ALLA FIRMA / PROCEED TO SIGN
@@ -76,19 +81,17 @@
         </div>
     </main>
 
-    <footer class="container-fluid py-3 border-top">
-        <div class="row align-items-center">
-            <div class="col-4 ps-4 text-muted small">
-                Powered by www.GoGuest.it
+    <footer class="row py-3 bg-white border-top align-items-center">
+        <div class="col-4 ps-4 text-muted small">
+            Powered by www.GoGuest.it
+        </div>
+        <div class="col-4 text-center">
+            <div class="fw-bold d-flex align-items-center justify-content-center">
+                <img src="/assets/logo.png" class="img-fluid" style="max-height: 100px;">
             </div>
-            <div class="col-4 text-center">
-                <div class="fw-bold d-flex align-items-center justify-content-center">
-                    <span class="badge bg-danger fs-3">GoGuest</span>
-                </div>
-            </div>
-            <div class="col-4 text-end pe-4 text-muted small">
-                {{ currentTime$ | async | date:'dd/MM/yyyy HH:mm:ss' }}
-            </div>
+        </div>
+        <div class="col-4 text-end pe-4 text-muted small">
+            {{ currentTime$ | async | date:'dd/MM/yyyy HH:mm:ss' }}
         </div>
     </footer>
 </div>

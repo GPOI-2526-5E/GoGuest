@@ -153,9 +153,9 @@ header, footer {
 }
 
 /* Stile per il pulsante Cancella sovrapposto */
-.clear-button-overlay button:hover {
-    background-color: #f8f9fa !important;
-    border-color: #999;
+.clear-btn-custom:hover {
+    background-color: #e9ecef !important; /* Un grigio un po' più evidente al passaggio del mouse */
+    color: #000 !important;
 }
 
 /* --- STILE PER IL BOTTONE CONFERMA (Inferiore) --- */

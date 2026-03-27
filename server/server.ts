@@ -24,20 +24,14 @@ app.get('/api/firma/:id', async (req: Request, res: Response) => {
   try {
     const idVisitatore = req.params.id;
 
-    const connection = await mysql.createConnection(pool);
-
-    const [rows]: any = await connection.execute(
-      'SELECT firma FROM visitatore WHERE IdVisitatore = ?', 
+    const [rows]: any = await pool.execute(
+      'SELECT Firma FROM visitatore WHERE IdVisitatore = ?', 
       [idVisitatore]
     );
 
-    await connection.end();
-
     if (rows.length > 0) {
-      // Trovato
-      res.status(200).json({ firma: rows[0].firma_base64 });
+      res.status(200).json({ firma: rows[0].Firma });
     } else {
-      // Non trovato
       res.status(404).json({ message: 'Visitatore non trovato' });
     }
 
@@ -53,21 +47,27 @@ app.get('/api/idVisitatore', async (req: Request, res: Response) => {
     const cognome = req.query.cognome as string;
     const azienda = req.query.azienda as string;
 
-    if (!nome || !cognome || !azienda) {
-      res.status(400).json({ message: 'Mancano dei dati (nome, cognome o azienda)' });
+    if (!nome || !cognome) {
+      res.status(400).json({ message: 'Mancano nome o cognome per la ricerca' });
       return;
     }
 
-    const connection = await mysql.createConnection(pool);
-    const [rows]: any = await connection.execute(
-      'SELECT id FROM visitatore WHERE Nome = ? AND Cognome = ? AND Azienda = ? LIMIT 1', 
-      [nome, cognome, azienda]
-    );
+    // Query base (cerca sempre per Nome e Cognome)
+    let querySql = 'SELECT IdVisitatore FROM visitatore WHERE Nome = ? AND Cognome = ?';
+    let parametriDiRicerca: any[] = [nome, cognome];
 
-    await connection.end();
+    // Se l'utente ha digitato l'azienda, la aggiungo ai filtri di ricerca
+    if (azienda && azienda.trim() !== '') {
+      querySql += ' AND Azienda = ?';
+      parametriDiRicerca.push(azienda);
+    }
+    
+    querySql += ' LIMIT 1';
+
+    const [rows]: any = await pool.execute(querySql, parametriDiRicerca);
 
     if (rows.length > 0) {
-      res.status(200).json({ id: rows[0].id });
+      res.status(200).json({ id: rows[0].IdVisitatore });
     } else {
       res.status(404).json({ message: 'Visitatore non trovato' });
     }
@@ -82,18 +82,15 @@ app.post('/api/nuovoUtente', async (req: Request, res: Response) => {
   try {
     const { nome, cognome, azienda, firma } = req.body;
 
-    if (!nome || !cognome || !azienda || !firma) {
+    if (!nome || !cognome || !firma) {
       res.status(400).json({ message: 'Dati incompleti. Impossibile salvare l\'utente.' });
       return;
     }
 
-    const connection = await mysql.createConnection(pool);
-    const [result]: any = await connection.execute(
-      'INSERT INTO Visitatore (Nome, Cognome, Azienda, VisitaAttiva, Firma) VALUES (?, ?, ?, ?, ?)',
-      [nome, cognome, azienda, 1, firma]
+    const [result]: any = await pool.execute(
+      'INSERT INTO visitatore (Nome, Cognome, Azienda, VisitaAttiva, Firma) VALUES (?, ?, ?, ?, ?)',
+      [nome, cognome, azienda || '', 1, firma]
     );
-
-    await connection.end();
 
     res.status(201).json({ 
       message: 'Utente salvato con successo!',
@@ -115,16 +112,10 @@ app.post('/api/impostaStato', async (req: Request, res: Response) => {
       return;
     }
 
-    const connection = await mysql.createConnection(pool);
-
-    // Nota: hai chiamato la tabella "visitatore" nel prompt, ho usato questo nome. 
-    // Se la tua tabella si chiama "utenti", cambialo qui!
-    await connection.execute(
-      'UPDATE visitatore SET VisitaAttiva = ? WHERE id = ?',
+    await pool.execute(
+      'UPDATE visitatore SET VisitaAttiva = ? WHERE IdVisitatore = ?',
       [stato, id]
     );
-
-    await connection.end();
 
     res.status(200).json({ message: 'Stato visita aggiornato con successo!' });
 

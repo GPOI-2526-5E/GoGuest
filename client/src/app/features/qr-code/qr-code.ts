@@ -1,12 +1,12 @@
 import { Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterModule } from '@angular/router';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { BarcodeFormat } from '@zxing/library';
 
 @Component({
   selector: 'app-qr-code',
-  imports: [CommonModule, RouterLink, ZXingScannerModule],
+  imports: [CommonModule, RouterLink, ZXingScannerModule, RouterModule],
   templateUrl: './qr-code.html',
   styleUrl: './qr-code.css',
   standalone: true

@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Observable, timer } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Router } from '@angular/router'; 
+import { Router, RouterLink, RouterModule } from '@angular/router'; 
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms'; import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-exit-form.component',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, RouterModule],
   templateUrl: './exit-form.component.html',
   styleUrl: './exit-form.component.css',
   standalone: true

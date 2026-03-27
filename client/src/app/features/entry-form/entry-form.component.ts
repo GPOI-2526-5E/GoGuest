@@ -2,13 +2,13 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Observable, timer } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Router } from '@angular/router'; 
+import { Router, RouterLink, RouterModule } from '@angular/router'; 
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms'; 
 import { AuthService } from '../../core/auth.service'; 
 
 @Component({
   selector: 'app-entry-form.component',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, RouterModule],
   templateUrl: './entry-form.component.html',
   styleUrl: './entry-form.component.css',
   standalone: true,

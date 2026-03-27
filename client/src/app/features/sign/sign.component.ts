@@ -2,13 +2,13 @@ import { Component, ElementRef, ViewChild, AfterViewInit, HostListener } from '@
 import { Observable, timer } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router'; 
+import { Router, RouterModule } from '@angular/router'; 
 import SignaturePad from 'signature_pad';
 import { AuthService } from '../../core/auth.service';
 
 @Component({
   selector: 'app-sign.component',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   standalone: true,
   templateUrl: './sign.component.html',
   styleUrl: './sign.component.css',
