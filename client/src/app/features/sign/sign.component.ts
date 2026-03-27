@@ -4,6 +4,7 @@ import { map } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router'; 
 import SignaturePad from 'signature_pad';
+import { AuthService } from '../../core/auth.service';
 
 @Component({
   selector: 'app-sign.component',
@@ -14,27 +15,27 @@ import SignaturePad from 'signature_pad';
 })
 export class SignComponent implements AfterViewInit {
   
-
   currentTime$: Observable<Date> = timer(0, 1000).pipe(
-        map(() => new Date())
-      );
+    map(() => new Date())
+  );
 
-  // @ViewChild recupera l'elemento <canvas #signatureCanvas> dall'HTML
   @ViewChild('signatureCanvas', { static: true }) canvasRef!: ElementRef<HTMLCanvasElement>;
   
   private signaturePad!: SignaturePad;
 
   nomeUtente: string = '';
   cognomeUtente: string = '';
+  nomeAzienda: string = '';
   source: string = '';
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private authService: AuthService) {
     const state = history.state;
-    this.source = history.state.sorgente;
+    this.source = history.state?.sorgente || '';
 
     if (state) {
       this.nomeUtente = state.nome || '';
       this.cognomeUtente = state.cognome || '';
+      this.nomeAzienda = state.azienda || '';
     }
   }
 
@@ -73,12 +74,46 @@ export class SignComponent implements AfterViewInit {
       return;
     }
     
-    const base64Data = this.signaturePad.toDataURL('image/png');
-    console.log("Pronto per il DB:", base64Data);
-    
-    // TODO: Chiama un tuo Service Angular per inviare "base64Data" al backend
-    this.router.navigate(['/home']);
+    const firmaNuova = this.signaturePad.toDataURL('image/png');
+    console.log("Pronto per il DB:", firmaNuova);
+
+    // PASSO 1: Chiediamo prima l'ID al server
+    this.authService.getVisitatoreID(this.nomeUtente, this.cognomeUtente, this.nomeAzienda).subscribe({
+      next: (rispostaId: any) => {
+        // Apriamo il primo pacco per prendere il VERO numero
+        const idUtente: number = rispostaId.id; 
+        console.log(`Visitatore trovato! Il suo ID è ${idUtente}`);
+
+        // PASSO 2: Ora che abbiamo il numero, chiediamo la firma
+        this.authService.getFirmaDalDatabase(idUtente).subscribe({
+          next: (rispostaDB: any) => {
+            const firmaVecchiaStringa = rispostaDB.firma; 
+            console.log("Firma vecchia recuperata! Inizio il confronto...");
+
+            // PASSO 3: Facciamo il controllo con la libreria Resemble
+            this.authService.controllaFirma(firmaNuova, firmaVecchiaStringa).then((corrisponde: boolean) => {
+              
+              if (corrisponde) {
+                alert("Successo! La firma è valida. Puoi entrare.");
+                // PASSO 4: Navighiamo alla home SOLO se la firma è corretta!
+                this.router.navigate(['/home']); 
+              } else {
+                alert("Attenzione: la firma non combacia. Riprova.");
+                this.clear(); // Opzionale: puliamo la lavagna se ha sbagliato
+              }
+              
+            });
+          },
+          error: (erroreFirma: any) => {
+            console.error("Errore recupero firma:", erroreFirma);
+            alert("Errore nel database durante il recupero della firma.");
+          }
+        }); // Fine subscribe Firma
+      },
+      error: (erroreId: any) => {
+        console.error("Errore ricerca utente:", erroreId);
+        alert("Non abbiamo trovato nessun visitatore registrato con questi dati.");
+      }
+    }); // Fine subscribe ID
   }
 }
-
-

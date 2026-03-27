@@ -18,7 +18,13 @@
     </div>
 
     <div class="col-4 pe-4 text-end">
-      <span class="welcome-text fw-bold">BENVENUTI</span>
+      <span class="welcome-text fw-bold">
+        @if(source == 'entry') {
+            BENVENUTI
+        } @else {
+            ARRIVEDERCI
+        }
+      </span>
     </div>
 
   </header>

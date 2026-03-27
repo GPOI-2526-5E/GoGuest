@@ -40,10 +40,11 @@ export class EntryFormComponent {
 
       const firstName = this.entryForm.value.firstName;
       const lastName = this.entryForm.value.lastName;
+      const companyName = this.entryForm.value.company;
 
       // Navighiamo verso /sign passando i dati nello "state"
       this.router.navigate(['/sign'], { 
-        state: { nome: firstName, cognome: lastName, sorgente: "entry" },
+        state: { nome: firstName, cognome: lastName, sorgente: "entry", azienda: companyName },
       });
       
       // Qui, in futuro, scriveremo il codice per inviare i dati al server/database
