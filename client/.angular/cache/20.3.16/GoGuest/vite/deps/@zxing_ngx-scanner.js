@@ -1,37 +1,4 @@
 import {
-  FormsModule
-} from "./chunk-S57DH6SA.js";
-import {
-  CommonModule
-} from "./chunk-HE47BIIJ.js";
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  NgModule,
-  Output,
-  ViewChild,
-  setClassMetadata,
-  ɵɵdefineComponent,
-  ɵɵdefineInjector,
-  ɵɵdefineNgModule,
-  ɵɵelementEnd,
-  ɵɵelementStart,
-  ɵɵloadQuery,
-  ɵɵproperty,
-  ɵɵqueryRefresh,
-  ɵɵsanitizeUrl,
-  ɵɵstyleProp,
-  ɵɵtext,
-  ɵɵviewQuery
-} from "./chunk-ENKTU3D5.js";
-import "./chunk-HWYXSU2G.js";
-import "./chunk-JRFR6BLO.js";
-import {
-  BehaviorSubject
-} from "./chunk-MARUHEWW.js";
-import {
   ArgumentException_default,
   AztecReader_default,
   BarcodeFormat_default,
@@ -55,9 +22,43 @@ import {
   QRCodeReader_default
 } from "./chunk-M34QWGN3.js";
 import {
+  FormsModule
+} from "./chunk-WYKRPCZF.js";
+import {
+  CommonModule
+} from "./chunk-ZI2RRQ3D.js";
+import "./chunk-R6U7IGMG.js";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  NgModule,
+  Output,
+  ViewChild,
+  setClassMetadata,
+  ɵɵdefineComponent,
+  ɵɵdefineInjector,
+  ɵɵdefineNgModule,
+  ɵɵelementEnd,
+  ɵɵelementStart,
+  ɵɵloadQuery,
+  ɵɵproperty,
+  ɵɵqueryRefresh,
+  ɵɵsanitizeUrl,
+  ɵɵstyleProp,
+  ɵɵtext,
+  ɵɵviewQuery
+} from "./chunk-EY2YTQKM.js";
+import "./chunk-JRFR6BLO.js";
+import "./chunk-HWYXSU2G.js";
+import {
+  BehaviorSubject
+} from "./chunk-MARUHEWW.js";
+import {
   __spreadProps,
   __spreadValues
-} from "./chunk-GOMI4DH3.js";
+} from "./chunk-H2SRQSE4.js";
 
 // node_modules/@zxing/browser/esm/common/HTMLCanvasElementLuminanceSource.js
 var __extends = /* @__PURE__ */ (function() {

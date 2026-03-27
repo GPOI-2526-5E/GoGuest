@@ -27,6 +27,8 @@ export class SignComponent implements AfterViewInit {
   cognomeUtente: string = '';
   nomeAzienda: string = '';
   source: string = '';
+  // 1. Aggiungiamo una variabile per sapere se è nuovo (di base falso)
+  isNuovoUtente: boolean = false; 
 
   constructor(private router: Router, private authService: AuthService) {
     const state = history.state;
@@ -36,6 +38,8 @@ export class SignComponent implements AfterViewInit {
       this.nomeUtente = state.nome || '';
       this.cognomeUtente = state.cognome || '';
       this.nomeAzienda = state.azienda || '';
+      // 2. Recuperiamo l'informazione dal form precedente!
+      this.isNuovoUtente = state.isNuovoUtente || false; 
     }
   }
 
@@ -77,43 +81,81 @@ export class SignComponent implements AfterViewInit {
     const firmaNuova = this.signaturePad.toDataURL('image/png');
     console.log("Pronto per il DB:", firmaNuova);
 
-    // PASSO 1: Chiediamo prima l'ID al server
-    this.authService.getVisitatoreID(this.nomeUtente, this.cognomeUtente, this.nomeAzienda).subscribe({
-      next: (rispostaId: any) => {
-        // Apriamo il primo pacco per prendere il VERO numero
-        const idUtente: number = rispostaId.id; 
-        console.log(`Visitatore trovato! Il suo ID è ${idUtente}`);
+    // 1. CAPIAMO SE ENTRA O ESCE
+    // Se source è "entry", lo stato sarà 1. Altrimenti (uscita) sarà 0.
+    const statoVisita = this.source === 'entry' ? 1 : 0; 
+    
+    if (this.isNuovoUtente) {
+      // ----------------------------------------
+      // PERCORSO A: L'utente è NUOVO
+      // ----------------------------------------
+      console.log("Utente nuovo! Procedo col salvataggio nel database...");
+      
+      this.authService.salvaNuovoUtente(this.nomeUtente, this.cognomeUtente, this.nomeAzienda, firmaNuova).subscribe({
+        next: (risposta: any) => {
+          // Quando salviamo l'utente, il backend ci restituisce il suo nuovo ID!
+          const nuovoId = risposta.nuovoId; 
 
-        // PASSO 2: Ora che abbiamo il numero, chiediamo la firma
-        this.authService.getFirmaDalDatabase(idUtente).subscribe({
-          next: (rispostaDB: any) => {
-            const firmaVecchiaStringa = rispostaDB.firma; 
-            console.log("Firma vecchia recuperata! Inizio il confronto...");
+          // AGGIORNIAMO LO STATO VISITA
+          this.authService.impostaStatoVisita(nuovoId, statoVisita).subscribe({
+            next: () => {
+              alert("Registrazione e ingresso completati! Benvenuto.");
+              this.router.navigate(['/home']); 
+            },
+            error: (err: any) => console.error("Errore aggiornamento stato:", err)
+          });
+        },
+        error: (erroreSalvataggio: any) => {
+          console.error("Errore durante il salvataggio:", erroreSalvataggio);
+          alert("Errore nel database durante la registrazione. Riprova.");
+        }
+      });
 
-            // PASSO 3: Facciamo il controllo con la libreria Resemble
-            this.authService.controllaFirma(firmaNuova, firmaVecchiaStringa).then((corrisponde: boolean) => {
-              
-              if (corrisponde) {
-                alert("Successo! La firma è valida. Puoi entrare.");
-                // PASSO 4: Navighiamo alla home SOLO se la firma è corretta!
-                this.router.navigate(['/home']); 
-              } else {
-                alert("Attenzione: la firma non combacia. Riprova.");
-                this.clear(); // Opzionale: puliamo la lavagna se ha sbagliato
-              }
-              
-            });
-          },
-          error: (erroreFirma: any) => {
-            console.error("Errore recupero firma:", erroreFirma);
-            alert("Errore nel database durante il recupero della firma.");
-          }
-        }); // Fine subscribe Firma
-      },
-      error: (erroreId: any) => {
-        console.error("Errore ricerca utente:", erroreId);
-        alert("Non abbiamo trovato nessun visitatore registrato con questi dati.");
-      }
-    }); // Fine subscribe ID
+    } else {
+      // ----------------------------------------
+      // PERCORSO B: L'utente è GIÀ REGISTRATO
+      // ----------------------------------------
+      console.log("Utente già registrato! Inizio processo di verifica...");
+
+      this.authService.getVisitatoreID(this.nomeUtente, this.cognomeUtente, this.nomeAzienda).subscribe({
+        next: (rispostaId: any) => {
+          const idUtente: number = rispostaId.id; 
+
+          this.authService.getFirmaDalDatabase(idUtente).subscribe({
+            next: (rispostaDB: any) => {
+              const firmaVecchiaStringa = rispostaDB.firma; 
+
+              this.authService.controllaFirma(firmaNuova, firmaVecchiaStringa).then((corrisponde: boolean) => {
+                if (corrisponde) {
+                  
+                  // AGGIORNIAMO LO STATO VISITA VISTO CHE LA FIRMA È CORRETTA!
+                  this.authService.impostaStatoVisita(idUtente, statoVisita).subscribe({
+                    next: () => {
+                      // Un alert dinamico: "Benvenuto" se entra, "Arrivederci" se esce
+                      const messaggio = statoVisita === 1 ? "Bentornato!" : "Arrivederci e grazie!";
+                      alert(`Successo! La firma è valida. ${messaggio}`);
+                      this.router.navigate(['/home']); 
+                    },
+                    error: (err: any) => console.error("Errore aggiornamento stato:", err)
+                  });
+
+                } else {
+                  alert("Attenzione: la firma non combacia. Riprova.");
+                  this.clear(); 
+                }
+              });
+            },
+            error: (erroreFirma: any) => {
+              console.error("Errore recupero firma:", erroreFirma);
+              alert("Errore nel database durante il recupero della firma.");
+            }
+          });
+        },
+        error: (erroreId: any) => {
+          console.error("Errore ricerca utente:", erroreId);
+          alert("Non abbiamo trovato nessun visitatore registrato con questi dati.");
+        }
+      }); 
+    }
   }
 }

@@ -46,4 +46,29 @@ export class AuthService {
         });
     });
   }
+
+  salvaNuovoUtente(nome: string, cognome: string, azienda: string, firma: string): Observable<any> {
+    const urlSalvataggio = 'http://localhost:3000/api/nuovoUtente';
+
+    const datiUtente = {
+      nome: nome,
+      cognome: cognome,
+      azienda: azienda,
+      firma: firma
+    };
+
+    return this.http.post(urlSalvataggio, datiUtente);
+  }
+
+  impostaStatoVisita(id: number, statoVisita: number): Observable<any> {
+    const urlStato = 'http://localhost:3000/api/impostaStato';
+    
+    // Spediamo un pacchetto col numero ID e lo stato (1 = dentro, 0 = fuori)
+    const dati = {
+      id: id,
+      stato: statoVisita
+    };
+
+    return this.http.post(urlStato, dati);
+  }
 }

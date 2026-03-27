@@ -57,14 +57,14 @@ import {
   ɵɵinject,
   ɵɵinjectAttribute,
   ɵɵstyleProp
-} from "./chunk-ENKTU3D5.js";
+} from "./chunk-EY2YTQKM.js";
 import {
   Subject
 } from "./chunk-MARUHEWW.js";
 import {
   __spreadProps,
   __spreadValues
-} from "./chunk-GOMI4DH3.js";
+} from "./chunk-H2SRQSE4.js";
 
 // node_modules/@angular/common/fesm2022/location.mjs
 var _DOM = null;
@@ -3682,21 +3682,6 @@ var CommonModule = class _CommonModule {
   }], null, null);
 })();
 
-// node_modules/@angular/common/fesm2022/xhr.mjs
-function parseCookieValue(cookieStr, name) {
-  name = encodeURIComponent(name);
-  for (const cookie of cookieStr.split(";")) {
-    const eqIndex = cookie.indexOf("=");
-    const [cookieName, cookieValue] = eqIndex == -1 ? [cookie, ""] : [cookie.slice(0, eqIndex), cookie.slice(eqIndex + 1)];
-    if (cookieName.trim() === name) {
-      return decodeURIComponent(cookieValue);
-    }
-  }
-  return null;
-}
-var XhrFactory = class {
-};
-
 // node_modules/@angular/common/fesm2022/platform_navigation.mjs
 var PlatformNavigation = class _PlatformNavigation {
   static ɵfac = function PlatformNavigation_Factory(__ngFactoryType__) {
@@ -5185,8 +5170,6 @@ export {
   CurrencyPipe,
   SlicePipe,
   CommonModule,
-  parseCookieValue,
-  XhrFactory,
   PlatformNavigation,
   registerLocaleData2 as registerLocaleData,
   PLATFORM_BROWSER_ID,
@@ -5209,7 +5192,6 @@ export {
 
 @angular/common/fesm2022/location.mjs:
 @angular/common/fesm2022/common_module.mjs:
-@angular/common/fesm2022/xhr.mjs:
 @angular/common/fesm2022/platform_navigation.mjs:
 @angular/common/fesm2022/common.mjs:
   (**
@@ -5218,4 +5200,4 @@ export {
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-HE47BIIJ.js.map
+//# sourceMappingURL=chunk-ZI2RRQ3D.js.map
