@@ -52,8 +52,8 @@ app.get('/api/idVisitatore', async (req: Request, res: Response) => {
       return;
     }
 
-    // Query base (cerca sempre per Nome e Cognome)
-    let querySql = 'SELECT IdVisitatore FROM visitatore WHERE Nome = ? AND Cognome = ?';
+    // Query base: MODIFICATA per includere VisitaAttiva
+    let querySql = 'SELECT IdVisitatore, VisitaAttiva FROM visitatore WHERE Nome = ? AND Cognome = ?';
     let parametriDiRicerca: any[] = [nome, cognome];
 
     // Se l'utente ha digitato l'azienda, la aggiungo ai filtri di ricerca
@@ -67,7 +67,11 @@ app.get('/api/idVisitatore', async (req: Request, res: Response) => {
     const [rows]: any = await pool.execute(querySql, parametriDiRicerca);
 
     if (rows.length > 0) {
-      res.status(200).json({ id: rows[0].IdVisitatore });
+      // MODIFICA: restituiamo sia l'ID che lo stato della visita
+      res.status(200).json({ 
+        id: rows[0].IdVisitatore,
+        visitaAttiva: rows[0].VisitaAttiva
+      });
     } else {
       res.status(404).json({ message: 'Visitatore non trovato' });
     }

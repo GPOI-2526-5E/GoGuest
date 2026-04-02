@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router'; 
 import SignaturePad from 'signature_pad';
 import { AuthService } from '../../core/auth.service';
+import { NotificationService } from '../../core/notification.service';
 
 @Component({
   selector: 'app-sign.component',
@@ -30,7 +31,7 @@ export class SignComponent implements AfterViewInit {
   // 1. Aggiungiamo una variabile per sapere se è nuovo (di base falso)
   isNuovoUtente: boolean = false; 
 
-  constructor(private router: Router, private authService: AuthService) {
+  constructor(private router: Router, private authService: AuthService, private notificationService: NotificationService) {
     const state = history.state;
     this.source = history.state?.sorgente || '';
 
@@ -74,7 +75,7 @@ export class SignComponent implements AfterViewInit {
 
   save(): void {
     if (this.signaturePad.isEmpty()) {
-      alert("Per favore, firma prima di salvare.");
+      this.notificationService.mostra("Per favore, firma prima di salvare.", 'error');
       return;
     }
     
@@ -99,7 +100,7 @@ export class SignComponent implements AfterViewInit {
           // AGGIORNIAMO LO STATO VISITA
           this.authService.impostaStatoVisita(nuovoId, statoVisita).subscribe({
             next: () => {
-              alert("Registrazione e ingresso completati! Benvenuto.");
+              this.notificationService.mostra("Registrazione e ingresso completati! Benvenuto.", 'success');
               this.router.navigate(['/home']); 
             },
             error: (err: any) => console.error("Errore aggiornamento stato:", err)
@@ -107,7 +108,7 @@ export class SignComponent implements AfterViewInit {
         },
         error: (erroreSalvataggio: any) => {
           console.error("Errore durante il salvataggio:", erroreSalvataggio);
-          alert("Errore nel database durante la registrazione. Riprova.");
+          this.notificationService.mostra("Errore nel database durante la registrazione. Riprova.", 'error');
         }
       });
 
@@ -133,27 +134,27 @@ export class SignComponent implements AfterViewInit {
                     next: () => {
                       // Un alert dinamico: "Benvenuto" se entra, "Arrivederci" se esce
                       const messaggio = statoVisita === 1 ? "Bentornato!" : "Arrivederci e grazie!";
-                      alert(`Successo! La firma è valida. ${messaggio}`);
+                      this.notificationService.mostra(`Successo! La firma è valida. ${messaggio}`, 'success');
                       this.router.navigate(['/home']); 
                     },
                     error: (err: any) => console.error("Errore aggiornamento stato:", err)
                   });
 
                 } else {
-                  alert("Attenzione: la firma non combacia. Riprova.");
+                  this.notificationService.mostra("Attenzione: la firma non combacia. Riprova.", 'error');
                   this.clear(); 
                 }
               });
             },
             error: (erroreFirma: any) => {
               console.error("Errore recupero firma:", erroreFirma);
-              alert("Errore nel database durante il recupero della firma.");
+              this.notificationService.mostra("Errore nel database durante il recupero della firma.", 'error');
             }
           });
         },
         error: (erroreId: any) => {
           console.error("Errore ricerca utente:", erroreId);
-          alert("Non abbiamo trovato nessun visitatore registrato con questi dati.");
+          this.notificationService.mostra("Non abbiamo trovato nessun visitatore registrato con questi dati.", 'error');
         }
       }); 
     }

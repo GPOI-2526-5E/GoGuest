@@ -1,8 +1,12 @@
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Observable, timer } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Router, RouterLink, RouterModule } from '@angular/router'; 
-import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms'; import { Component } from '@angular/core';
+import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms'; 
+import { AuthService } from '../../core/auth.service';
+// AGGIUNTO: Importazione del service
+import { NotificationService } from '../../core/notification.service'; 
 
 @Component({
   selector: 'app-exit-form.component',
@@ -13,7 +17,12 @@ import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angula
 })
 export class ExitFormComponent {
 
-  constructor(private router: Router){}
+  // MODIFICATO: Aggiunto notificationService
+  constructor(
+    private router: Router, 
+    private authService: AuthService,
+    private notificationService: NotificationService 
+  ){}
 
   currentTime$: Observable<Date> = timer(0, 1000).pipe(
       map(() => new Date())
@@ -26,21 +35,42 @@ export class ExitFormComponent {
 
   onSubmit() {
     if (this.exitForm.valid) {
-      console.log('Dati pronti per controllo della firma nel database:', this.exitForm.value);
+      console.log('Controllo nel database se il visitatore esiste...');
 
-      const firstName = this.exitForm.value.firstName;
-      const lastName = this.exitForm.value.lastName;
+      const firstName = this.exitForm.value.firstName || '';
+      const lastName = this.exitForm.value.lastName || '';
 
-      // Navighiamo verso /sign passando i dati nello "state"
-      this.router.navigate(['/sign'], { 
-        state: { nome: firstName, cognome: lastName, sorgente: "exit" },
+      // Chiamiamo il backend per vedere se l'utente è registrato.
+      this.authService.getVisitatoreID(firstName, lastName, '').subscribe({
+        
+        next: (risposta: any) => {
+          // MODIFICA: Controllo se il visitatore è effettivamente "dentro" l'azienda
+          if (risposta.visitaAttiva === 1) {
+            console.log(`Visitatore trovato ed è attualmente dentro (ID: ${risposta.id}). Procedo alla firma...`);
+            
+            this.router.navigate(['/sign'], { 
+              state: { 
+                nome: firstName, 
+                cognome: lastName, 
+                sorgente: "exit", 
+                isNuovoUtente: false 
+              },
+            });
+          } else {
+            // Il visitatore esiste, ma è già uscito in precedenza
+            console.log('Il visitatore risulta già essere fuori.');
+            // MODIFICATO: Sostituito alert
+            this.notificationService.mostra(`Attenzione: ${firstName} ${lastName} risulta già essere uscito dall'azienda. Non è necessaria un'altra firma.`, 'info'); 
+          }
+        },
+        
+        error: (errore) => {
+          console.error('Visitatore non trovato nel database.', errore);
+          // MODIFICATO: Sostituito alert
+          this.notificationService.mostra("Attenzione: Nessun visitatore trovato con questo nome e cognome. Verifica di aver scritto bene.", 'error');
+        }
+        
       });
-      
-      // Qui, in futuro, scriveremo il codice per controllare i dati e la firma dal server/database
-
-      /*
-      TO DO
-      */
 
     } else {
       console.log('Attenzione: Il form non è compilato correttamente.');
@@ -48,5 +78,3 @@ export class ExitFormComponent {
     }
   }
 }
-
-

@@ -1,0 +1,4 @@
+<div *ngIf="notifica" class="notifica-toast" [ngClass]="notifica.tipo">
+  <span>{{ notifica.testo }}</span>
+  <button (click)="chiudi()" class="chiudi-btn">&times;</button>
+</div>

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, RouterModule } from '@angular/router';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { BarcodeFormat } from '@zxing/library';
+import { NotificationService } from '../../core/notification.service';
 
 @Component({
   selector: 'app-qr-code',
@@ -12,6 +13,9 @@ import { BarcodeFormat } from '@zxing/library';
   standalone: true
 })
 export class QrCode {
+
+  constructor(private notificationService: NotificationService) {}
+
   // Definiamo i formati accettati (QR Code in questo caso)
   allowedFormats = [BarcodeFormat.QR_CODE];
 
@@ -59,7 +63,7 @@ export class QrCode {
     console.log('Codice ricevuto:', code);
     this.scannedResult = code;
     // Qui in futuro potrai aggiungere la chiamata al database/API
-    alert('Codice rilevato: ' + code);
+    this.notificationService.mostra('Codice rilevato: ' + code, 'success');
   }
 
   // Metodi per la gestione della fotocamera
