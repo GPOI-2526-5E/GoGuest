@@ -40,11 +40,11 @@ export class ExitFormComponent {
       const firstName = this.exitForm.value.firstName || '';
       const lastName = this.exitForm.value.lastName || '';
 
-      // Chiamiamo il backend per vedere se l'utente è registrato.
+      // Guardo se l'utente è registrato.
       this.authService.getVisitatoreID(firstName, lastName, '').subscribe({
         
         next: (risposta: any) => {
-          // MODIFICA: Controllo se il visitatore è effettivamente "dentro" l'azienda
+          // Controllo se il visitatore è effettivamente "dentro" l'azienda
           if (risposta.visitaAttiva === 1) {
             console.log(`Visitatore trovato ed è attualmente dentro (ID: ${risposta.id}). Procedo alla firma...`);
             
@@ -59,14 +59,14 @@ export class ExitFormComponent {
           } else {
             // Il visitatore esiste, ma è già uscito in precedenza
             console.log('Il visitatore risulta già essere fuori.');
-            // MODIFICATO: Sostituito alert
+            // Sostituito alert
             this.notificationService.mostra(`Attenzione: ${firstName} ${lastName} risulta già essere uscito dall'azienda. Non è necessaria un'altra firma.`, 'info'); 
           }
         },
         
         error: (errore) => {
           console.error('Visitatore non trovato nel database.', errore);
-          // MODIFICATO: Sostituito alert
+          // Sostituito alert
           this.notificationService.mostra("Attenzione: Nessun visitatore trovato con questo nome e cognome. Verifica di aver scritto bene.", 'error');
         }
         

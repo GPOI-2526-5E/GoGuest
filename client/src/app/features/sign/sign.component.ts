@@ -28,7 +28,7 @@ export class SignComponent implements AfterViewInit {
   cognomeUtente: string = '';
   nomeAzienda: string = '';
   source: string = '';
-  // 1. Aggiungiamo una variabile per sapere se è nuovo (di base falso)
+  // Aggiungo una variabile per sapere se è nuovo (di base falso)
   isNuovoUtente: boolean = false; 
 
   constructor(private router: Router, private authService: AuthService, private notificationService: NotificationService) {
@@ -39,7 +39,7 @@ export class SignComponent implements AfterViewInit {
       this.nomeUtente = state.nome || '';
       this.cognomeUtente = state.cognome || '';
       this.nomeAzienda = state.azienda || '';
-      // 2. Recuperiamo l'informazione dal form precedente!
+      // Recupero l'informazione dal form precedente
       this.isNuovoUtente = state.isNuovoUtente || false; 
     }
   }
@@ -82,22 +82,19 @@ export class SignComponent implements AfterViewInit {
     const firmaNuova = this.signaturePad.toDataURL('image/png');
     console.log("Pronto per il DB:", firmaNuova);
 
-    // 1. CAPIAMO SE ENTRA O ESCE
     // Se source è "entry", lo stato sarà 1. Altrimenti (uscita) sarà 0.
     const statoVisita = this.source === 'entry' ? 1 : 0; 
     
     if (this.isNuovoUtente) {
-      // ----------------------------------------
       // PERCORSO A: L'utente è NUOVO
-      // ----------------------------------------
       console.log("Utente nuovo! Procedo col salvataggio nel database...");
       
       this.authService.salvaNuovoUtente(this.nomeUtente, this.cognomeUtente, this.nomeAzienda, firmaNuova).subscribe({
         next: (risposta: any) => {
-          // Quando salviamo l'utente, il backend ci restituisce il suo nuovo ID!
+          // Quando salviamo l'utente, il backend ci restituisce il suo nuovo ID
           const nuovoId = risposta.nuovoId; 
 
-          // AGGIORNIAMO LO STATO VISITA
+          // AGGIORNO LO STATO VISITA
           this.authService.impostaStatoVisita(nuovoId, statoVisita).subscribe({
             next: () => {
               this.notificationService.mostra("Registrazione e ingresso completati! Benvenuto.", 'success');
@@ -113,9 +110,7 @@ export class SignComponent implements AfterViewInit {
       });
 
     } else {
-      // ----------------------------------------
       // PERCORSO B: L'utente è GIÀ REGISTRATO
-      // ----------------------------------------
       console.log("Utente già registrato! Inizio processo di verifica...");
 
       this.authService.getVisitatoreID(this.nomeUtente, this.cognomeUtente, this.nomeAzienda).subscribe({
@@ -129,7 +124,7 @@ export class SignComponent implements AfterViewInit {
               this.authService.controllaFirma(firmaNuova, firmaVecchiaStringa).then((corrisponde: boolean) => {
                 if (corrisponde) {
                   
-                  // AGGIORNIAMO LO STATO VISITA VISTO CHE LA FIRMA È CORRETTA!
+                  // AGGIORO LO STATO VISITA VISTO CHE LA FIRMA È CORRETTA
                   this.authService.impostaStatoVisita(idUtente, statoVisita).subscribe({
                     next: () => {
                       // Un alert dinamico: "Benvenuto" se entra, "Arrivederci" se esce

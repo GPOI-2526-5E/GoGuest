@@ -35,24 +35,24 @@ export class QrCode {
   @HostListener('window:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
     
-    // 1. FINE DELLA LETTURA: La pistola preme sempre 'Enter' alla fine
+    // La pistola preme sempre 'Enter' alla fine
     if (event.key === 'Enter') {
       if (this.barcodeBuffer.length > 0) {
         this.processQrCode(this.barcodeBuffer);
-        this.barcodeBuffer = ''; // Svuotiamo il contenitore per il prossimo QR code
+        this.barcodeBuffer = ''; // Svuoto il contenitore per il prossimo QR code
       }
       return;
     }
 
-    // 2. RACCOLTA DATI: Evitiamo di salvare tasti speciali come "Shift", "Control", ecc.
+    // Evito di salvare tasti speciali come "Shift", "Control", ecc.
     if (event.key.length === 1) {
       this.barcodeBuffer += event.key;
     }
 
-    // 3. CONTROLLO VELOCITÀ: Distinguiamo la pistola da un essere umano
+    // Distinguo la pistola da un essere umano
     clearTimeout(this.typingTimer);
     
-    // Se passa più di 50 millisecondi, è un umano che digita: svuotiamo il buffer.
+    // Se passa più di 50 millisecondi, è un umano che digita quindi svuoto il buffer.
     this.typingTimer = setTimeout(() => {
       this.barcodeBuffer = '';
     }, 50); 
@@ -62,7 +62,6 @@ export class QrCode {
   processQrCode(code: string) {
     console.log('Codice ricevuto:', code);
     this.scannedResult = code;
-    // Qui in futuro potrai aggiungere la chiamata al database/API
     this.notificationService.mostra('Codice rilevato: ' + code, 'success');
   }
 

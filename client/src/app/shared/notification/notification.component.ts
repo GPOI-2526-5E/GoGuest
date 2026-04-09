@@ -13,7 +13,6 @@ export class NotificationComponent {
   notifica: NotificationMessage | null = null;
 
   constructor(private notificationService: NotificationService) {
-    // Ci mettiamo in ascolto del Service per ricevere i messaggi
     this.notificationService.notifica$.subscribe(messaggio => {
       this.notifica = messaggio;
     });

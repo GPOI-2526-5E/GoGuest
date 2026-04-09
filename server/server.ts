@@ -52,7 +52,6 @@ app.get('/api/idVisitatore', async (req: Request, res: Response) => {
       return;
     }
 
-    // Query base: MODIFICATA per includere VisitaAttiva
     let querySql = 'SELECT IdVisitatore, VisitaAttiva FROM visitatore WHERE Nome = ? AND Cognome = ?';
     let parametriDiRicerca: any[] = [nome, cognome];
 
@@ -67,7 +66,6 @@ app.get('/api/idVisitatore', async (req: Request, res: Response) => {
     const [rows]: any = await pool.execute(querySql, parametriDiRicerca);
 
     if (rows.length > 0) {
-      // MODIFICA: restituiamo sia l'ID che lo stato della visita
       res.status(200).json({ 
         id: rows[0].IdVisitatore,
         visitaAttiva: rows[0].VisitaAttiva
