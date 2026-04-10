@@ -97,7 +97,7 @@ html, body {
 }
 
 /* ==========================================================
-   3. FOOTER CON EFFETTO VETRO (Mantenuto)
+   3. FOOTER CON EFFETTO VETRO
    ========================================================== */
 footer {
   /* Sfondo bianco semitrasparente con sfocatura */
@@ -113,9 +113,6 @@ footer {
 footer div, footer span {
   color: #333333 !important;
 }
-
-
-/* --- RESTO DELLO STILE (Mantenuto identico) --- */
 
 /* Stile per il tag <a> del pulsante indietro */
 .back-button {
@@ -150,8 +147,10 @@ footer div, footer span {
     margin-bottom: 20px;
 }
 
-/* Stile Input Testuali */
-input[type="text"] {
+/* Stile Input Testuali, Email e Date */
+input[type="text"],
+input[type="email"],
+input[type="date"] {
     flex: 1;
     padding: 15px;
     border: 1px solid #ddd;
@@ -160,14 +159,20 @@ input[type="text"] {
     color: #333;
     outline: none;
     transition: border-color 0.2s;
+    box-sizing: border-box;
+    font-family: inherit;
 }
 
-input[type="text"]::placeholder {
+input[type="text"]::placeholder,
+input[type="email"]::placeholder,
+input[type="date"]::placeholder {
     color: #aaa;
 }
 
 /* Colore verde coerente con la Home quando si clicca */
-input[type="text"]:focus {
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="date"]:focus {
     border-color: #28a745;
     box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
 }

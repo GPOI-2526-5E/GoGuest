@@ -26,6 +26,8 @@ export class EntryFormComponent {
     lastName: new FormControl('', Validators.required),
     company: new FormControl('', Validators.required),
     referent: new FormControl('', Validators.required),
+    email: new FormControl('', [Validators.required, Validators.email]),
+    dateOfBirth: new FormControl('', Validators.required),
     privacyConsent: new FormControl(false, Validators.requiredTrue) 
   });
 
@@ -36,14 +38,25 @@ export class EntryFormComponent {
       const firstName = this.entryForm.value.firstName || '';
       const lastName = this.entryForm.value.lastName || '';
       const companyName = this.entryForm.value.company || '';
+      const emailValue = this.entryForm.value.email || '';
+      const dateOfBirthValue = this.entryForm.value.dateOfBirth || '';
       
-      this.authService.getVisitatoreID(firstName, lastName, companyName).subscribe({
+      // ABBIAMO AGGIUNTO IL 4° PARAMETRO: dateOfBirthValue
+      this.authService.getVisitatoreID(firstName, lastName, companyName, dateOfBirthValue).subscribe({
         
         next: (risposta: any) => {
           console.log(`Visitatore trovato! È un utente di ritorno con ID: ${risposta.id}`);
           
           this.router.navigate(['/sign'], { 
-            state: { nome: firstName, cognome: lastName, sorgente: "entry", azienda: companyName, isNuovoUtente: false }
+            state: { 
+              nome: firstName, 
+              cognome: lastName, 
+              azienda: companyName,
+              email: emailValue,
+              dataNascita: dateOfBirthValue,
+              sorgente: "entry", 
+              isNuovoUtente: false 
+            }
           });
         },
         
@@ -51,7 +64,15 @@ export class EntryFormComponent {
           console.log('UTENTE NUOVO');
           
           this.router.navigate(['/sign'], { 
-            state: { nome: firstName, cognome: lastName, sorgente: "entry", azienda: companyName, isNuovoUtente: true }
+            state: { 
+              nome: firstName, 
+              cognome: lastName, 
+              azienda: companyName,
+              email: emailValue,
+              dataNascita: dateOfBirthValue,
+              sorgente: "entry", 
+              isNuovoUtente: true 
+            }
           });
         }
         
