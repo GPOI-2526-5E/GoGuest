@@ -44,10 +44,15 @@ export class SignComponent implements AfterViewInit {
     }
   }
 
+  // Nel tuo sign.component.ts
+  // Nel tuo sign.component.ts
   ngAfterViewInit() {
     this.signaturePad = new SignaturePad(this.canvasRef.nativeElement, {
       backgroundColor: 'rgb(255, 255, 255)',
-      penColor: 'rgb(0, 0, 0)'
+      penColor: 'rgb(0, 0, 0)',
+      // Riportiamo i valori allo standard sottile
+      minWidth: 0.5, 
+      maxWidth: 2.5  
     });
     
     this.resizeCanvas();
@@ -79,7 +84,7 @@ export class SignComponent implements AfterViewInit {
       return;
     }
     
-    const firmaNuova = this.signaturePad.toDataURL('image/png');
+    const firmaNuova = this.ritagliaFirma(this.canvasRef.nativeElement);
     console.log("Pronto per il DB:", firmaNuova);
 
     // Se source è "entry", lo stato sarà 1. Altrimenti (uscita) sarà 0.
@@ -153,5 +158,64 @@ export class SignComponent implements AfterViewInit {
         }
       }); 
     }
+  }
+
+  private ritagliaFirma(canvas: HTMLCanvasElement): string {
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return canvas.toDataURL('image/png');
+
+    const width = canvas.width;
+    const height = canvas.height;
+    const imageData = ctx.getImageData(0, 0, width, height);
+    const data = imageData.data;
+
+    let minX = width, minY = height, maxX = 0, maxY = 0;
+    let hasPixels = false;
+
+    // Analizza ogni pixel per trovare i margini del testo nero
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        const index = (y * width + x) * 4;
+        const r = data[index];
+        const g = data[index + 1];
+        const b = data[index + 2];
+
+        // Se il pixel non è bianco (r,g,b < 255), allora c'è dell'inchiostro
+        if (r < 255 || g < 255 || b < 255) {
+          hasPixels = true;
+          if (x < minX) minX = x;
+          if (x > maxX) maxX = x;
+          if (y < minY) minY = y;
+          if (y > maxY) maxY = y;
+        }
+      }
+    }
+
+    if (!hasPixels) return canvas.toDataURL('image/png'); // Se è tutto bianco
+
+    // Aggiungiamo 10px di margine (padding) per non tagliare troppo a filo
+    const padding = 10;
+    minX = Math.max(0, minX - padding);
+    minY = Math.max(0, minY - padding);
+    maxX = Math.min(width, maxX + padding);
+    maxY = Math.min(height, maxY + padding);
+
+    const trimWidth = maxX - minX;
+    const trimHeight = maxY - minY;
+
+    // Creiamo un mini-canvas grande solo quanto la firma effettiva
+    const trimmedCanvas = document.createElement('canvas');
+    trimmedCanvas.width = trimWidth;
+    trimmedCanvas.height = trimHeight;
+    const trimmedCtx = trimmedCanvas.getContext('2d');
+    
+    if (trimmedCtx) {
+        // Riempiamo di bianco il nuovo canvas e ci incolliamo la firma ritagliata
+        trimmedCtx.fillStyle = 'rgb(255, 255, 255)';
+        trimmedCtx.fillRect(0, 0, trimWidth, trimHeight);
+        trimmedCtx.putImageData(ctx.getImageData(minX, minY, trimWidth, trimHeight), 0, 0);
+    }
+
+    return trimmedCanvas.toDataURL('image/png');
   }
 }

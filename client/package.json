@@ -36,6 +36,7 @@
     "resemblejs": "^5.0.0",
     "rxjs": "~7.8.0",
     "signature_pad": "^5.1.3",
+    "ssim.js": "^3.5.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {

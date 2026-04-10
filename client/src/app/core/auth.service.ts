@@ -1,74 +1,87 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import resemble from 'resemblejs';
+import { ssim } from 'ssim.js';
 
 @Injectable({
   providedIn: 'root',
 })
-
 export class AuthService {
-  // L'indirizzo del backend Node.js
-  private getFirmaURL = 'http://localhost:3000/api/firma';
+  // CENTRALIZZIAMO L'URL: Modifica solo questa riga quando andrai in produzione!
+  private baseUrl = 'http://localhost:3000/api';
 
   constructor(private http: HttpClient) { }
 
- getVisitatoreID(nome: string, cognome: string, azienda: string): Observable<any> {
-    
-    // Costruiamo l'indirizzo aggiungendo i parametri di ricerca alla fine (Query Parameters)
-    // Esempio: http://localhost:3000/api/idVisitatore?nome=Mario&cognome=Rossi&azienda=Acme
-    const urlConParametri = `http://localhost:3000/api/idVisitatore?nome=${nome}&cognome=${cognome}&azienda=${azienda}`;
-    
+  getVisitatoreID(nome: string, cognome: string, azienda: string): Observable<any> {
+    // Usiamo il baseUrl dinamico
+    const urlConParametri = `${this.baseUrl}/idVisitatore?nome=${nome}&cognome=${cognome}&azienda=${azienda}`;
     return this.http.get(urlConParametri);
   }
 
-  // Chiede al backend la firma salvata nel database
   getFirmaDalDatabase(idVisitatore: number): Observable<any> {
-    return this.http.get(`${this.getFirmaURL}/${idVisitatore}`);
+    // Usiamo il baseUrl dinamico
+    return this.http.get(`${this.baseUrl}/firma/${idVisitatore}`);
   }
 
-  // Funzione di controllo
-  controllaFirma(firmaNuova: string, firmaDalDatabase: string): Promise<boolean> {
-    return new Promise((resolve) => {
-      resemble(firmaNuova)
-        .compareTo(firmaDalDatabase)
-        .ignoreColors()
-        .onComplete((data: any) => {
-          const differenza = Number(data.misMatchPercentage);
-          console.log(`Differenza firme: ${differenza}%`);
-          
-          // Se la differenza è minore del 20%, restituisce true (firma valida)
-          if (differenza < 20) {
-            resolve(true);
-          } else {
-            resolve(false);
-          }
-        });
+  // --- NUOVA FUNZIONE: Converte il Base64 in ImageData e lo ridimensiona ---
+  private normalizzaImmagine(base64: string, width: number = 400, height: number = 200): Promise<ImageData> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'Anonymous'; 
+      
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        
+        if (!ctx) {
+          return reject('Contesto Canvas non disponibile');
+        }
+
+        ctx.fillStyle = 'rgb(255, 255, 255)';
+        ctx.fillRect(0, 0, width, height);
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(ctx.getImageData(0, 0, width, height));
+      };
+      
+      img.onerror = (err) => reject(err);
+      img.src = base64;
     });
   }
 
-  salvaNuovoUtente(nome: string, cognome: string, azienda: string, firma: string): Observable<any> {
-    const urlSalvataggio = 'http://localhost:3000/api/nuovoUtente';
+  // --- NUOVA FUNZIONE DI CONTROLLO CON SSIM ---
+  async controllaFirma(firmaNuova: string, firmaDalDatabase: string): Promise<boolean> {
+    try {
+      const imgDataNuova = await this.normalizzaImmagine(firmaNuova);
+      const imgDataDatabase = await this.normalizzaImmagine(firmaDalDatabase);
 
-    const datiUtente = {
-      nome: nome,
-      cognome: cognome,
-      azienda: azienda,
-      firma: firma
-    };
+      const risultato = ssim(imgDataNuova, imgDataDatabase);
+      
+      console.log(`Indice di similitudine SSIM: ${risultato.mssim}`);
 
-    return this.http.post(urlSalvataggio, datiUtente);
+      const SOGLIA_ACCETTAZIONE = 0.60;
+
+      if (risultato.mssim >= SOGLIA_ACCETTAZIONE) {
+        return true; 
+      } else {
+        return false; 
+      }
+
+    } catch (errore) {
+      console.error("Errore durante il confronto SSIM:", errore);
+      return false; 
+    }
   }
 
-  impostaStatoVisita(id: number, statoVisita: number): Observable<any> {
-    const urlStato = 'http://localhost:3000/api/impostaStato';
-    
-    // Spediamo un pacchetto col numero ID e lo stato (1 = dentro, 0 = fuori)
-    const dati = {
-      id: id,
-      stato: statoVisita
-    };
+  salvaNuovoUtente(nome: string, cognome: string, azienda: string, firma: string): Observable<any> {
+    // Usiamo il baseUrl dinamico
+    const datiUtente = { nome, cognome, azienda, firma };
+    return this.http.post(`${this.baseUrl}/nuovoUtente`, datiUtente);
+  }
 
-    return this.http.post(urlStato, dati);
+  impostaStatoVisita(id: number, stato: number): Observable<any> {
+    // Usiamo il baseUrl dinamico
+    return this.http.post(`${this.baseUrl}/impostaStato`, { id, stato });
   }
 }
