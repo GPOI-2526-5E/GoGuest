@@ -12,7 +12,7 @@ export class AuthService {
 
   constructor(private http: HttpClient) { }
 
-  getVisitatoreID(nome: string, cognome: string, azienda: string): Observable<any> {
+  getVisitatoreID(nome: string, cognome: string, azienda: string, dateOfBirth: string): Observable<any> {
     // Usiamo il baseUrl dinamico
     const urlConParametri = `${this.baseUrl}/idVisitatore?nome=${nome}&cognome=${cognome}&azienda=${azienda}`;
     return this.http.get(urlConParametri);
@@ -74,7 +74,7 @@ export class AuthService {
     }
   }
 
-  salvaNuovoUtente(nome: string, cognome: string, azienda: string, firma: string): Observable<any> {
+  salvaNuovoUtente(nome: string, cognome: string, azienda: string, firma: string, dataNascita: string): Observable<any> {
     // Usiamo il baseUrl dinamico
     const datiUtente = { nome, cognome, azienda, firma };
     return this.http.post(`${this.baseUrl}/nuovoUtente`, datiUtente);

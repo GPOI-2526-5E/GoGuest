@@ -28,6 +28,7 @@ export class SignComponent implements AfterViewInit {
   cognomeUtente: string = '';
   nomeAzienda: string = '';
   source: string = '';
+  dataNascita: string = '';
   // Aggiungo una variabile per sapere se è nuovo (di base falso)
   isNuovoUtente: boolean = false; 
 
@@ -39,6 +40,7 @@ export class SignComponent implements AfterViewInit {
       this.nomeUtente = state.nome || '';
       this.cognomeUtente = state.cognome || '';
       this.nomeAzienda = state.azienda || '';
+      this.dataNascita = state.dataNascita || '';
       // Recupero l'informazione dal form precedente
       this.isNuovoUtente = state.isNuovoUtente || false; 
     }
@@ -94,7 +96,7 @@ export class SignComponent implements AfterViewInit {
       // PERCORSO A: L'utente è NUOVO
       console.log("Utente nuovo! Procedo col salvataggio nel database...");
       
-      this.authService.salvaNuovoUtente(this.nomeUtente, this.cognomeUtente, this.nomeAzienda, firmaNuova).subscribe({
+      this.authService.salvaNuovoUtente(this.nomeUtente, this.cognomeUtente, this.nomeAzienda, firmaNuova, this.dataNascita).subscribe({
         next: (risposta: any) => {
           // Quando salviamo l'utente, il backend ci restituisce il suo nuovo ID
           const nuovoId = risposta.nuovoId; 
@@ -118,7 +120,7 @@ export class SignComponent implements AfterViewInit {
       // PERCORSO B: L'utente è GIÀ REGISTRATO
       console.log("Utente già registrato! Inizio processo di verifica...");
 
-      this.authService.getVisitatoreID(this.nomeUtente, this.cognomeUtente, this.nomeAzienda).subscribe({
+      this.authService.getVisitatoreID(this.nomeUtente, this.cognomeUtente, this.nomeAzienda, this.dataNascita).subscribe({
         next: (rispostaId: any) => {
           const idUtente: number = rispostaId.id; 
 

@@ -1,7 +1,4 @@
 import {
-  FormsModule
-} from "./chunk-WYKRPCZF.js";
-import {
   ArgumentException_default,
   AztecReader_default,
   BarcodeFormat_default,
@@ -24,6 +21,9 @@ import {
   PDF417Reader_default,
   QRCodeReader_default
 } from "./chunk-M34QWGN3.js";
+import {
+  FormsModule
+} from "./chunk-WYKRPCZF.js";
 import {
   CommonModule
 } from "./chunk-ZI2RRQ3D.js";
@@ -50,8 +50,8 @@ import {
   ɵɵtext,
   ɵɵviewQuery
 } from "./chunk-EY2YTQKM.js";
-import "./chunk-JRFR6BLO.js";
 import "./chunk-HWYXSU2G.js";
+import "./chunk-JRFR6BLO.js";
 import {
   BehaviorSubject
 } from "./chunk-MARUHEWW.js";

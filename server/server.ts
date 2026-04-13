@@ -46,13 +46,14 @@ app.get('/api/idVisitatore', async (req: Request, res: Response) => {
     const nome = req.query.nome as string;
     const cognome = req.query.cognome as string;
     const azienda = req.query.azienda as string;
+    const dataNascita = req.query.dateOfBirth as string;
 
     if (!nome || !cognome) {
       res.status(400).json({ message: 'Mancano nome o cognome per la ricerca' });
       return;
     }
 
-    let querySql = 'SELECT IdVisitatore, VisitaAttiva FROM visitatore WHERE Nome = ? AND Cognome = ?';
+    let querySql = 'SELECT IdVisitatore, VisitaAttiva FROM visitatore WHERE Nome = ? AND Cognome = ? AND DataNascita = ?';
     let parametriDiRicerca: any[] = [nome, cognome];
 
     // Se l'utente ha digitato l'azienda, la aggiungo ai filtri di ricerca
@@ -82,16 +83,18 @@ app.get('/api/idVisitatore', async (req: Request, res: Response) => {
 
 app.post('/api/nuovoUtente', async (req: Request, res: Response) => {
   try {
-    const { nome, cognome, azienda, firma } = req.body;
+    const { nome, cognome, azienda, firma, DataNascita } = req.body;
 
     if (!nome || !cognome || !firma) {
       res.status(400).json({ message: 'Dati incompleti. Impossibile salvare l\'utente.' });
       return;
     }
 
+    const dataOraCorrente = new Date();
+
     const [result]: any = await pool.execute(
-      'INSERT INTO visitatore (Nome, Cognome, Azienda, VisitaAttiva, Firma) VALUES (?, ?, ?, ?, ?)',
-      [nome, cognome, azienda || '', 1, firma]
+      'INSERT INTO visitatore (Nome, Cognome, Azienda, VisitaAttiva, Firma, DataNascita, DataIngresso) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [nome, cognome, azienda || '', 1, firma, DataNascita, dataOraCorrente]
     );
 
     res.status(201).json({ 

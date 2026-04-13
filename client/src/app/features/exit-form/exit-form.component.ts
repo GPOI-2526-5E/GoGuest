@@ -31,6 +31,7 @@ export class ExitFormComponent {
   exitForm = new FormGroup({
     firstName: new FormControl('', Validators.required),
     lastName: new FormControl('', Validators.required), 
+    dateOfBirth: new FormControl('', Validators.required), 
   });
 
   onSubmit() {
@@ -39,9 +40,10 @@ export class ExitFormComponent {
 
       const firstName = this.exitForm.value.firstName || '';
       const lastName = this.exitForm.value.lastName || '';
+      const dateOfBirth = this.exitForm.value.dateOfBirth || '';
 
       // Guardo se l'utente è registrato.
-      this.authService.getVisitatoreID(firstName, lastName, '').subscribe({
+      this.authService.getVisitatoreID(firstName, lastName, '', dateOfBirth).subscribe({
         
         next: (risposta: any) => {
           // Controllo se il visitatore è effettivamente "dentro" l'azienda
