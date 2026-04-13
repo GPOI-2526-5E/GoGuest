@@ -95,8 +95,9 @@ export class SignComponent implements AfterViewInit {
     if (this.isNuovoUtente) {
       // PERCORSO A: L'utente è NUOVO
       console.log("Utente nuovo! Procedo col salvataggio nel database...");
+      console.log(this.nomeUtente, this.cognomeUtente, this.nomeAzienda, firmaNuova, this.dataNascita);
       
-      this.authService.salvaNuovoUtente(this.nomeUtente, this.cognomeUtente, this.nomeAzienda, firmaNuova, this.dataNascita).subscribe({
+      this.authService.salvaNuovoUtente(this.nomeUtente, this.cognomeUtente, this.nomeAzienda, this.dataNascita, firmaNuova,).subscribe({
         next: (risposta: any) => {
           // Quando salviamo l'utente, il backend ci restituisce il suo nuovo ID
           const nuovoId = risposta.nuovoId; 
@@ -120,7 +121,7 @@ export class SignComponent implements AfterViewInit {
       // PERCORSO B: L'utente è GIÀ REGISTRATO
       console.log("Utente già registrato! Inizio processo di verifica...");
 
-      this.authService.getVisitatoreID(this.nomeUtente, this.cognomeUtente, this.nomeAzienda, this.dataNascita).subscribe({
+      this.authService.getVisitatoreID(this.nomeUtente, this.cognomeUtente, '', this.dataNascita).subscribe({
         next: (rispostaId: any) => {
           const idUtente: number = rispostaId.id; 
 
