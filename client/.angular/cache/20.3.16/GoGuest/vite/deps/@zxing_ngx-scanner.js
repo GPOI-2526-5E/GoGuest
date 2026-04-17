@@ -4,29 +4,6 @@ import {
 import {
   CommonModule
 } from "./chunk-ZI2RRQ3D.js";
-import {
-  ArgumentException_default,
-  AztecReader_default,
-  BarcodeFormat_default,
-  BinaryBitmap_default,
-  ChecksumException_default,
-  DataMatrixReader_default,
-  DecodeHintType_default,
-  EncodeHintType_default,
-  Encoder_default,
-  ErrorCorrectionLevel_default,
-  FormatException_default,
-  HybridBinarizer_default,
-  IllegalArgumentException_default,
-  IllegalStateException_default,
-  InvertedLuminanceSource_default,
-  LuminanceSource_default,
-  MultiFormatOneDReader_default,
-  MultiFormatReader_default,
-  NotFoundException_default,
-  PDF417Reader_default,
-  QRCodeReader_default
-} from "./chunk-M34QWGN3.js";
 import "./chunk-R6U7IGMG.js";
 import {
   ChangeDetectionStrategy,
@@ -51,6 +28,29 @@ import {
   ɵɵviewQuery
 } from "./chunk-EY2YTQKM.js";
 import "./chunk-HWYXSU2G.js";
+import {
+  ArgumentException_default,
+  AztecReader_default,
+  BarcodeFormat_default,
+  BinaryBitmap_default,
+  ChecksumException_default,
+  DataMatrixReader_default,
+  DecodeHintType_default,
+  EncodeHintType_default,
+  Encoder_default,
+  ErrorCorrectionLevel_default,
+  FormatException_default,
+  HybridBinarizer_default,
+  IllegalArgumentException_default,
+  IllegalStateException_default,
+  InvertedLuminanceSource_default,
+  LuminanceSource_default,
+  MultiFormatOneDReader_default,
+  MultiFormatReader_default,
+  NotFoundException_default,
+  PDF417Reader_default,
+  QRCodeReader_default
+} from "./chunk-M34QWGN3.js";
 import "./chunk-JRFR6BLO.js";
 import {
   BehaviorSubject

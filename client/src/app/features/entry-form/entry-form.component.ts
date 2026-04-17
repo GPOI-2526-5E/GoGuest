@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { Router, RouterLink, RouterModule } from '@angular/router'; 
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms'; 
 import { AuthService } from '../../core/auth.service'; 
+import { NotificationService } from '../../core/notification.service'; 
 
 @Component({
   selector: 'app-entry-form.component',
@@ -15,7 +16,11 @@ import { AuthService } from '../../core/auth.service';
 })
 export class EntryFormComponent {
 
-  constructor(private router: Router, private authService: AuthService){}
+  constructor(
+    private router: Router, 
+    private authService: AuthService,
+    private notificationService: NotificationService
+  ){}
 
   currentTime$: Observable<Date> = timer(0, 1000).pipe(
       map(() => new Date())
@@ -32,8 +37,6 @@ export class EntryFormComponent {
 
   onSubmit() {
     if (this.entryForm.valid) {
-      console.log('Dati pronti per il database:', this.entryForm.value);
-
       const firstName = this.entryForm.value.firstName || '';
       const lastName = this.entryForm.value.lastName || '';
       const companyName = this.entryForm.value.company || '';
@@ -42,22 +45,27 @@ export class EntryFormComponent {
       this.authService.getVisitatoreID(firstName, lastName, companyName, dateOfBirthValue).subscribe({
         
         next: (risposta: any) => {
-          console.log(`Visitatore trovato! È un utente di ritorno con ID: ${risposta.id}`);
-          
-          this.router.navigate(['/sign'], { 
-            state: { 
-              nome: firstName, 
-              cognome: lastName, 
-              azienda: companyName,
-              dataNascita: dateOfBirthValue, 
-              sorgente: "entry", 
-              isNuovoUtente: false 
-            }
-          });
+          // CONTROLLO se l'utente è già all'interno dell'azienda
+          if (risposta.visitaAttiva === 1) {
+            this.notificationService.mostra(`Attenzione: ${firstName} ${lastName} risulta già all'interno dell'azienda.`, 'error');
+            this.router.navigate(['/home']);
+          } else {
+            this.notificationService.mostra("Bentornato! Procedi con la firma per entrare.", 'info');
+            this.router.navigate(['/sign'], { 
+              state: { 
+                nome: firstName, 
+                cognome: lastName, 
+                azienda: companyName,
+                dataNascita: dateOfBirthValue, 
+                sorgente: "entry", 
+                isNuovoUtente: false 
+              }
+            });
+          }
         },
         
         error: (errore) => {
-          console.log('UTENTE NUOVO');
+          this.notificationService.mostra("Dati validi. Procedi con la firma per completare la registrazione.", 'success');
           
           this.router.navigate(['/sign'], { 
             state: { 
@@ -74,7 +82,7 @@ export class EntryFormComponent {
       });
 
     } else {
-      console.log('Attenzione: Il form non è compilato correttamente.');
+      this.notificationService.mostra('Attenzione: Compila tutti i campi obbligatori per procedere.', 'error');
       this.entryForm.markAllAsTouched();
     }
   }

@@ -5,7 +5,6 @@ import { map } from 'rxjs/operators';
 import { Router, RouterLink, RouterModule } from '@angular/router'; 
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms'; 
 import { AuthService } from '../../core/auth.service';
-// AGGIUNTO: Importazione del service
 import { NotificationService } from '../../core/notification.service'; 
 
 @Component({
@@ -17,7 +16,6 @@ import { NotificationService } from '../../core/notification.service';
 })
 export class ExitFormComponent {
 
-  // MODIFICATO: Aggiunto notificationService
   constructor(
     private router: Router, 
     private authService: AuthService,
@@ -36,20 +34,15 @@ export class ExitFormComponent {
 
   onSubmit() {
     if (this.exitForm.valid) {
-      console.log('Controllo nel database se il visitatore esiste...');
-
       const firstName = this.exitForm.value.firstName || '';
       const lastName = this.exitForm.value.lastName || '';
       const dateOfBirth = this.exitForm.value.dateOfBirth || '';
 
-      // Guardo se l'utente è registrato.
       this.authService.getVisitatoreID(firstName, lastName, '', dateOfBirth).subscribe({
         
         next: (risposta: any) => {
-          // Controllo se il visitatore è effettivamente "dentro" l'azienda
           if (risposta.visitaAttiva === 1) {
-            console.log(`Visitatore trovato ed è attualmente dentro (ID: ${risposta.id}). Procedo alla firma...`);
-            
+            this.notificationService.mostra("Visitatore trovato. Procedi alla firma per uscire.", 'info');
             this.router.navigate(['/sign'], { 
               state: { 
                 nome: firstName, 
@@ -59,23 +52,18 @@ export class ExitFormComponent {
               },
             });
           } else {
-            // Il visitatore esiste, ma è già uscito in precedenza
-            console.log('Il visitatore risulta già essere fuori.');
-            // Sostituito alert
-            this.notificationService.mostra(`Attenzione: ${firstName} ${lastName} risulta già essere uscito dall'azienda. Non è necessaria un'altra firma.`, 'info'); 
+            this.notificationService.mostra(`Attenzione: ${firstName} ${lastName} risulta già essere uscito dall'azienda.`, 'info'); 
           }
         },
         
         error: (errore) => {
-          console.error('Visitatore non trovato nel database.', errore);
-          // Sostituito alert
-          this.notificationService.mostra("Attenzione: Nessun visitatore trovato con questo nome e cognome. Verifica di aver scritto bene.", 'error');
+          this.notificationService.mostra("Attenzione: Nessun visitatore trovato con questi dati. Verifica di aver scritto bene.", 'error');
         }
         
       });
 
     } else {
-      console.log('Attenzione: Il form non è compilato correttamente.');
+      this.notificationService.mostra('Attenzione: Compila tutti i campi obbligatori per procedere.', 'error');
       this.exitForm.markAllAsTouched();
     }
   }
