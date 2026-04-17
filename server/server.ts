@@ -20,7 +20,6 @@ const pool = mysql.createPool({
   queueLimit: 0
 });
 
-// --- RICERCA ID INTELLIGENTE ---
 app.get('/api/idVisitatore', async (req: Request, res: Response) => {
   try {
     const nome = req.query.nome as string;
@@ -33,7 +32,6 @@ app.get('/api/idVisitatore', async (req: Request, res: Response) => {
       return;
     }
 
-    // Partiamo dalla ricerca base
     let querySql = 'SELECT IdVisitatore, VisitaAttiva FROM visitatore WHERE Nome = ? AND Cognome = ?';
     let params: any[] = [nome, cognome];
 
@@ -137,7 +135,7 @@ app.post('/api/impostaStato', async (req: Request, res: Response) => {
 });
 
 // --- JOB SCHEDULATO PER CHIUSURA AUTOMATICA VISITE ---
-const ORE_SCADENZA = 4; // Modifica questo valore per cambiare la durata di validità (in ore)
+const ORE_SCADENZA = 4;
 const INTERVALLO_CONTROLLO_MS = 30 * 60 * 1000; // Controlla ogni 30 minuti
 
 setInterval(async () => {
