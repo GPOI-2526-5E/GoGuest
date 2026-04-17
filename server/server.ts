@@ -136,4 +136,28 @@ app.post('/api/impostaStato', async (req: Request, res: Response) => {
   }
 });
 
+// --- JOB SCHEDULATO PER CHIUSURA AUTOMATICA VISITE ---
+const ORE_SCADENZA = 4; // Modifica questo valore per cambiare la durata di validità (in ore)
+const INTERVALLO_CONTROLLO_MS = 30 * 60 * 1000; // Controlla ogni 30 minuti
+
+setInterval(async () => {
+  try {
+    const query = `
+      UPDATE visitatore v
+      JOIN visita vi ON v.IdVisitatore = vi.IdVisitatore
+      SET v.VisitaAttiva = 0, vi.DataOraUscita = NOW()
+      WHERE v.VisitaAttiva = 1 
+        AND vi.DataOraUscita IS NULL 
+        AND vi.DataOraIngresso < DATE_SUB(NOW(), INTERVAL ? HOUR)
+    `;
+    const [result]: any = await pool.execute(query, [ORE_SCADENZA]);
+    
+    if (result.affectedRows > 0) {
+      console.log(`Chiusura automatica: chiuse/modificate ${result.affectedRows} visite scadute da più di ${ORE_SCADENZA} ore.`);
+    }
+  } catch (error) {
+    console.error("Errore nel job di chiusura automatica:", error);
+  }
+}, INTERVALLO_CONTROLLO_MS);
+
 app.listen(PORT, () => console.log(`Server attivo su http://localhost:${PORT}`));
