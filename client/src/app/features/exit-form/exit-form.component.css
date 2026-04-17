@@ -140,7 +140,9 @@ footer div, footer span {
     margin-bottom: 30px; /* Un po' di margine in più dato che ci sono meno campi */
 }
 
-input[type="text"] {
+input[type="text"],
+input[type="email"],
+input[type="date"] {
     flex: 1;
     padding: 15px;
     border: 1px solid #ddd;
@@ -148,16 +150,22 @@ input[type="text"] {
     font-size: 15px;
     color: #333;
     outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+    font-family: inherit;
 }
 
-input[type="text"]::placeholder {
+input[type="text"]::placeholder,
+input[type="email"]::placeholder,
+input[type="date"]::placeholder {
     color: #aaa;
 }
 
-/* Focus Input: Tonalità BLU per l'uscita */
-input[type="text"]:focus {
-    border-color: #28a745; /* Blu aziendale */
+/* Colore verde coerente con la Home quando si clicca */
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="date"]:focus {
+    border-color: #28a745;
     box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.1);
 }
 
