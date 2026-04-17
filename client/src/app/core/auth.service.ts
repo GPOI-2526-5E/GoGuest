@@ -66,13 +66,13 @@ export class AuthService {
     }
   }
 
-  salvaNuovoUtente(nome: string, cognome: string, azienda: string, dataNascita: string, firma: string): Observable<any> {
+  salvaNuovoUtente(nome: string, cognome: string, azienda: string, dataNascita: string, firma: string, email: string): Observable<any> {
     return this.http.post(`${this.baseUrl}/nuovoUtente`, {
-      nome, cognome, azienda, dataNascita, firma
+      nome, cognome, azienda, dataNascita, firma, email
     });
   }
 
-  impostaStatoVisita(id: number, stato: number): Observable<any> {
-    return this.http.post(`${this.baseUrl}/impostaStato`, { id, stato });
+  impostaStatoVisita(id: number, stato: number, referente?: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/impostaStato`, { id, stato, referente });
   }
 }

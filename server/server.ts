@@ -89,7 +89,7 @@ app.get('/api/firma/:id', async (req: Request, res: Response) => {
 // --- SALVATAGGIO NUOVO UTENTE  ---
 app.post('/api/nuovoUtente', async (req: Request, res: Response) => {
   try {
-    const { nome, cognome, azienda, dataNascita, firma } = req.body;
+    const { nome, cognome, azienda, dataNascita, firma, email } = req.body;
 
     if (!nome || !cognome || !firma) {
       res.status(400).json({ message: 'Dati incompleti' });
@@ -97,8 +97,8 @@ app.post('/api/nuovoUtente', async (req: Request, res: Response) => {
     }
 
     const [result]: any = await pool.execute(
-      'INSERT INTO visitatore (Nome, Cognome, Azienda, VisitaAttiva, Firma, DataNascita, DataIngresso) VALUES (?, ?, ?, ?, ?, ?, NOW())',
-      [nome, cognome, azienda || '', 1, firma, dataNascita || '']
+      'INSERT INTO visitatore (Nome, Cognome, Azienda, Email, VisitaAttiva, Firma, DataNascita) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [nome, cognome, azienda || '', email || null, 1, firma, dataNascita || null]
     );
 
     res.status(201).json({ message: 'Utente salvato!', nuovoId: result.insertId });
@@ -111,11 +111,25 @@ app.post('/api/nuovoUtente', async (req: Request, res: Response) => {
 // --- AGGIORNAMENTO STATO  ---
 app.post('/api/impostaStato', async (req: Request, res: Response) => {
   try {
-    const { id, stato } = req.body;
+    const { id, stato, referente } = req.body;
     await pool.execute(
       'UPDATE visitatore SET VisitaAttiva = ? WHERE IdVisitatore = ?',
       [stato, id]
     );
+
+    if (stato === 1) {
+      await pool.execute(
+        'INSERT INTO visita (IdVisitatore, NomeReferente, DataOraIngresso) VALUES (?, ?, NOW())',
+        [id, referente || null]
+      );
+    } else if (stato === 0) {
+      // Se vuoi chiudere l'ultima visita aperta (opzionale ma utile)
+      await pool.execute(
+        'UPDATE visita SET DataOraUscita = NOW() WHERE IdVisitatore = ? AND DataOraUscita IS NULL ORDER BY IdVisita DESC LIMIT 1',
+        [id]
+      );
+    }
+
     res.status(200).json({ message: 'Stato aggiornato' });
   } catch (error) {
     res.status(500).json({ message: 'Errore aggiornamento' });

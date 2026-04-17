@@ -31,6 +31,7 @@ export class EntryFormComponent {
     lastName: new FormControl('', Validators.required),
     company: new FormControl('', Validators.required),
     referent: new FormControl('', Validators.required),
+    email: new FormControl('', Validators.required),
     dateOfBirth: new FormControl('', Validators.required), 
     privacyConsent: new FormControl(false, Validators.requiredTrue) 
   });
@@ -40,6 +41,8 @@ export class EntryFormComponent {
       const firstName = this.entryForm.value.firstName || '';
       const lastName = this.entryForm.value.lastName || '';
       const companyName = this.entryForm.value.company || '';
+      const referentName = this.entryForm.value.referent || '';
+      const emailValue = this.entryForm.value.email || '';
       const dateOfBirthValue = this.entryForm.value.dateOfBirth || '';
       
       this.authService.getVisitatoreID(firstName, lastName, companyName, dateOfBirthValue).subscribe({
@@ -56,6 +59,8 @@ export class EntryFormComponent {
                 nome: firstName, 
                 cognome: lastName, 
                 azienda: companyName,
+                referente: referentName,
+                email: emailValue,
                 dataNascita: dateOfBirthValue, 
                 sorgente: "entry", 
                 isNuovoUtente: false 
@@ -72,6 +77,8 @@ export class EntryFormComponent {
               nome: firstName, 
               cognome: lastName, 
               azienda: companyName,
+              referente: referentName,
+              email: emailValue,
               dataNascita: dateOfBirthValue, 
               sorgente: "entry", 
               isNuovoUtente: true 

@@ -30,6 +30,7 @@ export class SignComponent implements AfterViewInit {
   source: string = '';
   dataNascita: string = '';
   email: string = '';
+  nomeReferente: string = '';
   // Aggiungo una variabile per sapere se è nuovo (di base falso)
   isNuovoUtente: boolean = false; 
 
@@ -43,6 +44,7 @@ export class SignComponent implements AfterViewInit {
       this.nomeAzienda = state.azienda || '';
       this.dataNascita = state.dataNascita || '';
       this.email = state.email || '';
+      this.nomeReferente = state.referente || state.nomeReferente || '';
       // Recupero l'informazione dal form precedente
       this.isNuovoUtente = state.isNuovoUtente || false; 
     }
@@ -99,13 +101,13 @@ export class SignComponent implements AfterViewInit {
       console.log("Utente nuovo! Procedo col salvataggio nel database...");
       console.log(this.nomeUtente, this.cognomeUtente, this.nomeAzienda, firmaNuova, this.dataNascita);
       
-      this.authService.salvaNuovoUtente(this.nomeUtente, this.cognomeUtente, this.nomeAzienda, this.dataNascita, firmaNuova,).subscribe({
+      this.authService.salvaNuovoUtente(this.nomeUtente, this.cognomeUtente, this.nomeAzienda, this.dataNascita, firmaNuova, this.email).subscribe({
         next: (risposta: any) => {
           // Quando salviamo l'utente, il backend ci restituisce il suo nuovo ID
           const nuovoId = risposta.nuovoId; 
 
-          // AGGIORNO LO STATO VISITA
-          this.authService.impostaStatoVisita(nuovoId, statoVisita).subscribe({
+          // AGGIORNO LO STATO VISITA E REGISTRO L'INGRESSO
+          this.authService.impostaStatoVisita(nuovoId, statoVisita, this.nomeReferente).subscribe({
             next: () => {
               this.notificationService.mostra("Registrazione e ingresso completati! Benvenuto.", 'success');
               this.router.navigate(['/home']); 
@@ -135,7 +137,7 @@ export class SignComponent implements AfterViewInit {
                 if (corrisponde) {
                   
                   // AGGIORO LO STATO VISITA VISTO CHE LA FIRMA È CORRETTA
-                  this.authService.impostaStatoVisita(idUtente, statoVisita).subscribe({
+                  this.authService.impostaStatoVisita(idUtente, statoVisita, this.nomeReferente).subscribe({
                     next: () => {
                       // Un alert dinamico: "Benvenuto" se entra, "Arrivederci" se esce
                       const messaggio = statoVisita === 1 ? "Bentornato!" : "Arrivederci e grazie!";
