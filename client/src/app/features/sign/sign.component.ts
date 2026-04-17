@@ -29,6 +29,7 @@ export class SignComponent implements AfterViewInit {
   nomeAzienda: string = '';
   source: string = '';
   dataNascita: string = '';
+  email: string = '';
   // Aggiungo una variabile per sapere se è nuovo (di base falso)
   isNuovoUtente: boolean = false; 
 
@@ -41,6 +42,7 @@ export class SignComponent implements AfterViewInit {
       this.cognomeUtente = state.cognome || '';
       this.nomeAzienda = state.azienda || '';
       this.dataNascita = state.dataNascita || '';
+      this.email = state.email || '';
       // Recupero l'informazione dal form precedente
       this.isNuovoUtente = state.isNuovoUtente || false; 
     }
