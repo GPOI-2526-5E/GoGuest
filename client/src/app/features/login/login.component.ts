@@ -27,7 +27,7 @@ export class LoginComponent {
   }
 
   goToQrCode(): void {
-    this.router.navigate(['/qrcode']);
+    this.router.navigate(['/qrcode'], { state: { action: 'entry' } });
   }
 
   goToEntryForm(): void {

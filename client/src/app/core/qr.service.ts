@@ -10,7 +10,11 @@ export class QrService {
 
   constructor(private http: HttpClient) {}
 
-  generateQr(datiUtente: { nome: string, cognome: string, email: string, referente: string }): Observable<any> {
+  generateQr(datiUtente: { idVisitatore?: number | null, nome: string, cognome: string, email: string, referente: string }): Observable<any> {
     return this.http.post(`${this.apiUrl}/generate-qr`, datiUtente);
+  }
+
+  scanQr(idQr: string, action: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/scan-qr`, { idQr, action });
   }
 }

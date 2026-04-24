@@ -1,9 +1,10 @@
 import { Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterModule } from '@angular/router';
+import { RouterLink, RouterModule, Router } from '@angular/router';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { BarcodeFormat } from '@zxing/library';
 import { NotificationService } from '../../core/notification.service';
+import { QrService } from '../../core/qr.service';
 
 @Component({
   selector: 'app-qr-code',
@@ -14,7 +15,15 @@ import { NotificationService } from '../../core/notification.service';
 })
 export class QrCode {
 
-  constructor(private notificationService: NotificationService) {}
+  action: string = 'entry'; // Default fallback
+  isProcessing: boolean = false;
+
+  constructor(private notificationService: NotificationService, private qrService: QrService, private router: Router) {
+    const state = history.state;
+    if (state && state.action) {
+      this.action = state.action;
+    }
+  }
 
   // Definiamo i formati accettati (QR Code in questo caso)
   allowedFormats = [BarcodeFormat.QR_CODE];
@@ -60,9 +69,29 @@ export class QrCode {
 
   // Logica finale comune (sia da webcam che da pistola USB)
   processQrCode(code: string) {
-    console.log('Codice ricevuto:', code);
+    if (this.isProcessing) return; // Evita scansioni multiple
+    
+    this.isProcessing = true;
+    console.log(`Codice ricevuto: ${code}, Azione: ${this.action}`);
     this.scannedResult = code;
-    this.notificationService.mostra('Codice rilevato: ' + code, 'success');
+    
+    this.qrService.scanQr(code, this.action).subscribe({
+      next: (res: any) => {
+        this.notificationService.mostra(res.message, 'success');
+        setTimeout(() => {
+          this.router.navigate(['/home']);
+        }, 3000);
+      },
+      error: (err: any) => {
+        const errorMsg = err.error && err.error.message ? err.error.message : 'Errore durante la scansione del QR Code.';
+        this.notificationService.mostra(errorMsg, 'error');
+        // Riabilita la scansione dopo un errore
+        setTimeout(() => {
+          this.isProcessing = false;
+          this.scannedResult = null;
+        }, 3000);
+      }
+    });
   }
 
   // Metodi per la gestione della fotocamera

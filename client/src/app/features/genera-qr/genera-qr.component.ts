@@ -1,7 +1,8 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { QrService } from '../../core/qr.service';
+import { NotificationService } from '../../core/notification.service';
 
 @Component({
   selector: 'app-genera-qr',
@@ -16,16 +17,18 @@ export class GeneraQrComponent implements OnInit, OnDestroy {
   messaggioErrore: string = '';
   private timerInterval: any;
 
-  datiUtente = {
+  datiUtente: any = {
+    idVisitatore: null,
     nome: '',
     cognome: '',
     email: '',
     referente: ''
   };
 
-  constructor(private router: Router, private qrService: QrService) {
+  constructor(private router: Router, private qrService: QrService, private notificationService: NotificationService, private cdr: ChangeDetectorRef) {
     const state = history.state;
     if (state) {
+      this.datiUtente.idVisitatore = state.idVisitatore || null;
       this.datiUtente.nome = state.nome || '';
       this.datiUtente.cognome = state.cognome || '';
       this.datiUtente.email = state.email || '';
@@ -42,6 +45,8 @@ export class GeneraQrComponent implements OnInit, OnDestroy {
     this.qrService.generateQr(this.datiUtente).subscribe({
       next: (res) => {
         this.stato = 'successo';
+        this.notificationService.mostra("QR Code generato con successo e inviato via mail!", "success");
+        this.cdr.detectChanges(); // Forza l'aggiornamento della UI
         this.avviaTimerRitornoHome();
       },
       error: (err) => {

@@ -1,4 +1,4 @@
-<div class="container-fluid vh-100 d-flex flex-column justify-content-between main-bg">
+<div class="container-fluid min-vh-100 d-flex flex-column justify-content-between main-bg">
 
   <header class="custom-header row py-3 align-items-center">
     
@@ -50,14 +50,30 @@
 
   <!-- Prompt QR Code -->
   <main class="row justify-content-center align-items-center flex-grow-1" *ngIf="showQrPrompt">
-    <div class="col-12 text-center fade-in">
-      <h1 class="mb-5 text-dark fw-bold" style="font-size: 2.5rem;">Possiedi già un QR Code per l'ingresso?</h1>
-      <div class="d-flex justify-content-center gap-4 mt-4 flex-wrap">
-        <button class="btn btn-success btn-lg px-5 py-4 fs-3 rounded-pill shadow" (click)="goToQrCode()">SÌ, HO IL QR CODE</button>
-        <button class="btn btn-secondary btn-lg px-5 py-4 fs-3 rounded-pill shadow" (click)="goToEntryForm()">NO, DEVO REGISTRARMI</button>
-      </div>
-      <div class="mt-5">
-        <button class="btn btn-outline-dark rounded-pill px-4" (click)="showQrPrompt = false"><i class="bi bi-arrow-left"></i> Annulla e torna indietro</button>
+    <div class="col-12 text-center fade-in px-4">
+      <div class="glass-prompt-container">
+        <h1 class="glass-prompt-title">Possiedi già un QR Code per l'ingresso?</h1>
+        <p class="glass-prompt-subtitle">Seleziona l'opzione desiderata per continuare la procedura</p>
+        
+        <div class="d-flex justify-content-center gap-4 mt-5 flex-wrap">
+          <button class="glass-btn glass-btn-green" (click)="goToQrCode()">
+            <i class="bi bi-qr-code-scan glass-btn-icon"></i>
+            <span class="glass-btn-text">SÌ, HO IL QR CODE</span>
+            <span class="glass-btn-sub">Scansiona il tuo codice</span>
+          </button>
+          
+          <button class="glass-btn glass-btn-blue" (click)="goToEntryForm()">
+            <i class="bi bi-pencil-square glass-btn-icon"></i>
+            <span class="glass-btn-text">NO, DEVO REGISTRARMI</span>
+            <span class="glass-btn-sub">Inserisci i tuoi dati</span>
+          </button>
+        </div>
+        
+        <div class="mt-5 pt-4 mb-5">
+          <button class="btn glass-btn-back" (click)="showQrPrompt = false">
+            <i class="bi bi-arrow-left me-2"></i> Annulla e torna indietro
+          </button>
+        </div>
       </div>
     </div>
   </main>

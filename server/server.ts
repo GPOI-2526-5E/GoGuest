@@ -142,7 +142,7 @@ app.post('/api/impostaStato', async (req: Request, res: Response) => {
 // --- GENERAZIONE QR CODE ---
 app.post('/api/generate-qr', async (req: Request, res: Response) => {
   try {
-    const { nome, cognome, email, referente } = req.body;
+    const { idVisitatore, nome, cognome, email, referente } = req.body;
 
     if (!nome || !cognome) {
        res.status(400).json({ message: 'Nome e Cognome obbligatori' });
@@ -151,8 +151,8 @@ app.post('/api/generate-qr', async (req: Request, res: Response) => {
 
     // 1. Inserisci in DB e ottieni IdQr (imposto FineValidita a 4 ore da adesso)
     const [result]: any = await pool.execute(
-      'INSERT INTO qrGenerati (Nome, Cognome, Email, Referente, DataOraInizioValidita, DataOraFineValidita) VALUES (?, ?, ?, ?, NOW(), DATE_ADD(NOW(), INTERVAL 4 HOUR))',
-      [nome, cognome, email || null, referente || null]
+      'INSERT INTO qrGenerati (IdVisitatore, Nome, Cognome, Email, Referente, DataOraInizioValidita, DataOraFineValidita) VALUES (?, ?, ?, ?, ?, NOW(), DATE_ADD(NOW(), INTERVAL 4 HOUR))',
+      [idVisitatore || null, nome, cognome, email || null, referente || null]
     );
     const idQr = result.insertId;
 
@@ -193,6 +193,95 @@ app.post('/api/generate-qr', async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Errore generazione QR:", error);
     res.status(500).json({ message: 'Errore interno' });
+  }
+});
+
+// --- SCANSIONE QR CODE ---
+app.post('/api/scan-qr', async (req: Request, res: Response) => {
+  try {
+    const { idQr, action } = req.body;
+
+    if (!idQr || !action) {
+      res.status(400).json({ message: 'ID QR e Azione sono obbligatori' });
+      return;
+    }
+
+    // 1. Verifica se il QR esiste ed è ancora valido
+    const [qrRows]: any = await pool.execute(
+      'SELECT IdVisitatore, Referente, DataOraFineValidita FROM qrGenerati WHERE IdQr = ?',
+      [idQr]
+    );
+
+    if (qrRows.length === 0) {
+      res.status(404).json({ message: 'QR Code non trovato' });
+      return;
+    }
+
+    const qrRecord = qrRows[0];
+    const oraAttuale = new Date();
+    const scadenza = new Date(qrRecord.DataOraFineValidita);
+
+    if (oraAttuale > scadenza) {
+      res.status(400).json({ message: 'QR Code scaduto' });
+      return;
+    }
+
+    const idVisitatore = qrRecord.IdVisitatore;
+    if (!idVisitatore) {
+      res.status(400).json({ message: 'Nessun Visitatore associato a questo QR Code' });
+      return;
+    }
+
+    // 2. Recupera Info Visitatore
+    const [visitatoreRows]: any = await pool.execute(
+      'SELECT Nome, Cognome, VisitaAttiva FROM visitatore WHERE IdVisitatore = ?',
+      [idVisitatore]
+    );
+
+    if (visitatoreRows.length === 0) {
+      res.status(404).json({ message: 'Visitatore non trovato' });
+      return;
+    }
+
+    const visitatore = visitatoreRows[0];
+    const nomeCompleto = `${visitatore.Nome} ${visitatore.Cognome}`;
+
+    // 3. Esegui l'azione richiesta
+    if (action === 'entry') {
+      if (visitatore.VisitaAttiva === 1) {
+        res.status(400).json({ message: `Attenzione: ${nomeCompleto} risulta già all'interno dell'azienda.` });
+        return;
+      }
+      
+      await pool.execute('UPDATE visitatore SET VisitaAttiva = 1 WHERE IdVisitatore = ?', [idVisitatore]);
+      await pool.execute(
+        'INSERT INTO visita (IdVisitatore, NomeReferente, DataOraIngresso) VALUES (?, ?, NOW())',
+        [idVisitatore, qrRecord.Referente || null]
+      );
+      
+      res.status(200).json({ message: `Ingresso registrato! Benvenuto, ${nomeCompleto}.` });
+    } 
+    else if (action === 'exit') {
+      if (visitatore.VisitaAttiva === 0) {
+        res.status(400).json({ message: `Attenzione: ${nomeCompleto} risulta già fuori dall'azienda.` });
+        return;
+      }
+
+      await pool.execute('UPDATE visitatore SET VisitaAttiva = 0 WHERE IdVisitatore = ?', [idVisitatore]);
+      await pool.execute(
+        'UPDATE visita SET DataOraUscita = NOW() WHERE IdVisitatore = ? AND DataOraUscita IS NULL ORDER BY IdVisita DESC LIMIT 1',
+        [idVisitatore]
+      );
+
+      res.status(200).json({ message: `Uscita registrata! Arrivederci, ${nomeCompleto}.` });
+    } 
+    else {
+      res.status(400).json({ message: 'Azione non valida' });
+    }
+
+  } catch (error) {
+    console.error("Errore scansione QR:", error);
+    res.status(500).json({ message: 'Errore interno del server' });
   }
 });
 

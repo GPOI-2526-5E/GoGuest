@@ -112,7 +112,7 @@ export class SignComponent implements AfterViewInit {
               this.notificationService.mostra("Registrazione e ingresso completati! Benvenuto.", 'success');
               if (statoVisita === 1) {
                 this.router.navigate(['/genera-qr'], { 
-                  state: { nome: this.nomeUtente, cognome: this.cognomeUtente, email: this.email, referente: this.nomeReferente } 
+                  state: { idVisitatore: nuovoId, nome: this.nomeUtente, cognome: this.cognomeUtente, email: this.email, referente: this.nomeReferente } 
                 });
               } else {
                 this.router.navigate(['/home']);
@@ -135,42 +135,43 @@ export class SignComponent implements AfterViewInit {
         next: (rispostaId: any) => {
           const idUtente: number = rispostaId.id; 
 
-          this.authService.getFirmaDalDatabase(idUtente).subscribe({
-            next: (rispostaDB: any) => {
-              const firmaVecchiaStringa = rispostaDB.firma; 
+          if (statoVisita === 0) {
+            // E' un'uscita: saltiamo il controllo della firma e passiamo alla lettura QR code
+            this.notificationService.mostra("Firma acquisita! Inquadra il QR Code per confermare l'uscita.", 'info');
+            this.router.navigate(['/qrcode'], { state: { action: 'exit' } }); 
 
-              this.authService.controllaFirma(firmaNuova, firmaVecchiaStringa).then((corrisponde: boolean) => {
-                if (corrisponde) {
-                  
-                  // AGGIORO LO STATO VISITA VISTO CHE LA FIRMA È CORRETTA
-                  this.authService.impostaStatoVisita(idUtente, statoVisita, this.nomeReferente).subscribe({
-                    next: () => {
-                      // Un alert dinamico: "Benvenuto" se entra, "Arrivederci" se esce
-                      const messaggio = statoVisita === 1 ? "Bentornato!" : "Arrivederci e grazie!";
-                      this.notificationService.mostra(`Successo! La firma è valida. ${messaggio}`, 'success');
-                      
-                      if (statoVisita === 1) {
+          } else {
+            // E' un ingresso: controlliamo che la firma corrisponda
+            this.authService.getFirmaDalDatabase(idUtente).subscribe({
+              next: (rispostaDB: any) => {
+                const firmaVecchiaStringa = rispostaDB.firma; 
+
+                this.authService.controllaFirma(firmaNuova, firmaVecchiaStringa).then((corrisponde: boolean) => {
+                  if (corrisponde) {
+                    
+                    // AGGIORO LO STATO VISITA VISTO CHE LA FIRMA È CORRETTA
+                    this.authService.impostaStatoVisita(idUtente, statoVisita, this.nomeReferente).subscribe({
+                      next: () => {
+                        this.notificationService.mostra("Successo! La firma è valida. Bentornato!", 'success');
                         this.router.navigate(['/genera-qr'], { 
-                          state: { nome: this.nomeUtente, cognome: this.cognomeUtente, email: this.email, referente: this.nomeReferente } 
+                          state: { idVisitatore: idUtente, nome: this.nomeUtente, cognome: this.cognomeUtente, email: this.email, referente: this.nomeReferente } 
                         });
-                      } else {
-                        this.router.navigate(['/home']); 
-                      }
-                    },
-                    error: (err: any) => console.error("Errore aggiornamento stato:", err)
-                  });
+                      },
+                      error: (err: any) => console.error("Errore aggiornamento stato:", err)
+                    });
 
-                } else {
-                  this.notificationService.mostra("Attenzione: la firma non combacia. Riprova.", 'error');
-                  this.clear(); 
-                }
-              });
-            },
-            error: (erroreFirma: any) => {
-              console.error("Errore recupero firma:", erroreFirma);
-              this.notificationService.mostra("Errore nel database durante il recupero della firma.", 'error');
-            }
-          });
+                  } else {
+                    this.notificationService.mostra("Attenzione: la firma non combacia. Riprova.", 'error');
+                    this.clear(); 
+                  }
+                });
+              },
+              error: (erroreFirma: any) => {
+                console.error("Errore recupero firma:", erroreFirma);
+                this.notificationService.mostra("Errore nel database durante il recupero della firma.", 'error');
+              }
+            });
+          }
         },
         error: (erroreId: any) => {
           console.error("Errore ricerca utente:", erroreId);
