@@ -110,7 +110,13 @@ export class SignComponent implements AfterViewInit {
           this.authService.impostaStatoVisita(nuovoId, statoVisita, this.nomeReferente).subscribe({
             next: () => {
               this.notificationService.mostra("Registrazione e ingresso completati! Benvenuto.", 'success');
-              this.router.navigate(['/home']); 
+              if (statoVisita === 1) {
+                this.router.navigate(['/genera-qr'], { 
+                  state: { nome: this.nomeUtente, cognome: this.cognomeUtente, email: this.email, referente: this.nomeReferente } 
+                });
+              } else {
+                this.router.navigate(['/home']);
+              }
             },
             error: (err: any) => console.error("Errore aggiornamento stato:", err)
           });
@@ -142,7 +148,14 @@ export class SignComponent implements AfterViewInit {
                       // Un alert dinamico: "Benvenuto" se entra, "Arrivederci" se esce
                       const messaggio = statoVisita === 1 ? "Bentornato!" : "Arrivederci e grazie!";
                       this.notificationService.mostra(`Successo! La firma è valida. ${messaggio}`, 'success');
-                      this.router.navigate(['/home']); 
+                      
+                      if (statoVisita === 1) {
+                        this.router.navigate(['/genera-qr'], { 
+                          state: { nome: this.nomeUtente, cognome: this.cognomeUtente, email: this.email, referente: this.nomeReferente } 
+                        });
+                      } else {
+                        this.router.navigate(['/home']); 
+                      }
                     },
                     error: (err: any) => console.error("Errore aggiornamento stato:", err)
                   });

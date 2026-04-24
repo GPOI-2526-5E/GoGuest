@@ -2,6 +2,11 @@ import express from 'express';
 import type { Request, Response } from 'express';
 import mysql from 'mysql2/promise';
 import cors from 'cors';
+import nodemailer from 'nodemailer';
+import QRCode from 'qrcode';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const PORT = 3000;
 const app = express();
@@ -131,6 +136,63 @@ app.post('/api/impostaStato', async (req: Request, res: Response) => {
     res.status(200).json({ message: 'Stato aggiornato' });
   } catch (error) {
     res.status(500).json({ message: 'Errore aggiornamento' });
+  }
+});
+
+// --- GENERAZIONE QR CODE ---
+app.post('/api/generate-qr', async (req: Request, res: Response) => {
+  try {
+    const { nome, cognome, email, referente } = req.body;
+
+    if (!nome || !cognome) {
+       res.status(400).json({ message: 'Nome e Cognome obbligatori' });
+       return;
+    }
+
+    // 1. Inserisci in DB e ottieni IdQr (imposto OreValidazione a 4 di default, come ORE_SCADENZA)
+    const [result]: any = await pool.execute(
+      'INSERT INTO qrGenerati (Nome, Cognome, Email, Referente, DataOraIngresso, OreValidazione) VALUES (?, ?, ?, ?, NOW(), 4)',
+      [nome, cognome, email || null, referente || null]
+    );
+    const idQr = result.insertId;
+
+    // 2. Genera QR code contenente solo l'ID
+    const qrData = idQr.toString();
+    const qrBuffer = await QRCode.toBuffer(qrData, { errorCorrectionLevel: 'M' });
+
+    // 3. Invia email se l'utente l'ha fornita
+    if (email) {
+      let transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'goguest2026@gmail.com',
+          pass: (process.env.EMAIL_PASSWORD || 'inserisci_la_password_qui').replace(/\s/g, '')
+        },
+        tls: {
+          rejectUnauthorized: false
+        }
+      });
+
+      let info = await transporter.sendMail({
+        from: '"GoGuest System" <goguest2026@gmail.com>',
+        to: email,
+        subject: "Il tuo QR Code di Ingresso",
+        text: `Ciao ${nome},\necco il tuo QR Code per l'ingresso. Mostralo al lettore.`,
+        html: `<p>Ciao ${nome},</p><p>Ecco il tuo QR Code per l'ingresso. Mostralo al lettore.</p>`,
+        attachments: [
+          {
+            filename: 'qrcode.png',
+            content: qrBuffer
+          }
+        ]
+      });
+      console.log("Email inviata con successo a:", email);
+    }
+
+    res.status(200).json({ message: 'QR Code generato e inviato' });
+  } catch (error) {
+    console.error("Errore generazione QR:", error);
+    res.status(500).json({ message: 'Errore interno' });
   }
 });
 

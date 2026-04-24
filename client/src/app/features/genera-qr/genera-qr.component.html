@@ -1,0 +1,26 @@
+<div class="genera-qr-container">
+  <!-- Stato: Caricamento -->
+  <div *ngIf="stato === 'caricamento'">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Generazione in corso...</span>
+    </div>
+    <h2>Generazione QR Code in corso...</h2>
+    <p>Stiamo creando il tuo QR code personale e inviandolo via email. Attendere prego.</p>
+  </div>
+
+  <!-- Stato: Successo -->
+  <div *ngIf="stato === 'successo'" class="fade-in">
+    <i class="bi bi-check-circle-fill success-icon"></i>
+    <h2>Operazione Completata!</h2>
+    <p>Il QR code è stato generato con successo ed è stato inviato via email all'indirizzo fornito.</p>
+    <p class="text-muted mt-3">Ritorno alla home tra {{ secondiRimasti }} secondi...</p>
+  </div>
+
+  <!-- Stato: Errore -->
+  <div *ngIf="stato === 'errore'">
+    <i class="bi bi-x-circle-fill text-danger" style="font-size: 5rem; margin-bottom: 1.5rem; display: block;"></i>
+    <h2>Si è verificato un errore</h2>
+    <p>{{ messaggioErrore }}</p>
+    <button class="btn btn-primary mt-4" (click)="tornaAllaHome()">Torna alla Home</button>
+  </div>
+</div>

@@ -4,6 +4,7 @@ import { EntryFormComponent } from './features/entry-form/entry-form.component';
 import { ExitFormComponent } from './features/exit-form/exit-form.component';
 import { SignComponent } from './features/sign/sign.component';
 import { QrCode } from './features/qr-code/qr-code';
+import { GeneraQrComponent } from './features/genera-qr/genera-qr.component';
 
 export const routes: Routes = [
     //Route di default che manda a /home
@@ -17,4 +18,6 @@ export const routes: Routes = [
     { path: 'qrcode', component: QrCode }, 
     // route per la firma
     { path: 'sign', component: SignComponent }, 
+    // route per genera qr
+    { path: 'genera-qr', component: GeneraQrComponent }
 ];
