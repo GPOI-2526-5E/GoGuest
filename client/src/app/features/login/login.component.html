@@ -8,8 +8,8 @@
           <path d="M2 6a6 6 0 1 1 10.174 4.31c-.203.196-.359.4-.453.619l-.762 1.769A.5.5 0 0 1 10.5 13a.5.5 0 0 1 0 1 .5.5 0 0 1 0 1l-.224.447a1 1 0 0 1-.894.553H6.618a1 1 0 0 1-.894-.553L5.5 15a.5.5 0 0 1 0-1 .5.5 0 0 1 0-1 .5.5 0 0 1-.46-.302l-.761-1.77a1.964 1.964 0 0 0-.453-.618A5.984 5.984 0 0 1 2 6zm6-5a5 5 0 0 0-3.479 8.592c.263.254.514.564.676.941L5.83 12h4.342l.632-1.467c.162-.377.413-.687.676-.941A5 5 0 0 0 8 1z"/>
         </svg>
         <span class="tip-text">
-          SE POSSIEDI UN QR CODE, CLICCACI SOPRA E SCANNERIZZALO <br>
-          <span style="font-size: 0.6rem; color: #7f8c8d; font-weight: normal;">IF YOU HAVE A QR CODE, CLICK ON IT AND SCAN IT</span>
+          PER ENTRARE CON IL QR CODE, CLICCA SU "ENTRATA" E SELEZIONA "SÌ" <br>
+          <span style="font-size: 0.6rem; color: #7f8c8d; font-weight: normal;">TO ENTER WITH QR CODE, CLICK "ENTRY" AND SELECT "YES"</span>
         </span>
       </div>
     </div>
@@ -26,10 +26,10 @@
   </header>
 
   
-  <main class="row justify-content-center align-items-center flex-grow-1">
+  <main class="row justify-content-center align-items-center flex-grow-1" *ngIf="!showQrPrompt">
    
-    <div class="col-12 col-md-4 text-center mb-4 mb-md-0">
-      <div class="circle-btn-wrapper" (click)="handleAction('entrata')" [routerLink]="['/entry']">
+    <div class="col-12 col-md-5 text-center mb-4 mb-md-0">
+      <div class="circle-btn-wrapper" (click)="handleAction('entrata')">
         <div class="circle-btn green-btn">
           <span class="btn-title">ENTRATA</span>
           <span class="btn-subtitle">ENTRY</span>
@@ -37,7 +37,7 @@
       </div>
     </div>
 
-    <div class="col-12 col-md-4 text-center mb-4 mb-md-0">
+    <div class="col-12 col-md-5 text-center mb-4 mb-md-0">
       <div class="circle-btn-wrapper" (click)="handleAction('uscita')" [routerLink]="['/exit']">
         <div class="circle-btn blue-btn">
           <span class="btn-title">USCITA</span>
@@ -46,15 +46,20 @@
       </div>
     </div>
 
-    <div class="col-12 col-md-4 text-center">
-      <div class="circle-btn-wrapper" (click)="handleAction('qrcode')" [routerLink]="['/qrcode']">
-        <div class="circle-btn purple-btn">
-          <i class="bi bi-qr-code fs-1 mb-1"></i>
-          <span class="btn-subtitle">QR CODE</span>
-        </div>
+  </main>
+
+  <!-- Prompt QR Code -->
+  <main class="row justify-content-center align-items-center flex-grow-1" *ngIf="showQrPrompt">
+    <div class="col-12 text-center fade-in">
+      <h1 class="mb-5 text-dark fw-bold" style="font-size: 2.5rem;">Possiedi già un QR Code per l'ingresso?</h1>
+      <div class="d-flex justify-content-center gap-4 mt-4 flex-wrap">
+        <button class="btn btn-success btn-lg px-5 py-4 fs-3 rounded-pill shadow" (click)="goToQrCode()">SÌ, HO IL QR CODE</button>
+        <button class="btn btn-secondary btn-lg px-5 py-4 fs-3 rounded-pill shadow" (click)="goToEntryForm()">NO, DEVO REGISTRARMI</button>
+      </div>
+      <div class="mt-5">
+        <button class="btn btn-outline-dark rounded-pill px-4" (click)="showQrPrompt = false"><i class="bi bi-arrow-left"></i> Annulla e torna indietro</button>
       </div>
     </div>
-
   </main>
 
   <footer class="row py-3 bg-white border-top align-items-center">
