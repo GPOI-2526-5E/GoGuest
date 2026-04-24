@@ -149,9 +149,9 @@ app.post('/api/generate-qr', async (req: Request, res: Response) => {
        return;
     }
 
-    // 1. Inserisci in DB e ottieni IdQr (imposto OreValidazione a 4 di default, come ORE_SCADENZA)
+    // 1. Inserisci in DB e ottieni IdQr (imposto FineValidita a 4 ore da adesso)
     const [result]: any = await pool.execute(
-      'INSERT INTO qrGenerati (Nome, Cognome, Email, Referente, DataOraIngresso, OreValidazione) VALUES (?, ?, ?, ?, NOW(), 4)',
+      'INSERT INTO qrGenerati (Nome, Cognome, Email, Referente, DataOraInizioValidita, DataOraFineValidita) VALUES (?, ?, ?, ?, NOW(), DATE_ADD(NOW(), INTERVAL 4 HOUR))',
       [nome, cognome, email || null, referente || null]
     );
     const idQr = result.insertId;
