@@ -59,7 +59,7 @@ export class AuthService {
       const risultato = ssim(imgDataNuova, imgDataDatabase);
       
       console.log(`Similitudine: ${risultato.mssim}`);
-      return risultato.mssim >= 0.60;
+      return risultato.mssim >= 0.55;
     } catch (errore) {
       console.error("Errore confronto:", errore);
       return false; 
