@@ -94,6 +94,17 @@
   color: #495057;
 }
 
+.collapse-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.22s ease;
+}
+
+.collapse-icon.flip {
+  transform: rotate(180deg);
+}
+
 .collapse-btn svg {
   transition: transform 0.22s ease;
 }
@@ -224,19 +235,17 @@
 }
 
 .chevron {
+  display: flex;
+  align-items: center;
   flex-shrink: 0;
   color: #d1d5db;
   transition: transform 0.2s ease, color 0.12s;
   margin-left: auto;
 }
 
-.nav-group-toggle.open .chevron {
+.chevron.open {
   transform: rotate(180deg);
   color: #9ca3af;
-}
-
-.nav-group-toggle.group-active .chevron {
-  color: #a78bfa;
 }
 
 /* ==============================
