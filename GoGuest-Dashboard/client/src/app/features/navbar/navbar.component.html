@@ -1,0 +1,94 @@
+<aside class="sidebar" [class.collapsed]="collapsed">
+
+  <!-- Header brand -->
+  <div class="sidebar-header">
+    <ng-container *ngIf="!collapsed">
+      <div class="brand">
+        <span class="brand-icon">🏨</span>
+        <span class="brand-name">GoGuest</span>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="collapsed">
+      <div class="brand brand-mini">
+        <span class="brand-icon">🏨</span>
+      </div>
+    </ng-container>
+
+    <button
+      class="collapse-btn"
+      id="sidebar-collapse-btn"
+      (click)="toggleCollapse()"
+      [title]="collapsed ? 'Espandi' : 'Comprimi'"
+    >
+      <span
+        class="collapse-icon"
+        [class.flip]="collapsed"
+        [innerHTML]="collapseSvg()"
+      ></span>
+    </button>
+  </div>
+
+  <!-- Nav items -->
+  <nav class="sidebar-nav">
+    <ul>
+      <li *ngFor="let item of navItems">
+
+        <!-- Item senza figli -->
+        <a
+          *ngIf="!item.children"
+          class="nav-item"
+          [class.active]="isActive(item.path)"
+          [routerLink]="item.path"
+          [id]="'nav-' + item.label.toLowerCase()"
+          [title]="collapsed ? item.label : ''"
+        >
+          <span class="nav-icon" [innerHTML]="item.icon"></span>
+          <span class="nav-label" *ngIf="!collapsed">{{ item.label }}</span>
+        </a>
+
+        <!-- Item con figli (gruppo) -->
+        <div *ngIf="item.children" class="nav-group">
+          <button
+            class="nav-item nav-group-toggle"
+            [class.active]="isGroupActive(item)"
+            [class.open]="isGroupOpen(item.label)"
+            (click)="toggleGroup(item.label)"
+            [id]="'nav-group-' + item.label.toLowerCase()"
+            [title]="collapsed ? item.label : ''"
+          >
+            <span class="nav-icon" [innerHTML]="item.icon"></span>
+            <span class="nav-label" *ngIf="!collapsed">{{ item.label }}</span>
+            <span
+              *ngIf="!collapsed"
+              class="chevron"
+              [class.open]="isGroupOpen(item.label)"
+              [innerHTML]="chevronSvg()"
+            ></span>
+          </button>
+
+          <!-- Sub-items -->
+          <ul class="sub-menu" *ngIf="!collapsed && isGroupOpen(item.label)">
+            <li *ngFor="let child of item.children">
+              <a
+                class="sub-item"
+                [class.active]="isActive(child.path)"
+                [routerLink]="child.path"
+                [id]="'nav-sub-' + child.label.toLowerCase()"
+              >
+                <span class="sub-dot"></span>
+                {{ child.label }}
+              </a>
+            </li>
+          </ul>
+        </div>
+
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Footer versione -->
+  <div class="sidebar-footer" *ngIf="!collapsed">
+    <span class="version">v1.0.0 · API v1.0</span>
+  </div>
+
+</aside>

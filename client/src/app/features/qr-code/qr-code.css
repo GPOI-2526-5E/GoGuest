@@ -1,228 +1,376 @@
-/* =========================================
-   0. FIX PER LO SCROLL DELLA PAGINA
-   ========================================= */
-/* Trasformiamo l'altezza fissa in altezza minima per far apparire la barra di scorrimento */
-.vh-100 {
-    height: auto !important; 
-    min-height: 100vh !important; 
-    padding-top: 3rem !important; /* Spazio sopra */
-    padding-bottom: 3rem !important; /* Spazio sotto, così il bottone non tocca il fondo */
+/* ═══════════════════════════════════════════════════
+   SCANNING OVERLAY — Full-screen dark glass
+═══════════════════════════════════════════════════ */
+
+/* Import a clean modern font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap');
+
+/* ── Keyframes ─────────────────────────────────── */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 
-/* =========================================
-   1. STRUTTURA E ALLARGAMENTO LAYOUT
-   ========================================= */
-/* Ridefiniamo lo sfondo generale di Bootstrap */
-div.bg-light {
-    background-color: #F8F9FA !important; /* Un grigio chiarissimo molto pulito */
+@keyframes pulse-blue {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.7; transform: scale(0.95); }
 }
 
-/* Header */
-.custom-header {
-  background: rgba(255, 255, 255, 0.85) !important; 
-  backdrop-filter: blur(15px); 
-  -webkit-backdrop-filter: blur(15px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); 
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.company-logo-new {
-  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; 
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  font-size: 2.2rem;
-  color: #2c3e50 !important; 
-}
-
-.company-subtitle {
-  font-size: 0.7rem;
-  letter-spacing: 3px;
-  color: #7f8c8d !important;
-  text-transform: uppercase;
-}
-
-/* Stile per il Consiglio Utile (Tip Box) a sinistra */
-.tip-box {
-  background-color: rgba(64, 196, 227, 0.08); 
-  border-left: 4px solid #40c4e3; 
-  padding: 8px 12px;
-  border-radius: 0 6px 6px 0; 
-  display: inline-flex;
+/* ── Overlay wrapper ───────────────────────────── */
+.scanning-overlay {
+  font-family: 'Inter', sans-serif;
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  background: rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  z-index: 10000;
+  display: flex;
   align-items: center;
-  gap: 12px; 
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); 
-  max-width: 450px; /* Allargato per contenere testo in due lingue */
+  justify-content: center;
+  animation: fade-in 0.25s ease both;
 }
 
-.tip-icon {
-  color: #40c4e3; 
+/* ── Inner flex (camera box + info panel) ─────── */
+.overlay-flex {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 1.5rem;
+  width: 100%;
+  color: #fff;
+  text-align: center;
 }
 
-.tip-text {
-  font-size: 0.7rem;
-  line-height: 1.3;
-  color: #34495e; 
+@media (min-width: 768px) and (orientation: landscape) {
+  .overlay-flex {
+    flex-direction: row;
+    text-align: left;
+    gap: 3rem;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   SCAN BOX
+═══════════════════════════════════════════════════ */
+.scan-box {
+  position: relative;
+  width:  min(85vmin, 440px);
+  height: min(85vmin, 440px);
+  flex-shrink: 0;
+  border-radius: 40px;
+  border: 4px solid rgba(255,255,255,0.2);
+  box-shadow: 0 0 60px rgba(0,0,0,0.4);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+@media (min-width: 768px) and (orientation: landscape) {
+  .scan-box {
+    width:  min(45vw, 540px);
+    height: min(70vh, 540px);
+    border-radius: 56px;
+  }
+}
+
+/* ── Camera feed ───────────────────────────────── */
+.camera-feed {
+  width: 100%;
+  height: 100%;
+}
+
+.camera-feed.hidden {
+  visibility: hidden;
+}
+
+/* Force html5-qrcode internal video to fill the box */
+:host ::ng-deep #qr-reader video {
+  object-fit: cover;
+  width: 100% !important;
+  height: 100% !important;
+  filter: brightness(0.82) contrast(1.28);
+}
+
+/* Hide html5-qrcode default UI chrome */
+:host ::ng-deep #qr-reader > img,
+:host ::ng-deep #qr-reader__dashboard,
+:host ::ng-deep #qr-reader__header_message,
+:host ::ng-deep #qr-reader__status_span {
+  display: none !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   INNER OVERLAYS (loading / manual / bluetooth)
+═══════════════════════════════════════════════════ */
+.inner-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  padding: 2rem;
+  animation: fade-in 0.2s ease both;
+  z-index: 6;
+}
+
+.glass-dark {
+  background: rgba(10, 14, 26, 0.78);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+/* ── Loading ───────────────────────────────────── */
+.loading-overlay {
+  z-index: 10;
+}
+
+.spinner {
+  width: 88px;
+  height: 88px;
+  border: 5px solid rgba(255,255,255,0.12);
+  border-top-color: #68d391;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+.overlay-label {
+  font-size: 1.15rem;
+  font-weight: 900;
+  letter-spacing: 0.25em;
+  color: #fff;
+}
+
+/* ── Icon circles ──────────────────────────────── */
+.icon-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+}
+
+.icon-circle.blue {
+  background: rgba(99, 179, 237, 0.14);
+  color: #63b3ed;
+}
+
+.icon-circle.gray {
+  background: rgba(160,160,160,0.12);
+  color: #a0aec0;
+}
+
+.icon-circle.blue-pulse {
+  background: rgba(99, 179, 237, 0.14);
+  color: #63b3ed;
+  animation: pulse-blue 2s cubic-bezier(0.4,0,0.6,1) infinite;
+}
+
+/* ── Overlay text ──────────────────────────────── */
+.overlay-title {
+  font-size: 1.2rem;
   font-weight: 700;
+  color: #fff;
   margin: 0;
-  letter-spacing: 0.5px;
 }
 
-/* Stile per il Benvenuti a destra */
-.welcome-text {
-  color: #7f8c8d;
-  letter-spacing: 1.5px;
+.overlay-sub {
+  font-size: 0.95rem;
+  color: rgba(255,255,255,0.6);
+  margin: 0;
+  text-align: center;
+}
+
+/* ── Manual row (input + button) ──────────────── */
+.manual-row {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.manual-input {
+  flex: 1;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 10px;
+  padding: 0.65rem 1rem;
   font-size: 1rem;
+  color: #fff;
+  outline: none;
+  transition: border-color 0.2s;
 }
 
-/* La Scheda Principale: molto più larga e professionale */
-.card {
-    border: none !important; 
-    border-radius: 12px !important; 
-    max-width: 1000px !important; /* Scheda bella larga */
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important; 
-    padding: 4rem !important; /* Molto respiro interno */
-    background-color: #ffffff !important;
-    position: relative; 
-    overflow: hidden; 
-    margin-bottom: 2rem !important; /* Spazio extra sotto la scheda */
+.manual-input::placeholder { color: rgba(255,255,255,0.38); }
+.manual-input:focus { border-color: #63b3ed; }
+
+/* ═══════════════════════════════════════════════════
+   CAMERA CONTROLS (flash + flip)
+═══════════════════════════════════════════════════ */
+.cam-controls {
+  position: absolute;
+  bottom: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.75rem;
+  z-index: 10;
 }
 
-/* --- DETTAGLI SARTORIALI ---
-   Bordi decorativi verdi agli angoli
-*/
-.card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 200px;
-    height: 6px;
-    background-color: #2E7D32; /* Verde Istituzionale */
-    border-radius: 0 0 6px 0;
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
-.card::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 200px;
-    height: 6px;
-    background-color: #2E7D32;
-    border-radius: 6px 0 0 0;
+.icon-btn:hover { background: rgba(255,255,255,0.28); transform: scale(1.08); }
+.icon-btn.active-yellow { background: rgba(246,224,94,0.25); color: #f6e05e; }
+
+/* ═══════════════════════════════════════════════════
+   INFO PANEL
+═══════════════════════════════════════════════════ */
+.info-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.75rem;
+  max-width: 380px;
+  width: 100%;
+  animation: fade-in 0.3s ease 0.05s both;
 }
 
-/* =========================================
-   2. TIPOGRAFIA E ELEMENTI DI TESTO
-   ========================================= */
-/* Il Titolo Principale */
-h2 {
-    font-weight: 800; 
-    letter-spacing: -0.02em; 
-    color: #2E7D32; /* Verde Istituzionale */
-    text-transform: uppercase; 
-    font-size: 2rem;
-    border-bottom: 3px solid rgba(46, 125, 50, 0.1); /* Linea verde trasparente */
-    display: inline-block;
-    padding-bottom: 0.75rem;
-    margin-bottom: 3rem !important; 
+@media (min-width: 768px) and (orientation: landscape) {
+  .info-panel {
+    align-items: flex-start;
+    max-width: 360px;
+  }
 }
 
-/* Testo Istruzioni */
-.text-muted.small {
-    color: #495057 !important; 
-    font-weight: 500;
-    font-size: 0.95rem !important;
-    margin-bottom: 2.5rem !important;
+/* ── Heading & sub ─────────────────────────────── */
+.scan-heading {
+  font-size: clamp(1.4rem, 4vw, 2.1rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: #fff;
+  margin: 0 0 0.4rem 0;
+  line-height: 1.15;
 }
 
-/* Icona USB */
-.bi-usb-symbol {
-    color: #2E7D32; 
-    margin-right: 6px;
-    font-size: 1.1rem;
+.scan-sub {
+  font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+  color: rgba(255,255,255,0.72);
+  font-weight: 500;
+  margin: 0;
 }
 
-/* =========================================
-   3. STILIZZAZIONE SCANNER (TELECAMERA)
-   ========================================= */
-zxing-scanner {
-    display: block !important;
-    width: 100% !important;
-    max-width: 640px !important; /* Evita che diventi gigante su schermi grandi */
-    margin: 0 auto 2rem auto !important; /* Centra orizzontalmente */
-    border: 4px solid #2E7D32 !important; /* Cornice verde professionale */
-    border-radius: 12px !important;
-    overflow: hidden !important;
-    background-color: #111111 !important; /* Sfondo scuro in attesa della cam */
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
-    aspect-ratio: 4 / 3 !important; /* Proporzione fissa per non schiacciare il video */
-    min-height: 300px !important;
+/* ── Action buttons ────────────────────────────── */
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
 }
 
-/* Adatta il video interno al nostro riquadro */
-zxing-scanner video {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important; 
+/* Base button */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  height: 54px;
+  width: 100%;
+  border: none;
+  border-radius: 16px;
+  font-size: 0.98rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: filter 0.18s, transform 0.15s, opacity 0.2s;
+  font-family: 'Inter', sans-serif;
 }
 
-/* =========================================
-   4. AVVISI (ALERTS) E PULSANTI
-   ========================================= */
-/* Stile base degli avvisi */
-.alert {
-    border-radius: 8px !important;
-    border: 1px solid;
-    padding: 1.25rem !important;
-    font-size: 1rem !important;
-    text-align: left !important; 
-    font-weight: 500;
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none !important;
+  filter: none !important;
 }
 
-.alert strong {
-    display: block;
-    font-weight: 700;
-    font-size: 1.1rem;
-    margin-bottom: 0.25rem;
+.btn:not(:disabled):hover {
+  filter: brightness(1.12);
+  transform: translateY(-2px);
 }
 
-/* Alert Successo (Codice rilevato) */
-.alert-success {
-    background-color: #F1FFF3 !important; 
-    border-color: #A3CFBB !important;
-    color: #146c43 !important;
-}
+.btn:not(:disabled):active { transform: translateY(0); }
 
-.alert-success strong {
-    color: #146c43 !important;
+/* Green */
+.btn-green {
+  background: rgba(72,187,120,0.22);
+  color: #9ae6b4;
+  border: 1px solid rgba(72,187,120,0.35);
 }
+.btn-green:not(:disabled):hover { background: rgba(72,187,120,0.35); }
 
-/* Alert Info (In attesa) */
-.alert-info {
-    background-color: #F1F9FF !important; 
-    border-color: #9EC5FE !important;
-    color: #084298 !important;
+/* Blue (full-width action button) */
+.btn-blue {
+  background: rgba(99,179,237,0.35);
+  color: #e8f4fd;
+  border: 1.5px solid rgba(99,179,237,0.6);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.4);
 }
+.btn-blue:not(:disabled):hover { background: rgba(99,179,237,0.52); }
 
-/* Il Pulsante "Torna alla Home" */
-.btn-outline-secondary {
-    background-color: #ffffff !important;
-    color: #2E7D32 !important; /* Testo verde */
-    border: 2px solid #2E7D32 !important; /* Bordo verde */
-    border-radius: 30px !important; 
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 12px 28px !important;
-    font-size: 0.9rem !important;
-    transition: all 0.2s ease-in-out; 
-    margin-top: 3rem !important; 
+/* Blue small (inline "Invia" button inside manual overlay) */
+.btn-blue-sm {
+  background: rgba(99,179,237,0.35);
+  color: #e8f4fd;
+  border: 1.5px solid rgba(99,179,237,0.6);
+  border-radius: 10px;
+  height: 44px;
+  width: auto;
+  padding: 0 1.2rem;
+  flex-shrink: 0;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.4);
 }
+.btn-blue-sm:not(:disabled):hover { background: rgba(99,179,237,0.52); }
 
-.btn-outline-secondary:hover {
-    background-color: #2E7D32 !important; /* Sfondo verde al passaggio del mouse */
-    color: #ffffff !important;
-    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.2); /* Ombra verde */
-    transform: translateY(-2px); 
+/* Ghost (outline) */
+.btn-ghost {
+  background: rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.8);
+  border: 1px solid rgba(255,255,255,0.18);
 }
+.btn-ghost:not(:disabled):hover { background: rgba(255,255,255,0.14); }
+
+/* Red */
+.btn-red {
+  background: rgba(245,101,101,0.18);
+  color: #fc8181;
+  border: 1px solid rgba(245,101,101,0.3);
+}
+.btn-red:not(:disabled):hover { background: rgba(245,101,101,0.32); }

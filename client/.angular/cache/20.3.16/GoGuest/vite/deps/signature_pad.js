@@ -1,7 +1,7 @@
 import {
   __spreadProps,
   __spreadValues
-} from "./chunk-H2SRQSE4.js";
+} from "./chunk-46DXP6YY.js";
 
 // node_modules/signature_pad/dist/signature_pad.js
 var Point = class {

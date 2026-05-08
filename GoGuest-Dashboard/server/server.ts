@@ -3,91 +3,72 @@ import express from 'express';
 import type { Request, Response } from 'express';
 import mysql from 'mysql2/promise';
 import cors from 'cors';
-import nodemailer from 'nodemailer';
-import QRCode from 'qrcode';
-import dotenv from 'dotenv';
 
-dotenv.config();
-
-const PORT = 3000;
-const app = express();
-
-app.use(express.json({ limit: '50mb' })); 
-app.use(cors());
-
-// Configurazione Database
-const pool = mysql.createPool({
+const db = mysql.createPool({
   host: 'localhost',
   user: 'root',
-  password: '',  
+  password: '',
   database: 'goguest',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
 });
 
-app.get('/api/idVisitatore', async (req: Request, res: Response) => {
+const app = express();
+const PORT = 3001;
+
+app.use(cors());
+app.use(express.json());
+
+// ──────────────────────────────────────────────
+// GET /api/visite?periodo=oggi|mese|anno
+// ──────────────────────────────────────────────
+app.get('/api/visite', async (req: Request, res: Response) => {
+  const periodo = (req.query['periodo'] as string) ?? 'oggi';
+
+  let whereClause: string;
+  switch (periodo) {
+    case 'mese':
+      whereClause = `MONTH(v.DataOraIngresso) = MONTH(CURDATE())
+                     AND YEAR(v.DataOraIngresso)  = YEAR(CURDATE())`;
+      break;
+    case 'anno':
+      whereClause = `YEAR(v.DataOraIngresso) = YEAR(CURDATE())`;
+      break;
+    case 'oggi':
+    default:
+      whereClause = `DATE(v.DataOraIngresso) = CURDATE()`;
+      break;
+  }
+
+  const sql = `
+    SELECT
+      v.IdVisita,
+      vis.Nome,
+      vis.Cognome,
+      vis.Azienda,
+      vis.Email,
+      v.NomeReferente,
+      v.DataOraIngresso,
+      v.DataOraUscita,
+      vis.VisitaAttiva
+    FROM visita v
+    JOIN visitatore vis ON v.IdVisitatore = vis.IdVisitatore
+    WHERE ${whereClause}
+    ORDER BY v.DataOraIngresso DESC
+  `;
+
   try {
-    const nome = req.query.nome as string;
-    const cognome = req.query.cognome as string;
-    const azienda = req.query.azienda as string;
-    const dateOfBirth = req.query.dateOfBirth as string;
-
-    if (!nome || !cognome) {
-      res.status(400).json({ message: 'Nome e Cognome sono obbligatori' });
-      return;
-    }
-
-    let querySql = 'SELECT IdVisitatore, VisitaAttiva FROM visitatore WHERE Nome = ? AND Cognome = ?';
-    let params: any[] = [nome, cognome];
-
-    // Aggiungiamo Filtro Azienda solo se esiste (Ingresso)
-    if (azienda && azienda !== 'undefined' && azienda.trim() !== '') {
-      querySql += ' AND Azienda = ?';
-      params.push(azienda);
-    }
-
-    // Aggiungiamo Filtro Data Nascita solo se esiste (Uscita)
-    if (dateOfBirth && dateOfBirth !== 'undefined' && dateOfBirth.trim() !== '') {
-      querySql += ' AND DataNascita = ?';
-      params.push(dateOfBirth);
-    }
-
-    querySql += ' ORDER BY IdVisitatore DESC LIMIT 1';
-
-    const [rows]: any = await pool.execute(querySql, params);
-
-    if (rows.length > 0) {
-      res.status(200).json({ 
-        id: rows[0].IdVisitatore,
-        visitaAttiva: rows[0].VisitaAttiva
-      });
-    } else {
-      res.status(404).json({ message: 'Visitatore non trovato' });
-    }
-  } catch (error) {
-    console.error("Errore ricerca ID:", error);
-    res.status(500).json({ message: 'Errore server' });
+    const [rows] = await db.execute(sql);
+    res.json(rows);
+  } catch (err: any) {
+    console.error('Errore DB /api/visite:', err.message);
+    res.status(500).json({ error: 'Errore nel recupero delle visite.' });
   }
 });
 
-// --- RECUPERO FIRMA ---
-app.get('/api/firma/:id', async (req: Request, res: Response) => {
-  try {
-    const idVisitatore = req.params.id;
-    const [rows]: any = await pool.execute(
-      'SELECT Firma FROM visitatore WHERE IdVisitatore = ?', 
-      [idVisitatore]
-    );
-
-    if (rows.length > 0) {
-      res.status(200).json({ firma: rows[0].Firma });
-    } else {
-      res.status(404).json({ message: 'Firma non trovata' });
-    }
-  } catch (error) {
-    res.status(500).json({ message: 'Errore recupero firma' });
-  }
+app.listen(PORT, () => {
+  console.log(`Server Dashboard in ascolto su http://localhost:${PORT}`);
 });
 
 // --- SALVATAGGIO NUOVO UTENTE  ---
@@ -309,6 +290,4 @@ setInterval(async () => {
     console.error("Errore nel job di chiusura automatica:", error);
   }
 }, INTERVALLO_CONTROLLO_MS);
-
-app.listen(PORT, () => console.log(`Server attivo su http://localhost:${PORT}`));
 */

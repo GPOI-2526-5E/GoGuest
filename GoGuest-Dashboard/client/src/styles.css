@@ -4,6 +4,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
+/* Global reset e base */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -35,4 +36,11 @@ input {
 a {
   text-decoration: none;
   color: inherit;
+}
+
+/* Fa sì che il componente root occupi tutta l'altezza */
+app-root {
+  display: flex;
+  height: 100vh;
+  width: 100%;
 }
