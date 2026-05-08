@@ -1,3 +1,4 @@
+/*
 import express from 'express';
 import type { Request, Response } from 'express';
 import mysql from 'mysql2/promise';
@@ -310,3 +311,4 @@ setInterval(async () => {
 }, INTERVALLO_CONTROLLO_MS);
 
 app.listen(PORT, () => console.log(`Server attivo su http://localhost:${PORT}`));
+*/
