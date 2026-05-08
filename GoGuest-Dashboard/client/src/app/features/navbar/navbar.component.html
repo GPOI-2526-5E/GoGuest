@@ -2,19 +2,29 @@
 
   <!-- Header brand -->
   <div class="sidebar-header">
-    <div class="brand" *ngIf="!collapsed">
-      <span class="brand-icon">🏨</span>
-      <span class="brand-name">GoGuest</span>
-    </div>
-    <div class="brand brand-mini" *ngIf="collapsed">
-      <span class="brand-icon">🏨</span>
-    </div>
-    <button class="collapse-btn" id="sidebar-collapse-btn" (click)="toggleCollapse()" [title]="collapsed ? 'Espandi' : 'Comprimi'">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
-        [style.transform]="collapsed ? 'rotate(180deg)' : 'rotate(0deg)'">
-        <polyline points="15 18 9 12 15 6"/>
-      </svg>
+    <ng-container *ngIf="!collapsed">
+      <div class="brand">
+        <span class="brand-icon">🏨</span>
+        <span class="brand-name">GoGuest</span>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="collapsed">
+      <div class="brand brand-mini">
+        <span class="brand-icon">🏨</span>
+      </div>
+    </ng-container>
+
+    <button
+      class="collapse-btn"
+      id="sidebar-collapse-btn"
+      (click)="toggleCollapse()"
+      [title]="collapsed ? 'Espandi' : 'Comprimi'"
+    >
+      <span
+        class="collapse-icon"
+        [class.flip]="collapsed"
+        [innerHTML]="collapseSvg()"
+      ></span>
     </button>
   </div>
 
@@ -24,7 +34,8 @@
       <li *ngFor="let item of navItems">
 
         <!-- Item senza figli -->
-        <a *ngIf="!item.children"
+        <a
+          *ngIf="!item.children"
           class="nav-item"
           [class.active]="isActive(item.path)"
           [routerLink]="item.path"
@@ -47,11 +58,12 @@
           >
             <span class="nav-icon" [innerHTML]="item.icon"></span>
             <span class="nav-label" *ngIf="!collapsed">{{ item.label }}</span>
-            <svg *ngIf="!collapsed" class="chevron" xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-              stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="6 9 12 15 18 9"/>
-            </svg>
+            <span
+              *ngIf="!collapsed"
+              class="chevron"
+              [class.open]="isGroupOpen(item.label)"
+              [innerHTML]="chevronSvg()"
+            ></span>
           </button>
 
           <!-- Sub-items -->
@@ -61,7 +73,7 @@
                 class="sub-item"
                 [class.active]="isActive(child.path)"
                 [routerLink]="child.path"
-                [id]="'nav-' + child.label.toLowerCase()"
+                [id]="'nav-sub-' + child.label.toLowerCase()"
               >
                 <span class="sub-dot"></span>
                 {{ child.label }}
