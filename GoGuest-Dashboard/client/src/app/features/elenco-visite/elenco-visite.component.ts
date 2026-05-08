@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ElencoVisiteService, Visita, Periodo } from './elenco-visite.service';
+import { ElencoVisiteService, Visita, Periodo } from '../../core/elenco-visite.service';
 
 @Component({
   selector: 'app-elenco-visite',

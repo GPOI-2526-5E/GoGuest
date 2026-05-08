@@ -1,6 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../core/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -10,55 +11,54 @@ import { CommonModule } from '@angular/common';
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  email = signal('');
-  password = signal('');
-  isLoading = signal(false);
+  private authService = inject(AuthService);
+
+  email        = signal('');
+  password     = signal('');
+  isLoading    = signal(false);
   showPassword = signal(false);
   errorMessage = signal('');
 
-  onEmailChange(value: string) {
-    this.email.set(value);
-  }
-
-  onPasswordChange(value: string) {
-    this.password.set(value);
-  }
+  onEmailChange(value: string)    { this.email.set(value); }
+  onPasswordChange(value: string) { this.password.set(value); }
 
   togglePasswordVisibility() {
     this.showPassword.set(!this.showPassword());
   }
 
+  // Login email/password — da implementare in futuro
   onLogin() {
     this.errorMessage.set('');
-
     if (!this.email() || !this.password()) {
       this.errorMessage.set('Inserisci email e password.');
       return;
     }
-
-    this.isLoading.set(true);
-
-    // TODO: Implement real login logic
-    setTimeout(() => {
-      this.isLoading.set(false);
-      console.log('Login attempt:', this.email());
-    }, 1500);
+    this.errorMessage.set('Login email/password non ancora implementato. Usa Google.');
   }
 
-  onGoogleLogin() {
+  // Login Google via Firebase
+  async onGoogleLogin() {
     this.isLoading.set(true);
-    // TODO: Implement Google OAuth login
-    console.log('Google login initiated');
-    setTimeout(() => this.isLoading.set(false), 1500);
+    this.errorMessage.set('');
+    try {
+      await this.authService.loginWithGoogle();
+    } catch (err: any) {
+      const msg = err?.code === 'auth/popup-closed-by-user'
+        ? 'Popup chiuso. Riprova.'
+        : 'Errore durante il login con Google. Riprova.';
+      this.errorMessage.set(msg);
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 
   onForgotPassword() {
-    // TODO: Navigate to forgot password page
-    console.log('Forgot password clicked');
+    // TODO: recupero password
+    console.log('Forgot password');
   }
 
   onCreateAccount() {
-    // TODO: Navigate to registration page
-    console.log('Create account clicked');
+    // TODO: registrazione
+    console.log('Create account');
   }
 }

@@ -4,6 +4,9 @@
 
 /* Brand color: GoGuest Red */
 :host {
+  display: block;
+  width: 100%;
+  height: 100%;
   --brand: #E22D20;
   --brand-dark: #c4251a;
   --brand-darker: #a81e15;

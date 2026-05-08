@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 /* ==============================
-   HOST
+   HOST — spazio per i bordi arrotondati
    ============================== */
 :host {
   display: block;
@@ -9,18 +9,26 @@
   position: sticky;
   top: 0;
   flex-shrink: 0;
+  padding: 12px 0 12px 12px; /* respiro dai bordi della pagina */
 }
 
 /* ==============================
-   SIDEBAR WRAPPER
+   SIDEBAR — card bianca flottante
    ============================== */
 .sidebar {
   display: flex;
   flex-direction: column;
-  width: 148px;
-  height: 100vh;
+  width: 152px;
+  height: calc(100vh - 24px);
+
   background: #ffffff;
-  border-right: 1px solid #e9ecef;
+  border-radius: 20px;
+  border: 1px solid rgba(0,0,0,0.07);
+  box-shadow:
+    0 4px 24px rgba(0,0,0,0.08),
+    0 1px 4px rgba(0,0,0,0.04),
+    inset 0 1px 0 rgba(255,255,255,0.9);
+
   font-family: 'Inter', sans-serif;
   transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
@@ -28,7 +36,7 @@
 }
 
 .sidebar.collapsed {
-  width: 54px;
+  width: 56px;
 }
 
 /* ==============================
@@ -40,7 +48,7 @@
   justify-content: space-between;
   padding: 0 8px 0 14px;
   height: 50px;
-  border-bottom: 1px solid #f1f3f5;
+  border-bottom: 1px solid #f0f2f5;
   flex-shrink: 0;
 }
 
@@ -77,11 +85,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   border: none;
   background: transparent;
-  border-radius: 5px;
+  border-radius: 7px;
   cursor: pointer;
   color: #c0c8d0;
   flex-shrink: 0;
@@ -92,17 +100,6 @@
 .collapse-btn:hover {
   background: #f1f3f5;
   color: #495057;
-}
-
-.collapse-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.22s ease;
-}
-
-.collapse-icon.flip {
-  transform: rotate(180deg);
 }
 
 .collapse-btn svg {
@@ -116,7 +113,7 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 10px 7px;
+  padding: 10px 8px;
   scrollbar-width: none;
 }
 
@@ -138,7 +135,7 @@
 }
 
 /* ==============================
-   NAV ITEM
+   NAV ITEM — stato di default
    ============================== */
 .nav-item {
   display: flex;
@@ -146,45 +143,54 @@
   gap: 9px;
   width: 100%;
   padding: 7px 10px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 0.79rem;
   font-weight: 500;
   color: #5a6171;
   text-decoration: none;
-  border: none;
+  border: 1px solid transparent;
   background: transparent;
   cursor: pointer;
-  transition: background 0.12s, color 0.12s;
+  transition: background 0.14s, color 0.14s, border-color 0.14s;
   white-space: nowrap;
   text-align: left;
   box-sizing: border-box;
   line-height: 1.3;
 }
 
-.nav-item:hover {
+.nav-item:hover:not(.active) {
   background: #f5f6f8;
   color: #1a1d2e;
 }
 
-/* ACTIVE — viola pieno, testo bianco */
+/* ── ACTIVE: glass rosso ─────────── */
 .nav-item.active {
-  background: #7c3aed;
-  color: #ffffff;
+  background: rgba(220, 38, 38, 0.09);
+  color: #c81e1e;
   font-weight: 600;
+  border-color: rgba(220, 38, 38, 0.20);
+  box-shadow:
+    0 2px 10px rgba(220, 38, 38, 0.12),
+    inset 0 1px 0 rgba(255,255,255,0.70);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 .nav-item.active .nav-icon {
-  color: #ffffff;
+  color: #dc2626;
 }
 
-/* gruppo attivo ma non il singolo item */
+/* ── Gruppo con figlio attivo: solo testo rosso, ZERO sfondo ── */
 .nav-item.group-active:not(.active) {
-  color: #7c3aed;
+  color: #dc2626!important;
   font-weight: 600;
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
 }
 
 .nav-item.group-active:not(.active) .nav-icon {
-  color: #7c3aed;
+  color: #dc2626;
 }
 
 /* Sidebar collassata: centra l'icona */
@@ -208,7 +214,7 @@
   transition: color 0.12s;
 }
 
-.nav-item:hover .nav-icon {
+.nav-item:hover:not(.active) .nav-icon {
   color: #374151;
 }
 
@@ -243,20 +249,24 @@
   margin-left: auto;
 }
 
-.chevron.open {
+.nav-group-toggle.open .chevron {
   transform: rotate(180deg);
   color: #9ca3af;
 }
 
+.nav-group-toggle.group-active .chevron {
+  color: #f87171;
+}
+
 /* ==============================
-   SUB-MENU
+   SUB-MENU — separato visivamente
    ============================== */
 .sub-menu {
   display: flex;
   flex-direction: column;
-  gap: 1px;
-  padding: 2px 0 4px 14px;
-  margin-top: 1px;
+  gap: 2px;
+  padding: 4px 0 6px 0;
+  margin-top: 4px; /* spazio di separazione dal genitore */
 }
 
 .sub-item {
@@ -264,29 +274,34 @@
   align-items: center;
   gap: 8px;
   padding: 5px 10px;
-  border-radius: 7px;
+  border-radius: 8px;
   font-size: 0.76rem;
   font-weight: 500;
   color: #6b7280;
   text-decoration: none;
-  transition: background 0.12s, color 0.12s;
+  border: 1px solid transparent;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
   white-space: nowrap;
 }
 
-.sub-item:hover {
+.sub-item:hover:not(.active) {
   background: #f5f6f8;
   color: #1a1d2e;
 }
 
-/* ACTIVE sub-item — viola pieno, testo bianco */
+/* ── ACTIVE sub-item: glass rosso ── */
 .sub-item.active {
-  background: #7c3aed;
-  color: #ffffff;
+  background: rgba(220, 38, 38, 0.09);
+  color: #c81e1e;
   font-weight: 600;
+  border-color: rgba(220, 38, 38, 0.20);
+  box-shadow:
+    0 2px 8px rgba(220, 38, 38, 0.10),
+    inset 0 1px 0 rgba(255,255,255,0.65);
 }
 
 .sub-item.active .sub-dot {
-  background: #ffffff;
+  background: #dc2626;
 }
 
 .sub-dot {
@@ -298,7 +313,7 @@
   transition: background 0.12s;
 }
 
-.sub-item:hover .sub-dot {
+.sub-item:hover:not(.active) .sub-dot {
   background: #9ca3af;
 }
 
@@ -307,7 +322,7 @@
    ============================== */
 .sidebar-footer {
   padding: 8px 14px;
-  border-top: 1px solid #f1f3f5;
+  border-top: 1px solid #f0f2f5;
   flex-shrink: 0;
 }
 

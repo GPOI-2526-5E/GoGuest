@@ -50,7 +50,7 @@
         <div *ngIf="item.children" class="nav-group">
           <button
             class="nav-item nav-group-toggle"
-            [class.active]="isGroupActive(item)"
+            [class.group-active]="isGroupActive(item)"
             [class.open]="isGroupOpen(item.label)"
             (click)="toggleGroup(item.label)"
             [id]="'nav-group-' + item.label.toLowerCase()"
