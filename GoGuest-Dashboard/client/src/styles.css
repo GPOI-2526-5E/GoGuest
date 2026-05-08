@@ -1,1 +1,22 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global reset e base */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #f0f2f5;
+}
+
+/* Fa sì che il componente root occupi tutta l'altezza */
+app-root {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}

@@ -1,0 +1,15 @@
+/* ========================================
+   APP LAYOUT — sidebar sinistra + contenuto
+   ======================================== */
+.app-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.app-content {
+  flex: 1;
+  overflow-y: auto;
+  background: #f0f2f5;
+  min-width: 0;
+}
