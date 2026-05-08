@@ -14,6 +14,8 @@ server/bazel-out
 client/node_modules/
 server/node_modules/
 GoGuest-Dashboard/node_modules/
+GoGuest-Dashboard/server/node_modules/
+GoGuest-Dashboard/client/node_modules/
 npm-debug.log
 yarn-error.log
 
