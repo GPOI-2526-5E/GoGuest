@@ -8,11 +8,17 @@
         <span class="sep">/</span>
         <span class="active">Dashboard</span>
       </nav>
-      <h1 class="page-title">Dashboard</h1>
+      <div class="title-row">
+        <span class="page-mark"></span>
+        <h1 class="page-title">Dashboard</h1>
+      </div>
     </div>
     <div class="topbar-right">
-      <span class="user-badge">Super Admin</span>
-      <div class="avatar">SA</div>
+      <div class="account-copy">
+        <span class="account-label">Account</span>
+        <span class="user-badge">{{ authService.userDisplayName }}</span>
+      </div>
+      <div class="avatar">{{ userInitials }}</div>
     </div>
   </header>
 
@@ -29,12 +35,48 @@
     </div>
   </section>
 
-  <!-- Contenuto placeholder -->
   <section class="content-area">
-    <div class="empty-state">
-      <span class="empty-icon">📊</span>
-      <p class="empty-title">Nessun dato disponibile</p>
-      <p class="empty-sub">I dati appariranno qui una volta connesso il backend.</p>
+    <div class="chart-panel">
+      <div class="chart-header">
+        <div>
+          <h2>Visitatori mensili</h2>
+          <p>Totale ingressi registrati da gennaio {{ currentYear }}</p>
+        </div>
+        <button type="button" class="refresh-btn" (click)="caricaDashboard()" [disabled]="isLoading">
+          Aggiorna
+        </button>
+      </div>
+
+      <div *ngIf="isLoading" class="state-message">Caricamento dati...</div>
+      <div *ngIf="error && !isLoading" class="state-message error">{{ error }}</div>
+
+      <div *ngIf="!isLoading && !error && chartData.length" class="chart-wrap">
+        <div class="y-axis">
+          <span>Max</span>
+          <span>0</span>
+        </div>
+
+        <div class="line-chart" [class.empty-chart]="!hasMonthlyVisitors">
+          <svg class="line-svg" viewBox="0 0 612 220" preserveAspectRatio="xMidYMid meet" role="img">
+            <line class="grid-line" x1="32" y1="22" x2="580" y2="22"></line>
+            <line class="grid-line" x1="32" y1="100" x2="580" y2="100"></line>
+            <line class="grid-line base-line" x1="32" y1="178" x2="580" y2="178"></line>
+
+            <polygon *ngIf="areaPoints" class="line-area" [attr.points]="areaPoints"></polygon>
+            <polyline class="line-path" [attr.points]="linePoints"></polyline>
+
+            <g *ngFor="let item of chartData">
+              <circle class="line-point" [attr.cx]="item.x" [attr.cy]="item.y" r="5"></circle>
+              <text class="point-value" [attr.x]="item.x" [attr.y]="item.y - 12">{{ item.totale }}</text>
+              <text class="month-label" [attr.x]="item.x" y="212">{{ item.label }}</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+
+      <div *ngIf="!isLoading && !error && !hasMonthlyVisitors" class="empty-note">
+        Nessun visitatore registrato nell'anno corrente.
+      </div>
     </div>
   </section>
 

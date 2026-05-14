@@ -1,0 +1,78 @@
+<div class="page-container">
+  <div class="header">
+    <h1>Registra Visitatore</h1>
+    <p>Invita un nuovo visitatore inviandogli il QR Code via email.</p>
+  </div>
+
+  <div class="card">
+    <form (ngSubmit)="inviaInvito()" #registraForm="ngForm" class="registra-form">
+      
+      <div class="form-group">
+        <label for="nome">Nome *</label>
+        <input 
+          type="text" 
+          id="nome" 
+          name="nome" 
+          [(ngModel)]="dati.nome" 
+          required
+          placeholder="Es. Mario"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="cognome">Cognome *</label>
+        <input 
+          type="text" 
+          id="cognome" 
+          name="cognome" 
+          [(ngModel)]="dati.cognome" 
+          required
+          placeholder="Es. Rossi"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email *</label>
+        <input 
+          type="email" 
+          id="email" 
+          name="email" 
+          [(ngModel)]="dati.email" 
+          required
+          placeholder="Es. mario.rossi@email.com"
+        />
+        <small>Il QR Code verrà inviato a questo indirizzo.</small>
+      </div>
+
+      <div class="form-group">
+        <label for="dataNascita">Data di Nascita</label>
+        <input 
+          type="date" 
+          id="dataNascita" 
+          name="dataNascita" 
+          [(ngModel)]="dati.dataNascita" 
+        />
+      </div>
+
+      <div class="actions">
+        <button 
+          type="submit" 
+          class="btn btn-primary" 
+          [disabled]="!registraForm.valid || stato === 'caricamento'"
+        >
+          <span *ngIf="stato !== 'caricamento'">Invita Visitatore</span>
+          <span *ngIf="stato === 'caricamento'">Invio in corso...</span>
+        </button>
+      </div>
+
+      <div *ngIf="stato === 'successo'" class="alert alert-success">
+        {{ messaggio }}
+      </div>
+
+      <div *ngIf="stato === 'errore'" class="alert alert-danger">
+        {{ messaggio }}
+      </div>
+
+    </form>
+  </div>
+</div>
