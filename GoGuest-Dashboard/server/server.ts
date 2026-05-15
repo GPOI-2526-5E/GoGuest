@@ -1,12 +1,26 @@
 import express from 'express';
 import type { Request, Response } from 'express';
 import mysql from 'mysql2/promise';
+import type { RowDataPacket } from 'mysql2';
 import cors from 'cors';
 import nodemailer from 'nodemailer';
 import QRCode from 'qrcode';
 import dotenv from 'dotenv';
 import { existsSync } from 'fs';
 import { resolve } from 'path';
+
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+
+
+interface UtenteRow extends RowDataPacket {
+  IdUtente: number;
+  Ruolo: string | null;
+  Email: string;
+  Nome: string;
+  Cognome: string;
+  Password: string;
+}
 
 const envPath = [
   resolve(process.cwd(), 'GoGuest-Dashboard/server/.env'),
@@ -21,6 +35,7 @@ if (envPath) {
 }
 
 const EMAIL_USER = process.env.EMAIL_USER || 'goguest2026@gmail.com';
+const JWT_SECRET = process.env.JWT_SECRET || 'goguest-dashboard-dev-secret';
 
 function getEmailPassword(): string | null {
   const password = process.env.EMAIL_PASSWORD?.replace(/\s/g, '');
@@ -56,6 +71,210 @@ const PORT = 3001;
 
 app.use(cors());
 app.use(express.json());
+
+function isBcryptHash(password: string): boolean {
+  return /^\$2[aby]\$\d{2}\$/.test(password);
+}
+
+async function passwordMatches(plainTextPassword: string, savedPassword: string): Promise<boolean> {
+  if (isBcryptHash(savedPassword)) {
+    return bcrypt.compare(plainTextPassword, savedPassword);
+  }
+
+  return plainTextPassword === savedPassword;
+}
+
+// --------------------------------------------------------------
+// POST /api/login
+// --------------------------------------------------------------
+app.post('/api/login', async (req: Request, res: Response) => {
+  const identifier = String(req.body?.email ?? req.body?.username ?? '').trim();
+  const password = String(req.body?.password ?? '');
+
+  if (!identifier || !password) {
+    res.status(400).json({ message: 'Inserisci username/e-mail e password.' });
+    return;
+  }
+
+  try {
+    const [rows] = await db.execute<UtenteRow[]>(
+      'SELECT IdUtente, Ruolo, Email, Nome, Cognome, Password FROM utente WHERE Email = ? LIMIT 1',
+      [identifier]
+    );
+
+    const user = rows[0];
+
+    if (!user || !(await passwordMatches(password, user.Password))) {
+      res.status(401).json({ message: 'Credenziali non valide.' });
+      return;
+    }
+
+    const token = jwt.sign(
+      {
+        userId: user.IdUtente,
+        email: user.Email,
+        nome: user.Nome,
+        cognome: user.Cognome,
+        role: user.Ruolo
+
+      },
+      JWT_SECRET,
+      { expiresIn: '1d' }
+    );
+
+    res.json({
+      token,
+      user: {
+        id: user.IdUtente,
+        email: user.Email,
+        nome: user.Nome,
+        cognome: user.Cognome,
+        role: user.Ruolo
+
+      }
+    });
+  } catch (err: any) {
+    console.error('Errore DB /api/login:', err.message);
+    res.status(500).json({ message: 'Errore durante il login.' });
+  }
+});
+
+// --------------------------------------------------------------
+// POST /api/register
+// --------------------------------------------------------------
+app.post('/api/register', async (req: Request, res: Response) => {
+  const email = String(req.body?.email ?? '').trim();
+  const nome = String(req.body?.nome ?? '').trim();
+  const cognome = String(req.body?.cognome ?? '').trim();
+  const password = String(req.body?.password ?? '');
+
+  if (!email || !password || !nome || !cognome) {
+    res.status(400).json({ message: 'Tutti i campi sono obbligatori.' });
+    return;
+  }
+
+  try {
+    // 1. Verifica se l'utente esiste già
+    const [existing]: any = await db.execute(
+      'SELECT IdUtente FROM utente WHERE Email = ? LIMIT 1',
+      [email]
+    );
+
+    if (existing.length > 0) {
+      res.status(409).json({ message: 'Email già utilizzata.' });
+      return;
+    }
+
+    // 2. Hash della password (cost factor 10)
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // 3. Inserimento nel database (Ruolo default 'admin')
+    const [result]: any = await db.execute(
+      'INSERT INTO utente (Email, Nome, Cognome, Password, Ruolo) VALUES (?, ?, ?, ?, ?)',
+      [email, nome, cognome, hashedPassword, 'admin']
+    );
+
+    res.status(201).json({
+      message: 'Account creato con successo!',
+      userId: result.insertId
+    });
+  } catch (err: any) {
+    console.error('Errore DB /api/register:', err.message);
+    res.status(500).json({ message: 'Errore durante la registrazione.' });
+  }
+});
+
+// --------------------------------------------------------------
+// POST /api/forgot-password
+// --------------------------------------------------------------
+
+app.post('/api/forgot-password', async (req: Request, res: Response) => {
+  const { email } = req.body;
+
+  if (!email) {
+    res.status(400).json({ message: 'Email obbligatoria.' });
+    return;
+  }
+
+  try {
+    const [rows] = await db.execute<UtenteRow[]>(
+      'SELECT IdUtente, Nome FROM utente WHERE Email = ? LIMIT 1',
+      [email]
+    );
+    const user = rows[0];
+
+    if (!user) {
+      // Per sicurezza, non confermiamo se l'email esiste o meno
+      res.json({ message: 'Se l\'email è presente nei nostri sistemi, riceverai un link di ripristino.' });
+      return;
+    }
+
+    const emailPassword = getEmailPassword();
+    if (!emailPassword) {
+      res.status(500).json({ message: 'Servizio email non configurato.' });
+      return;
+    }
+
+    // Genera token di reset (valido 1 ora)
+    const resetToken = jwt.sign({ userId: user.IdUtente }, JWT_SECRET, { expiresIn: '1h' });
+    const resetLink = `http://localhost:4200/reset-password?token=${resetToken}`;
+
+    let transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: { user: EMAIL_USER, pass: emailPassword },
+      tls: { rejectUnauthorized: false }
+    });
+
+    await transporter.sendMail({
+      from: `"GoGuest Dashboard" <${EMAIL_USER}>`,
+      to: email,
+      subject: "Ripristino Password",
+      html: `
+        <p>Ciao ${user.Nome},</p>
+        <p>Hai richiesto il ripristino della password per il tuo account GoGuest.</p>
+        <p>Clicca sul link sottostante per impostare una nuova password (valido per 1 ora):</p>
+        <p><a href="${resetLink}">${resetLink}</a></p>
+        <br>
+        <p>Se non hai richiesto tu il ripristino, ignora questa email.</p>
+      `
+    });
+
+    res.json({ message: 'Email di ripristino inviata.' });
+  } catch (err: any) {
+    console.error('Errore /api/forgot-password:', err.message);
+    res.status(500).json({ message: 'Errore durante l\'invio dell\'email.' });
+  }
+});
+
+// --------------------------------------------------------------
+// POST /api/reset-password
+// --------------------------------------------------------------
+app.post('/api/reset-password', async (req: Request, res: Response) => {
+  const { token, newPassword } = req.body;
+
+  if (!token || !newPassword) {
+    res.status(400).json({ message: 'Dati mancanti.' });
+    return;
+  }
+
+  try {
+    // Verifica token
+    const decoded = jwt.verify(token, JWT_SECRET) as { userId: number };
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await db.execute(
+      'UPDATE utente SET Password = ? WHERE IdUtente = ?',
+      [hashedPassword, decoded.userId]
+    );
+
+    res.json({ message: 'Password aggiornata con successo!' });
+  } catch (err: any) {
+    console.error('Errore /api/reset-password:', err.message);
+    res.status(400).json({ message: 'Token non valido o scaduto.' });
+  }
+});
+
+
 
 // --------------------------------------------------------------
 // GET /api/dashboard

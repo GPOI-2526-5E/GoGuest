@@ -1,27 +1,5 @@
 <div class="dashboard">
 
-  <!-- Topbar -->
-  <header class="topbar">
-    <div class="topbar-left">
-      <nav class="breadcrumb">
-        <span>Home</span>
-        <span class="sep">/</span>
-        <span class="active">Dashboard</span>
-      </nav>
-      <div class="title-row">
-        <span class="page-mark"></span>
-        <h1 class="page-title">Dashboard</h1>
-      </div>
-    </div>
-    <div class="topbar-right">
-      <div class="account-copy">
-        <span class="account-label">Account</span>
-        <span class="user-badge">{{ authService.userDisplayName }}</span>
-      </div>
-      <div class="avatar">{{ userInitials }}</div>
-    </div>
-  </header>
-
   <!-- Stat Cards -->
   <section class="stats-grid">
     <div class="stat-card" *ngFor="let s of stats">

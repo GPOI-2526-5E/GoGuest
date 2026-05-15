@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, HostListener } from '@angular/core';
+
 import { CommonModule } from '@angular/common';
 import { DashboardService, DashboardStats, VisitatoriMensili } from '../../core/dashboard.service';
 import { AuthService } from '../../core/auth.service';
@@ -45,6 +46,7 @@ export class DashboardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+
     this.caricaDashboard();
   }
 

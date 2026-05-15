@@ -1,0 +1,161 @@
+<div class="registration-page">
+  <div class="registration-card">
+
+    <!-- Logo -->
+    <div class="brand-header">
+      <div class="brand-logo">
+        <img src="assets/logo.png" alt="GoGuest Logo" class="logo-img" />
+      </div>
+      <p class="brand-tagline">Crea il tuo account<br><strong>GoGuest Dashboard.</strong></p>
+    </div>
+
+    <!-- Form Section -->
+    <div class="form-section">
+
+      <!-- Header row -->
+      <div class="form-header-row">
+        <span class="form-label-title">Registrazione</span>
+        <button class="back-login-btn" (click)="onBackToLogin()" id="btn-back-login">
+          &larr; Torna al Login
+        </button>
+      </div>
+
+      <!-- Messages -->
+      @if (errorMessage()) {
+        <div class="error-banner" role="alert">
+          <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+          {{ errorMessage() }}
+        </div>
+      }
+      @if (successMessage()) {
+        <div class="success-banner" role="alert">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          {{ successMessage() }}
+        </div>
+      }
+
+      <!-- Nome & Cognome row -->
+      <div class="input-row">
+        <div class="input-group">
+          <label class="input-label" for="reg-nome">Nome</label>
+          <input
+            id="reg-nome"
+            type="text"
+            class="input-field"
+            placeholder="Il tuo nome"
+            [value]="nome()"
+            (input)="onNomeChange($any($event.target).value)"
+            [disabled]="isLoading()"
+          />
+        </div>
+        <div class="input-group">
+          <label class="input-label" for="reg-cognome">Cognome</label>
+          <input
+            id="reg-cognome"
+            type="text"
+            class="input-field"
+            placeholder="Il tuo cognome"
+            [value]="cognome()"
+            (input)="onCognomeChange($any($event.target).value)"
+            [disabled]="isLoading()"
+          />
+        </div>
+      </div>
+
+      <!-- Email Field -->
+      <div class="input-group">
+        <label class="input-label" for="reg-email">E-mail</label>
+        <input
+          id="reg-email"
+          type="email"
+          class="input-field"
+          placeholder="La tua e-mail"
+          [value]="email()"
+          (input)="onEmailChange($any($event.target).value)"
+          autocomplete="email"
+          [disabled]="isLoading()"
+        />
+      </div>
+
+
+      <!-- Password Field -->
+      <div class="input-group">
+        <label class="input-label" for="reg-password">Password</label>
+        <div class="password-wrapper">
+          <input
+            id="reg-password"
+            [type]="showPassword() ? 'text' : 'password'"
+            class="input-field"
+            placeholder="Crea una password"
+
+            [value]="password()"
+            (input)="onPasswordChange($any($event.target).value)"
+            autocomplete="new-password"
+            [disabled]="isLoading()"
+          />
+          <button
+            class="toggle-password-btn"
+            type="button"
+            (click)="togglePasswordVisibility()"
+            [attr.aria-label]="showPassword() ? 'Nascondi password' : 'Mostra password'"
+            id="btn-toggle-password"
+          >
+            @if (showPassword()) {
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            } @else {
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            }
+          </button>
+        </div>
+      </div>
+
+      <!-- Confirm Password Field -->
+      <div class="input-group">
+        <label class="input-label" for="reg-confirm">Conferma Password</label>
+        <div class="password-wrapper">
+          <input
+            id="reg-confirm"
+            [type]="showConfirmPassword() ? 'text' : 'password'"
+            class="input-field"
+            placeholder="Ripeti la password"
+            [value]="confirmPassword()"
+            (input)="onConfirmPasswordChange($any($event.target).value)"
+            autocomplete="new-password"
+            [disabled]="isLoading()"
+          />
+          <button
+            class="toggle-password-btn"
+            type="button"
+            (click)="toggleConfirmPasswordVisibility()"
+            [attr.aria-label]="showConfirmPassword() ? 'Nascondi password' : 'Mostra password'"
+            id="btn-toggle-confirm"
+          >
+            @if (showConfirmPassword()) {
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            } @else {
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            }
+          </button>
+        </div>
+      </div>
+
+
+      <!-- Register Button -->
+      <button
+        class="btn-primary"
+        (click)="onRegister()"
+        [disabled]="isLoading()"
+        id="btn-register"
+      >
+        @if (isLoading()) {
+          <span class="spinner"></span>
+          Creazione in corso...
+        } @else {
+          Crea Account
+        }
+      </button>
+
+    </div>
+
+  </div>
+</div>

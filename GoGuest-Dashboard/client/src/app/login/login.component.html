@@ -27,6 +27,14 @@
           {{ errorMessage() }}
         </div>
       }
+      @if (successMessage()) {
+        <div class="success-banner" role="alert">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          {{ successMessage() }}
+        </div>
+
+      }
+
 
       <!-- Email Field -->
       <div class="input-group">
@@ -35,7 +43,7 @@
           id="input-email"
           type="email"
           class="input-field"
-          placeholder="nome@esempio.com"
+          placeholder="la tua e-mail"
           [value]="email()"
           (input)="onEmailChange($any($event.target).value)"
           autocomplete="email"

@@ -3,16 +3,15 @@ import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from './auth.service';
 
 export const authGuard: CanActivateFn = () => {
-  const auth   = inject(AuthService);
+  const auth = inject(AuthService);
   const router = inject(Router);
 
-  // Attende che Firebase abbia verificato lo stato di auth
-  if (auth.isLoading()) {
-    // Permetti temporaneamente — onAuthStateChanged aggiornerà
+  if (auth.isLoggedIn() || auth.hasJwtSession()) {
     return true;
   }
 
-  if (auth.isLoggedIn()) {
+  // Attende che Firebase abbia verificato lo stato di auth.
+  if (auth.isLoading()) {
     return true;
   }
 

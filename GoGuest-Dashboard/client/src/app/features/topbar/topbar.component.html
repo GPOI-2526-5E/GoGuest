@@ -1,0 +1,43 @@
+<header class="topbar">
+  <div class="topbar-left">
+    <nav class="breadcrumb">
+      <span>Home</span>
+      <span class="sep">/</span>
+      <span class="active">{{ pageTitle() }}</span>
+    </nav>
+    <div class="title-row">
+      <span class="page-mark"></span>
+      <h1 class="page-title">{{ pageTitle() }}</h1>
+    </div>
+  </div>
+
+  <div class="topbar-right" (click)="toggleMenu()" id="btn-profile-toggle">
+    <div class="account-copy">
+      <span class="account-label">Account</span>
+      <span class="user-badge">{{ userDisplayName }}</span>
+    </div>
+    <div class="avatar">{{ userInitials }}</div>
+
+    <!-- Dropdown Menu -->
+    <div class="profile-dropdown" *ngIf="isMenuOpen()" id="profile-dropdown-menu" (click)="$event.stopPropagation()">
+      <div class="dropdown-header">
+        <p class="dropdown-label">Profilo</p>
+        <p class="dropdown-username">{{ userDisplayName }}</p>
+      </div>
+      
+      <div class="dropdown-divider"></div>
+
+      <button class="dropdown-item" (click)="goToProfile()">
+        <span class="item-icon">👤</span>
+        Visualizza Profilo
+      </button>
+
+
+      <button class="dropdown-item logout-item" (click)="onLogout()" id="btn-logout">
+        <span class="item-icon">🚪</span>
+        Esci
+      </button>
+    </div>
+
+  </div>
+</header>

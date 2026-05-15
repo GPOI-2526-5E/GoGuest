@@ -1,6 +1,7 @@
 import { Component, signal, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { AuthService } from '../core/auth.service';
 
 @Component({
@@ -12,28 +13,49 @@ import { AuthService } from '../core/auth.service';
 })
 export class LoginComponent {
   private authService = inject(AuthService);
+  private router = inject(Router);
 
-  email        = signal('');
-  password     = signal('');
-  isLoading    = signal(false);
+
+  email = signal('');
+  password = signal('');
+  isLoading = signal(false);
   showPassword = signal(false);
   errorMessage = signal('');
+  successMessage = signal('');
 
-  onEmailChange(value: string)    { this.email.set(value); }
-  onPasswordChange(value: string) { this.password.set(value); }
+  onEmailChange(value: string) {
+    this.email.set(value);
+  }
+
+  onPasswordChange(value: string) {
+    this.password.set(value);
+  }
 
   togglePasswordVisibility() {
     this.showPassword.set(!this.showPassword());
   }
 
-  // Login email/password — da implementare in futuro
-  onLogin() {
+  async onLogin() {
     this.errorMessage.set('');
-    if (!this.email() || !this.password()) {
+    const identifier = this.email().trim();
+    const password = this.password();
+
+    if (!identifier || !password) {
       this.errorMessage.set('Inserisci email e password.');
       return;
     }
-    this.errorMessage.set('Login email/password non ancora implementato. Usa Google.');
+
+    this.isLoading.set(true);
+    try {
+      await this.authService.loginWithCredentials(identifier, password);
+    } catch (err: any) {
+      const msg = err?.status === 401
+        ? 'Credenziali non valide.'
+        : err?.error?.message ?? 'Errore durante il login. Riprova.';
+      this.errorMessage.set(msg);
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 
   // Login Google via Firebase
@@ -52,13 +74,30 @@ export class LoginComponent {
     }
   }
 
-  onForgotPassword() {
-    // TODO: recupero password
-    console.log('Forgot password');
+  async onForgotPassword() {
+    this.errorMessage.set('');
+    this.successMessage.set('');
+    const mail = this.email().trim();
+
+    if (!mail) {
+      this.errorMessage.set('Inserisci la tua e-mail per recuperare la password.');
+      return;
+    }
+
+    this.isLoading.set(true);
+    try {
+      await this.authService.forgotPassword(mail);
+      this.successMessage.set('Email di ripristino inviata! Controlla la tua posta.');
+    } catch (err: any) {
+      this.errorMessage.set('Errore durante l\'invio dell\'email. Riprova.');
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 
+
   onCreateAccount() {
-    // TODO: registrazione
-    console.log('Create account');
+    this.router.navigate(['/registrazione']);
   }
+
 }

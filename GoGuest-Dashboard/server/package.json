@@ -1,6 +1,8 @@
 {
   "name": "server",
   "version": "1.0.0",
+  "type": "module",
+
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -22,8 +24,10 @@
     "qrcode": "^1.5.4"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.5.0",
     "@types/nodemailer": "^8.0.0",
     "@types/qrcode": "^1.5.6",

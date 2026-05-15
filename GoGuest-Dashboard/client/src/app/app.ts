@@ -1,14 +1,17 @@
 import { Component, computed, inject } from '@angular/core';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { NavbarComponent } from './features/navbar/navbar.component';
+import { TopbarComponent } from './features/topbar/topbar.component';
 import { CommonModule } from '@angular/common';
+
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map, startWith } from 'rxjs';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, CommonModule],
+  imports: [RouterOutlet, NavbarComponent, TopbarComponent, CommonModule],
+
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -26,6 +29,8 @@ export class App {
 
   isLoginPage = computed(() => {
     const url = this.currentUrl() ?? '/';
-    return url === '/login' || url === '/' || url === '';
+    return url === '/login' || url === '/' || url === '' || url === '/registrazione' || url.startsWith('/reset-password');
   });
+
+
 }
