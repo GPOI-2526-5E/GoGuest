@@ -10,20 +10,24 @@
 
 .header h1 {
   font-size: 1.8rem;
-  color: #111827;
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
+  transition: color 0.3s;
 }
 
 .header p {
-  color: #6b7280;
+  color: var(--text-secondary);
   font-size: 1rem;
+  transition: color 0.3s;
 }
 
 .card {
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-color);
   padding: 2rem;
+  transition: background-color 0.3s, box-shadow 0.3s, border-color 0.3s;
 }
 
 .registra-form {
@@ -40,28 +44,31 @@
 
 .form-group label {
   font-weight: 500;
-  color: #374151;
+  color: var(--text-primary);
   font-size: 0.95rem;
+  transition: color 0.3s;
 }
 
 .form-group input {
   padding: 0.75rem 1rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-color);
+  background: var(--bg-input);
   border-radius: 8px;
   font-size: 1rem;
-  color: #1f2937;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  color: var(--text-primary);
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.3s, color 0.3s;
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px var(--brand-glow);
 }
 
 .form-group small {
-  color: #6b7280;
+  color: var(--text-muted);
   font-size: 0.85rem;
+  transition: color 0.3s;
 }
 
 .actions {
@@ -82,17 +89,17 @@
 }
 
 .btn-primary {
-  background-color: #4f46e5;
+  background-color: var(--brand);
   color: white;
   width: 100%;
 }
 
 .btn-primary:hover:not([disabled]) {
-  background-color: #4338ca;
+  background-color: var(--brand-dark);
 }
 
 .btn-primary:disabled {
-  background-color: #a5b4fc;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
@@ -108,13 +115,13 @@
 }
 
 .alert-success {
-  background-color: #d1fae5;
-  color: #065f46;
-  border: 1px solid #a7f3d0;
+  background-color: var(--feedback-success-bg);
+  color: var(--feedback-success-text);
+  border: 1px solid var(--feedback-success-border);
 }
 
 .alert-danger {
-  background-color: #fee2e2;
-  color: #991b1b;
-  border: 1px solid #fecaca;
+  background-color: var(--feedback-error-bg);
+  color: var(--feedback-error-text);
+  border: 1px solid var(--feedback-error-border);
 }

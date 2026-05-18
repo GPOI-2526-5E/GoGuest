@@ -1,16 +1,18 @@
-import { Component, inject, computed } from '@angular/core';
+import { Component, inject, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/auth.service';
+import { LogComponent } from '../log.component/log.component';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, LogComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
 export class ProfileComponent {
   private authService = inject(AuthService);
+  showLogModal = signal(false);
 
   user = computed(() => {
     return this.authService.currentUser() as any;
@@ -32,10 +34,17 @@ export class ProfileComponent {
     return source.slice(0, 2).toUpperCase() || 'UT';
   }
 
-  // Esempio di dati "fantasiosi"
-  stats = [
-    { label: 'Livello Accesso', value: 'Amministratore', icon: '🔑' },
-    { label: 'Stato Account', value: 'Attivo', icon: '🛡️' },
-    { label: 'Ultima Attività', value: 'Oggi', icon: '🕒' }
-  ];
+  userRole = computed(() => {
+    return this.authService.isAdmin ? 'Admin Dashboard' : 'Lavoratore';
+  });
+
+  // Esempio di dati "fantasiosi" reattivi
+  stats = computed(() => {
+    const isAccessAdmin = this.authService.isAdmin;
+    return [
+      { label: 'Livello Accesso', value: isAccessAdmin ? 'Amministratore' : 'Lavoratore', icon: isAccessAdmin ? '🔑' : '🧭' },
+      { label: 'Stato Account', value: 'Attivo', icon: '🛡️' },
+      { label: 'Ultima Attività', value: 'Oggi', icon: '🕒' }
+    ];
+  });
 }

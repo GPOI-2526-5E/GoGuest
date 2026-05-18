@@ -2,9 +2,6 @@
   display: block;
   width: 100%;
   height: 100%;
-  --brand-red: #E22D20;
-  --glass-bg: rgba(255, 255, 255, 0.45);
-  --glass-border: rgba(255, 255, 255, 0.5);
 }
 
 .profile-container {
@@ -13,8 +10,9 @@
   padding: 20px;
   overflow: hidden;
   border-radius: 24px;
-  background: #f8f9fa;
+  background: var(--bg-app);
   font-family: 'Inter', sans-serif;
+  transition: background 0.3s;
 }
 
 /* Sfondo Mesh Gradient */
@@ -37,12 +35,6 @@
   display: none;
 }
 
-
-@keyframes float {
-  from { transform: translate(0, 0) scale(1); }
-  to { transform: translate(40px, 40px) scale(1.1); }
-}
-
 .profile-wrapper {
   position: relative;
   z-index: 2;
@@ -59,11 +51,12 @@
   align-items: center;
   gap: 30px;
   padding: 40px;
-  background: var(--glass-bg);
+  background: var(--glass-card-bg);
   backdrop-filter: blur(16px);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--glass-card-border);
   border-radius: 30px;
   box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+  transition: background 0.3s, border-color 0.3s;
 }
 
 .avatar-container {
@@ -76,7 +69,7 @@
   position: relative;
   width: 100%;
   height: 100%;
-  background: var(--brand-red);
+  background: var(--brand);
   color: #fff;
   border-radius: 35px;
   display: flex;
@@ -94,7 +87,7 @@
   left: 10%;
   width: 80%;
   height: 80%;
-  background: var(--brand-red);
+  background: var(--brand);
   filter: blur(30px);
   opacity: 0.5;
   z-index: 1;
@@ -104,8 +97,9 @@
   margin: 0;
   font-size: 2.2rem;
   font-weight: 800;
-  color: #1a1a1a;
+  color: var(--text-primary);
   letter-spacing: -0.02em;
+  transition: color 0.3s;
 }
 
 .user-role-badge {
@@ -113,7 +107,7 @@
   margin-top: 8px;
   padding: 6px 16px;
   background: rgba(226, 45, 32, 0.1);
-  color: var(--brand-red);
+  color: var(--brand);
   border-radius: 99px;
   font-size: 0.9rem;
   font-weight: 700;
@@ -129,13 +123,13 @@
 }
 
 .glass-card {
-  background: var(--glass-bg);
+  background: var(--glass-card-bg);
   backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--glass-card-border);
   border-radius: 24px;
   padding: 24px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s, border-color 0.3s;
 }
 
 .glass-card:hover {
@@ -158,7 +152,8 @@
 .info-section h3 {
   margin: 0;
   font-size: 1.25rem;
-  color: #333;
+  color: var(--text-primary);
+  transition: color 0.3s;
 }
 
 .info-list {
@@ -176,19 +171,21 @@
 .info-item .label {
   font-size: 0.75rem;
   font-weight: 700;
-  color: #888;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  transition: color 0.3s;
 }
 
 .info-item .value {
   font-size: 1.05rem;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--text-primary);
+  transition: color 0.3s;
 }
 
 .email-value {
-  color: var(--brand-red) !important;
+  color: var(--brand) !important;
 }
 
 /* Stats Section */
@@ -208,13 +205,14 @@
 .tile-icon {
   width: 48px;
   height: 48px;
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.4rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  box-shadow: var(--shadow-card);
+  transition: background 0.3s;
 }
 
 .tile-content {
@@ -224,14 +222,16 @@
 
 .tile-label {
   font-size: 0.8rem;
-  color: #777;
+  color: var(--text-secondary);
   font-weight: 500;
+  transition: color 0.3s;
 }
 
 .tile-value {
   font-size: 1rem;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--text-primary);
+  transition: color 0.3s;
 }
 
 /* Actions Section */
@@ -244,13 +244,15 @@
 
 .actions-section h3 {
   margin: 0;
-  color: #1a1a1a;
+  color: var(--text-primary);
+  transition: color 0.3s;
 }
 
 .actions-section p {
   margin: 0;
-  color: #666;
+  color: var(--text-secondary);
   font-size: 0.95rem;
+  transition: color 0.3s;
 }
 
 .action-buttons {
@@ -261,8 +263,8 @@
 .btn-outline {
   padding: 10px 24px;
   background: transparent;
-  border: 1.5px solid var(--brand-red);
-  color: var(--brand-red);
+  border: 1.5px solid var(--brand);
+  color: var(--brand);
   border-radius: 12px;
   font-weight: 700;
   cursor: pointer;
@@ -270,9 +272,9 @@
 }
 
 .btn-outline:hover {
-  background: var(--brand-red);
+  background: var(--brand);
   color: #fff;
-  box-shadow: 0 5px 15px rgba(226, 45, 32, 0.2);
+  box-shadow: 0 5px 15px var(--brand-glow);
 }
 
 @media (max-width: 850px) {

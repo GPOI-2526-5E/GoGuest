@@ -1,3 +1,7 @@
+/* ============================================
+   REGISTRATION PAGE - GoGuest Dashboard
+   ============================================ */
+
 :host {
   display: block;
   width: 100%;
@@ -10,27 +14,27 @@
 
 .registration-page {
   min-height: 100vh;
-  background-color: #eee8dc;
+  background-color: var(--bg-page);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 2rem 1rem;
   font-family: 'Inter', sans-serif;
+  transition: background-color 0.3s ease;
 }
 
 /* ---- Card ---- */
 .registration-card {
-  background: #f7f3ed;
+  background: var(--bg-card);
   border-radius: 2rem;
   width: 100%;
   max-width: 440px;
   padding: 2.5rem 2.25rem 2rem;
-  box-shadow:
-    0 4px 6px rgba(0, 0, 0, 0.04),
-    0 20px 60px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
   gap: 0;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* ---- Brand Header ---- */
@@ -54,15 +58,17 @@
 
 .brand-tagline {
   font-size: 1.05rem;
-  color: #444;
+  color: var(--text-secondary);
   line-height: 1.45;
   margin: 0;
   font-weight: 400;
+  transition: color 0.3s ease;
 }
 
 .brand-tagline strong {
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--text-primary);
+  transition: color 0.3s ease;
 }
 
 /* ---- Form Section ---- */
@@ -83,18 +89,19 @@
 .form-label-title {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--text-primary);
   letter-spacing: 0.02em;
+  transition: color 0.3s ease;
 }
 
 .back-login-btn {
   background: transparent;
-  border: 1px solid #c8c0b4;
+  border: 1px solid var(--border-color);
   border-radius: 999px;
   padding: 0.3rem 0.85rem;
   font-size: 0.78rem;
   font-weight: 500;
-  color: #555;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s, color 0.2s;
   font-family: inherit;
@@ -117,18 +124,19 @@
   font-weight: 500;
   margin-bottom: 1rem;
   animation: slideIn 0.2s ease;
+  transition: background 0.3s, border-color 0.3s, color 0.3s;
 }
 
 .error-banner {
-  background: #fdf2f2;
-  border: 1px solid #f5c6c6;
-  color: #c0392b;
+  background: var(--feedback-error-bg);
+  border: 1px solid var(--feedback-error-border);
+  color: var(--feedback-error-text);
 }
 
 .success-banner {
-  background: #f0fdf4;
-  border: 1px solid #bcf0da;
-  color: #27ae60;
+  background: var(--feedback-success-bg);
+  border: 1px solid var(--feedback-success-border);
+  color: var(--feedback-success-text);
 }
 
 .error-banner svg, .success-banner svg {
@@ -157,34 +165,35 @@
   margin-bottom: 1.25rem;
 }
 
-
 .input-label {
   display: block;
   font-size: 0.78rem;
   font-weight: 600;
-  color: #888;
+  color: var(--text-muted);
   margin-bottom: 0.35rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+  transition: color 0.3s ease;
 }
 
 .input-field {
   width: 100%;
   background: transparent;
   border: none;
-  border-bottom: 1.5px solid #c8c0b4;
+  border-bottom: 1.5px solid var(--border-color);
   border-radius: 0;
   padding: 0.5rem 0;
   font-size: 0.95rem;
-  color: #1a1a1a;
+  color: var(--text-primary);
   font-family: inherit;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, color 0.3s ease;
   box-sizing: border-box;
 }
 
 .input-field::placeholder {
-  color: #bbb;
+  color: var(--text-muted);
+  opacity: 0.6;
 }
 
 .input-field:focus {
@@ -217,7 +226,7 @@
   padding: 0;
   display: flex;
   align-items: center;
-  color: #aaa;
+  color: var(--text-muted);
   transition: color 0.2s;
 }
 
@@ -231,7 +240,6 @@
 }
 
 /* ---- Primary Button ---- */
-
 .btn-primary {
   width: 100%;
   background: var(--brand);
@@ -281,6 +289,38 @@
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+/* ---- Theme Toggle inside card ---- */
+.theme-toggle-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.btn-theme-toggle {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.btn-theme-toggle:hover {
+  background: var(--border-subtle);
+  color: var(--text-primary);
+}
+
+.btn-theme-toggle svg {
+  width: 14px;
+  height: 14px;
 }
 
 /* ---- Responsive ---- */

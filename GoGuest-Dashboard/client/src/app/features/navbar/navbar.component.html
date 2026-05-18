@@ -33,7 +33,7 @@
   <!-- Nav items -->
   <nav class="sidebar-nav">
     <ul>
-      <li *ngFor="let item of navItems">
+      <li *ngFor="let item of visibleNavItems">
 
         <!-- Item senza figli -->
         <a
@@ -87,10 +87,5 @@
       </li>
     </ul>
   </nav>
-
-  <!-- Footer versione -->
-  <div class="sidebar-footer" *ngIf="!collapsed">
-    <span class="version">v1.0.0 · API v1.0</span>
-  </div>
 
 </aside>

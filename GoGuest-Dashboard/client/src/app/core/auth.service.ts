@@ -152,6 +152,14 @@ export class AuthService {
     return this.currentUser()?.photoURL ?? null;
   }
 
+  /** True se l'utente ha ruolo admin */
+  get isAdmin(): boolean {
+    const user = this.currentUser();
+    if (!user) return false;
+    // DashboardUser ha 'role', FirebaseUser non ce l'ha
+    return (user as any)['role'] === 'admin';
+  }
+
   private restoreJwtSession(): void {
     const user = this.getStoredUser();
 

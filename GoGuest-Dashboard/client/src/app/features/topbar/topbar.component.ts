@@ -2,6 +2,7 @@ import { Component, signal, inject, HostListener, computed } from '@angular/core
 import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
+import { ThemeService } from '../../core/theme.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map, startWith } from 'rxjs';
 
@@ -15,8 +16,14 @@ import { filter, map, startWith } from 'rxjs';
 export class TopbarComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private themeService = inject(ThemeService);
 
   isMenuOpen = signal(false);
+  isDark = computed(() => this.themeService.isDark());
+
+  toggleTheme() {
+    this.themeService.toggleTheme();
+  }
 
   // Signal per l'URL corrente
   private currentUrl = toSignal(
@@ -39,6 +46,7 @@ export class TopbarComponent {
     if (url.includes('genera-qr')) return 'Genera QR';
     if (url.includes('report')) return 'Report Vendite';
     if (url.includes('settings')) return 'Sicurezza';
+    if (url.includes('promuovi')) return 'Gestione Ruoli';
     return 'Dashboard';
   });
 

@@ -4,17 +4,15 @@
   justify-content: space-between;
   min-height: 58px;
   padding: 8px 14px 8px 18px;
-  background: #ffffff;
-  border: 1px solid #e8ebf0;
+  background: var(--bg-sidebar);
+  border: 1px solid var(--border-subtle);
   border-radius: 18px;
-  box-shadow:
-    0 6px 18px rgba(15, 23, 42, 0.055),
-    0 1px 2px rgba(15, 23, 42, 0.035),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow-sidebar);
   flex-shrink: 0;
   margin-bottom: 20px;
   z-index: 50;
   position: relative;
+  transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
 
 .breadcrumb {
@@ -23,15 +21,15 @@
   gap: 6px;
   margin-bottom: 2px;
   font-size: 0.75rem;
-  color: #9ca3af;
+  color: var(--text-muted);
 }
 
 .breadcrumb .sep {
-  color: #d1d5db;
+  color: var(--border-color);
 }
 
 .breadcrumb .active {
-  color: #6d28d9;
+  color: var(--brand);
   font-weight: 600;
 }
 
@@ -53,8 +51,40 @@
   margin: 0;
   font-size: 1.08rem;
   font-weight: 700;
-  color: #1a1d2e;
+  color: var(--text-primary);
   letter-spacing: 0;
+  transition: color 0.3s;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-topbar-theme-toggle {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
+}
+
+.btn-topbar-theme-toggle:hover {
+  background: var(--border-subtle);
+  color: var(--brand);
+  transform: scale(1.05);
+}
+
+.btn-topbar-theme-toggle svg {
+  width: 18px;
+  height: 18px;
 }
 
 .topbar-right {
@@ -63,11 +93,17 @@
   gap: 12px;
   min-width: 0;
   padding: 4px 5px 4px 12px;
-  border: 1px solid #eef1f5;
+  border: 1px solid var(--border-color);
   border-radius: 14px;
-  background: #fafbfc;
+  background: var(--bg-card);
   cursor: pointer;
   position: relative;
+  transition: background 0.3s, border-color 0.3s;
+}
+
+.topbar-right:hover {
+  border-color: var(--brand);
+  background: var(--border-subtle);
 }
 
 .account-copy {
@@ -81,7 +117,7 @@
 .account-label {
   font-size: 0.62rem;
   font-weight: 700;
-  color: #a1a8b3;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0;
 }
@@ -93,7 +129,8 @@
   white-space: nowrap;
   font-size: 0.78rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--text-primary);
+  transition: color 0.3s;
 }
 
 .avatar {
@@ -116,13 +153,14 @@
   top: calc(100% + 0.75rem);
   right: 0;
   width: 220px;
-  background: #fff;
-  border: 1px solid #e2dcd5;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 1rem;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+  box-shadow: var(--shadow-card);
   padding: 0.5rem;
   animation: dropdownFade 0.2s ease;
   z-index: 100;
+  transition: background 0.3s, border-color 0.3s;
 }
 
 @keyframes dropdownFade {
@@ -138,7 +176,7 @@
 .dropdown-label {
   font-size: 0.7rem;
   font-weight: 700;
-  color: #aaa;
+  color: var(--text-muted);
   text-transform: uppercase;
   margin: 0 0 0.2rem;
   letter-spacing: 0.05em;
@@ -147,17 +185,19 @@
 .dropdown-username {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--text-primary);
   margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  transition: color 0.3s;
 }
 
 .dropdown-divider {
   height: 1px;
-  background: #f0ede8;
+  background: var(--border-color);
   margin: 0.5rem 0;
+  transition: background 0.3s;
 }
 
 .dropdown-item {
@@ -171,15 +211,15 @@
   border-radius: 0.6rem;
   font-size: 0.88rem;
   font-weight: 500;
-  color: #444;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.15s ease;
   text-align: left;
 }
 
 .dropdown-item:hover {
-  background: #f7f3ed;
-  color: #1a1a1a;
+  background: var(--border-subtle);
+  color: var(--text-primary);
 }
 
 .logout-item {
@@ -187,8 +227,8 @@
 }
 
 .logout-item:hover {
-  background: #fdf2f2;
-  color: #c4251a;
+  background: var(--feedback-error-bg);
+  color: var(--feedback-error-text);
 }
 
 .item-icon {

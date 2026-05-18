@@ -1,8 +1,9 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../core/auth.service';
+import { ThemeService } from '../core/theme.service';
 
 @Component({
   selector: 'app-login',
@@ -14,6 +15,7 @@ import { AuthService } from '../core/auth.service';
 export class LoginComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private themeService = inject(ThemeService);
 
 
   email = signal('');
@@ -22,6 +24,12 @@ export class LoginComponent {
   showPassword = signal(false);
   errorMessage = signal('');
   successMessage = signal('');
+
+  isDark = computed(() => this.themeService.isDark());
+
+  toggleTheme() {
+    this.themeService.toggleTheme();
+  }
 
   onEmailChange(value: string) {
     this.email.set(value);

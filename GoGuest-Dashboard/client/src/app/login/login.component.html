@@ -46,6 +46,7 @@
           placeholder="la tua e-mail"
           [value]="email()"
           (input)="onEmailChange($any($event.target).value)"
+          (keyup.enter)="onLogin()"
           autocomplete="email"
           [disabled]="isLoading()"
         />
@@ -62,6 +63,7 @@
             placeholder="La tua password"
             [value]="password()"
             (input)="onPasswordChange($any($event.target).value)"
+            (keyup.enter)="onLogin()"
             autocomplete="current-password"
             [disabled]="isLoading()"
           />
@@ -123,6 +125,8 @@
         </svg>
         Continua con Google
       </button>
+
+
 
     </div>
 

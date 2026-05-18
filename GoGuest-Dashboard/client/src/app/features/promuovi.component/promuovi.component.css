@@ -1,0 +1,293 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+  --brand-red: #E22D20;
+  --glass-bg: var(--glass-card-bg);
+  --glass-border: var(--glass-card-border);
+  --admin-gold: #F59E0B;
+}
+
+/* ─── Container ─── */
+.promuovi-container {
+  position: relative;
+  min-height: calc(100vh - 100px);
+  padding: 28px;
+  overflow: hidden;
+  border-radius: 24px;
+  background: var(--bg-app);
+  font-family: 'Inter', sans-serif;
+  transition: background 0.3s;
+}
+
+.mesh-gradient {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(at 0% 0%,   rgba(226, 45, 32, 0.12) 0px, transparent 50%),
+    radial-gradient(at 100% 0%,  rgba(245, 158, 11, 0.1) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(226, 45, 32, 0.08) 0px, transparent 50%);
+  filter: blur(80px);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.promuovi-wrapper {
+  position: relative;
+  z-index: 2;
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ─── Header ─── */
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 32px 36px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: 28px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.05);
+  transition: background 0.3s, border-color 0.3s;
+}
+
+.header-icon {
+  font-size: 3rem;
+  line-height: 1;
+  filter: drop-shadow(0 4px 8px rgba(245, 158, 11, 0.3));
+}
+
+.header-text h2 {
+  margin: 0 0 4px;
+  font-size: 1.9rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  transition: color 0.3s;
+}
+
+.header-text p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  transition: color 0.3s;
+}
+
+.header-text strong {
+  color: var(--admin-gold);
+}
+
+/* ─── Alert ─── */
+.alert {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-radius: 16px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.alert-success {
+  background: var(--feedback-success-bg);
+  border: 1px solid var(--feedback-success-border);
+  color: var(--feedback-success-text);
+}
+
+.alert-error {
+  background: var(--feedback-error-bg);
+  border: 1px solid var(--feedback-error-border);
+  color: var(--feedback-error-text);
+}
+
+.alert-icon { font-size: 1.1rem; }
+
+/* ─── Loading ─── */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 60px 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(226, 45, 32, 0.15);
+  border-top-color: var(--brand-red);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─── Table Card ─── */
+.table-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: background 0.3s, border-color 0.3s;
+}
+
+/* ─── Empty state ─── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 60px 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.empty-icon { font-size: 3rem; }
+
+/* ─── Table ─── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead tr {
+  background: rgba(226, 45, 32, 0.06);
+  border-bottom: 1px solid var(--border-color);
+}
+
+thead th {
+  padding: 14px 20px;
+  text-align: left;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+}
+
+tbody tr {
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background 0.2s;
+}
+
+tbody tr:last-child { border-bottom: none; }
+
+tbody tr:hover {
+  background: var(--border-subtle);
+}
+
+tbody td {
+  padding: 16px 20px;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.col-id    { color: var(--text-muted); font-size: 0.8rem; font-weight: 600; width: 40px; }
+.col-name  { font-weight: 600; color: var(--text-primary); }
+.col-email { color: var(--text-secondary); font-size: 0.9rem; }
+
+/* ─── Badge ─── */
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 99px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: capitalize;
+  letter-spacing: 0.03em;
+}
+
+.badge-dipendente {
+  background: rgba(99, 102, 241, 0.12);
+  color: #818cf8;
+}
+
+/* ─── Promuovi Button ─── */
+.btn-promuovi {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  background: linear-gradient(135deg, var(--admin-gold), #D97706);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+  white-space: nowrap;
+}
+
+.btn-promuovi:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
+}
+
+.btn-promuovi:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-promuovi:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.btn-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mini-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+/* ─── Counter ─── */
+.counter-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.counter-badge {
+  background: var(--border-subtle);
+  color: var(--text-secondary);
+  padding: 6px 14px;
+  border-radius: 99px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 768px) {
+  .page-header { flex-direction: column; text-align: center; }
+  table { font-size: 0.85rem; }
+  thead th, tbody td { padding: 12px 12px; }
+  .btn-promuovi { font-size: 0.78rem; padding: 8px 12px; }
+  .col-email { display: none; }
+}

@@ -1,0 +1,253 @@
+<div class="gdpr-container">
+  <!-- Mesh gradient background accent -->
+  <div class="mesh-gradient"></div>
+
+  <div class="gdpr-wrapper">
+    <!-- Header -->
+    <header class="gdpr-header">
+      <div class="title-area">
+        <span class="shield-pulse">🛡️</span>
+        <div class="title-meta">
+          <h1>GDPR – Gestione dati visitatori</h1>
+          <p class="subtitle">Personalizzazione della gestione dei dati dei visitatori in base alla policy aziendale</p>
+        </div>
+      </div>
+      <div class="route-badge">GDPR</div>
+    </header>
+
+    <!-- Success/Error Feedback Alerts -->
+    @if (successMsg()) {
+      <div class="feedback-alert success-alert">
+        <span class="icon">✓</span>
+        <p>{{ successMsg() }}</p>
+      </div>
+    }
+    @if (errorMsg()) {
+      <div class="feedback-alert error-alert">
+        <span class="icon">⚠️</span>
+        <p>{{ errorMsg() }}</p>
+      </div>
+    }
+
+    <!-- GDPR Warnings -->
+    <div class="alerts-section">
+      <!-- Warning Alert -->
+      <div class="gdpr-alert alert-danger">
+        <span class="alert-icon">⚠️</span>
+        <div class="alert-body">
+          <p><strong>Attenzione:</strong> tutti i dati eliminati non saranno più recuperabili.</p>
+        </div>
+      </div>
+
+      <!-- Info Alert -->
+      <div class="gdpr-alert alert-info">
+        <span class="alert-icon">ℹ️</span>
+        <div class="alert-body">
+          <p>Qui puoi visualizzare o eliminare i dati personali raccolti tramite il Registro Visitatori (Regolamento UE 679/2016). Seleziona i record interessati oppure usa le azioni rapide.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- KPI Metric Cards -->
+    <div class="kpi-grid">
+      <!-- KPI 1: Visitatori Totali -->
+      <div class="kpi-card bg-purple">
+        <div class="kpi-icon">👤</div>
+        <div class="kpi-content">
+          <span class="kpi-label">VISITATORI TOTALI</span>
+          <span class="kpi-value">{{ totalVisitors() }}</span>
+        </div>
+      </div>
+
+      <!-- KPI 2: Eliminazioni Totali -->
+      <div class="kpi-card bg-blue">
+        <div class="kpi-icon">🗑️</div>
+        <div class="kpi-content">
+          <span class="kpi-label">ELIMINAZIONI TOTALI</span>
+          <span class="kpi-value">{{ totalDeletions() }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- GDPR Policy Parameters Control Bar -->
+    <section class="glass-card controls-section">
+      <div class="policy-controls">
+        <!-- Retention Days Dropdown -->
+        <div class="control-group">
+          <label for="retention-days">Elimina dati più vecchi di:</label>
+          <div class="select-wrapper">
+            <select
+              id="retention-days"
+              [value]="retentionDays()"
+              (change)="onRetentionDaysChange(+$any($event.target).value)"
+            >
+              <option value="30">30 giorni</option>
+              <option value="90">90 giorni</option>
+              <option value="180">180 giorni</option>
+              <option value="365">365 giorni</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Automatic Delete Toggle -->
+        <div class="control-group">
+          <span class="toggle-label">Eliminazione automatica dei dati</span>
+          <label class="switch">
+            <input
+              type="checkbox"
+              #autoDeleteInput
+              [checked]="autoDelete()"
+              (change)="toggleAutoDelete(autoDeleteInput.checked)"
+            >
+            <span class="slider round"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Batch Actions -->
+      <div class="batch-actions">
+        <button
+          class="btn-delete-selected"
+          [disabled]="selectedIds().size === 0"
+          (click)="onDeleteSelected()"
+        >
+          🗑️ Elimina selezionati
+        </button>
+      </div>
+    </section>
+
+    <!-- Search Filters -->
+    <section class="glass-card search-section">
+      <form (submit)="onSearch($event)" class="search-form">
+        <!-- Text query search -->
+        <div class="filter-group">
+          <label for="search-query">Cerca per nome e cognome</label>
+          <input
+            type="text"
+            id="search-query"
+            placeholder="Inserisci nome e/o cognome"
+            [value]="searchQuery()"
+            (input)="searchQuery.set($any($event.target).value)"
+          >
+        </div>
+
+        <!-- Date Range search -->
+        <div class="filter-group">
+          <label for="date-from">Cerca per Data dal</label>
+          <input
+            type="date"
+            id="date-from"
+            [value]="dateFrom()"
+            (change)="dateFrom.set($any($event.target).value)"
+          >
+        </div>
+
+        <div class="filter-group">
+          <label for="date-to">al</label>
+          <input
+            type="date"
+            id="date-to"
+            [value]="dateTo()"
+            (change)="dateTo.set($any($event.target).value)"
+          >
+        </div>
+
+        <!-- Search Submit button -->
+        <div class="filter-actions">
+          <button type="submit" class="btn-search">
+            🔍 Cerca
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Visitors Data Table -->
+    <section class="glass-card table-section">
+      @if (isLoading()) {
+        <div class="table-loader">
+          <div class="loader-spinner"></div>
+          <p>Caricamento dati in corso...</p>
+        </div>
+      } @else {
+        <div class="table-responsive">
+          <table class="gdpr-table">
+            <thead>
+              <tr>
+                <th width="40">
+                  <label class="checkbox-container">
+                    <input
+                      type="checkbox"
+                      [checked]="isAllSelected()"
+                      (change)="toggleSelectAll($any($event.target).checked)"
+                    >
+                    <span class="checkbox-mark"></span>
+                  </label>
+                </th>
+                <th>VISITATORE</th>
+                <th>AZIENDA</th>
+                <th>REFERENTE</th>
+                <th>DATA / ORA INGRESSO</th>
+                <th>DATA / ORA USCITA</th>
+                <th width="80" class="text-center">AZIONI</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (v of visitors(); track v.IdVisitatore) {
+                <tr [class.selected-row]="isRowSelected(v.IdVisitatore)">
+                  <td>
+                    <label class="checkbox-container">
+                      <input
+                        type="checkbox"
+                        #rowCheck
+                        [checked]="isRowSelected(v.IdVisitatore)"
+                        (change)="toggleSelectRow(v.IdVisitatore, rowCheck.checked)"
+                      >
+                      <span class="checkbox-mark"></span>
+                    </label>
+                  </td>
+                  <td>
+                    <div class="visitor-name">
+                      <span class="user-avatar">👤</span>
+                      <span>{{ v.Nome }} {{ v.Cognome }}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge badge-company">{{ v.Azienda || 'N/D' }}</span>
+                  </td>
+                  <td>
+                    <span class="badge badge-host">{{ v.Referente || 'N/D' }}</span>
+                  </td>
+                  <td>{{ v.DataOraIngresso ? (v.DataOraIngresso | date: 'dd/MM/yyyy HH:mm') : 'N/D' }}</td>
+                  <td>
+                    @if (v.DataOraUscita) {
+                      {{ v.DataOraUscita | date: 'dd/MM/yyyy HH:mm' }}
+                    } @else if (v.DataOraIngresso) {
+                      <span class="badge badge-active">Attiva</span>
+                    } @else {
+                      N/D
+                    }
+                  </td>
+                  <td class="text-center">
+                    <button
+                      class="btn-row-action btn-row-delete"
+                      title="Elimina dati personali del visitatore"
+                      (click)="onDeleteIndividual(v)"
+                    >
+                      🗑️
+                    </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="7" class="empty-state">
+                    Nessun visitatore trovato in base ai criteri impostati.
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+  </div>
+</div>

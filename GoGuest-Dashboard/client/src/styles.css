@@ -4,6 +4,42 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
+:root {
+  --brand: #E22D20;
+  --brand-dark: #c4251a;
+  --brand-darker: #a81e15;
+  --brand-glow: rgba(226, 45, 32, 0.3);
+  
+  /* ── LIGHT THEME (Default) ── */
+  --bg-page: #ffffff;
+  --bg-app: #f4f5f7;
+  --bg-card: #ffffff;
+  --bg-sidebar: #ffffff;
+  --bg-input: #ffffff;
+  --border-color: #e5e7eb;
+  --border-subtle: rgba(0, 0, 0, 0.05);
+  --border-header: #f0f2f5;
+  --text-primary: #1a1a1a;
+  --text-secondary: #444;
+  --text-muted: #888;
+  --text-sidebar-brand: #1a1d2e;
+  --text-sidebar-item: #5a6171;
+  --text-sidebar-hover: #1a1d2e;
+  --bg-sidebar-hover: #f5f6f8;
+  --shadow-card: 0 4px 6px rgba(0, 0, 0, 0.04), 0 20px 60px rgba(0, 0, 0, 0.08);
+  --shadow-sidebar: 0 4px 24px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04);
+  --glass-card-bg: rgba(255, 255, 255, 0.55);
+  --glass-card-border: rgba(255, 255, 255, 0.5);
+  --feedback-success-bg: #f0fdf4;
+  --feedback-success-border: #bcf0da;
+  --feedback-success-text: #27ae60;
+  --feedback-error-bg: #fdf2f2;
+  --feedback-error-border: #f5c6c6;
+  --feedback-error-text: #c0392b;
+}
+
+
+
 /* Global reset e base */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -18,10 +54,11 @@ html, body {
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background-color: #eee8dc;
-  color: #1a1a1a;
+  background-color: var(--bg-page);
+  color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 button {
@@ -43,4 +80,6 @@ app-root {
   display: flex;
   height: 100vh;
   width: 100%;
+  background-color: var(--bg-app);
+  transition: background-color 0.3s ease;
 }

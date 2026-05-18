@@ -56,6 +56,34 @@ function getInviteErrorMessage(error: unknown): string {
   return "Errore interno durante l'invito. Controlla i log del server.";
 }
 
+interface AuthenticatedRequest extends Request {
+  user?: {
+    userId: number;
+    email: string;
+    nome: string;
+    cognome: string;
+    role: string | null;
+  };
+}
+
+const authenticateToken = (req: AuthenticatedRequest, res: Response, next: any) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    res.status(401).json({ message: 'Token di autenticazione mancante.' });
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as any;
+    req.user = decoded;
+    next();
+  } catch (err) {
+    res.status(403).json({ message: 'Token non valido o scaduto.' });
+  }
+};
+
 const db = mysql.createPool({
   host: 'localhost',
   user: 'root',
@@ -65,6 +93,52 @@ const db = mysql.createPool({
   connectionLimit: 10,
   queueLimit: 0
 });
+
+async function initializeDatabaseSchema() {
+  try {
+    const addColumn = async (col: string, def: string) => {
+      try {
+        await db.execute(`ALTER TABLE utente ADD COLUMN ${col} ${def}`);
+        console.log(`Colonna ${col} aggiunta con successo.`);
+      } catch (e: any) {
+        if (!e.message.includes('duplicate column') && !e.message.includes('Duplicate column') && !e.message.includes('already exists')) {
+          console.error(`Errore aggiunta colonna ${col}:`, e.message);
+        }
+      }
+    };
+    await addColumn('CreatoIl', 'DATETIME DEFAULT CURRENT_TIMESTAMP');
+    await addColumn('UltimoLogin', 'DATETIME NULL');
+    await addColumn('PromossoIl', 'DATETIME NULL');
+    await addColumn('PromossoDa', 'INT NULL');
+
+    // Tabella gdpr_settings
+    await db.execute(`
+      CREATE TABLE IF NOT EXISTS gdpr_settings (
+        Chiave VARCHAR(100) NOT NULL PRIMARY KEY,
+        Valore VARCHAR(255) NULL
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+    `);
+    console.log("Tabella gdpr_settings creata/esistente.");
+
+    const initSetting = async (key: string, defaultVal: string) => {
+      try {
+        const [rows]: any = await db.execute('SELECT Chiave FROM gdpr_settings WHERE Chiave = ?', [key]);
+        if (rows.length === 0) {
+          await db.execute('INSERT INTO gdpr_settings (Chiave, Valore) VALUES (?, ?)', [key, defaultVal]);
+          console.log(`Impostazione GDPR ${key} inizializzata a ${defaultVal}.`);
+        }
+      } catch (err: any) {
+        console.error(`Errore inizializzazione ${key}:`, err.message);
+      }
+    };
+    await initSetting('eliminazioni_totali', '0');
+    await initSetting('conservazione_giorni', '90');
+    await initSetting('cancellazione_automatica', 'false');
+  } catch (err: any) {
+    console.error('Errore durante le migrazioni del database:', err.message);
+  }
+}
+initializeDatabaseSchema();
 
 const app = express();
 const PORT = 3001;
@@ -122,6 +196,15 @@ app.post('/api/login', async (req: Request, res: Response) => {
       { expiresIn: '1d' }
     );
 
+    try {
+      await db.execute(
+        'UPDATE utente SET UltimoLogin = NOW() WHERE IdUtente = ?',
+        [user.IdUtente]
+      );
+    } catch (e: any) {
+      console.error("Errore aggiornamento UltimoLogin:", e.message);
+    }
+
     res.json({
       token,
       user: {
@@ -148,38 +231,48 @@ app.post('/api/register', async (req: Request, res: Response) => {
   const cognome = String(req.body?.cognome ?? '').trim();
   const password = String(req.body?.password ?? '');
 
+  console.log('[/api/register] Richiesta ricevuta per email:', email);
+
   if (!email || !password || !nome || !cognome) {
+    console.log('[/api/register] Errore: campi obbligatori mancanti');
     res.status(400).json({ message: 'Tutti i campi sono obbligatori.' });
     return;
   }
 
   try {
     // 1. Verifica se l'utente esiste già
+    console.log('[/api/register] Verifica se email esiste...');
     const [existing]: any = await db.execute(
       'SELECT IdUtente FROM utente WHERE Email = ? LIMIT 1',
       [email]
     );
+    console.log('[/api/register] Risultato esistente:', existing);
 
     if (existing.length > 0) {
+      console.log('[/api/register] Errore: Email già utilizzata.');
       res.status(409).json({ message: 'Email già utilizzata.' });
       return;
     }
 
     // 2. Hash della password (cost factor 10)
+    console.log('[/api/register] Esecuzione hash password...');
     const hashedPassword = await bcrypt.hash(password, 10);
+    console.log('[/api/register] Hash password completato.');
 
-    // 3. Inserimento nel database (Ruolo default 'admin')
+    // 3. Inserimento nel database (Ruolo default 'dipendente')
+    console.log('[/api/register] Inserimento utente nel database...');
     const [result]: any = await db.execute(
-      'INSERT INTO utente (Email, Nome, Cognome, Password, Ruolo) VALUES (?, ?, ?, ?, ?)',
-      [email, nome, cognome, hashedPassword, 'admin']
+      'INSERT INTO utente (Email, Nome, Cognome, Password, Ruolo, CreatoIl) VALUES (?, ?, ?, ?, ?, NOW())',
+      [email, nome, cognome, hashedPassword, 'dipendente']
     );
+    console.log('[/api/register] Inserimento completato, ID inserito:', result.insertId);
 
     res.status(201).json({
       message: 'Account creato con successo!',
       userId: result.insertId
     });
   } catch (err: any) {
-    console.error('Errore DB /api/register:', err.message);
+    console.error('[/api/register] Errore DB /api/register:', err.message);
     res.status(500).json({ message: 'Errore durante la registrazione.' });
   }
 });
@@ -275,6 +368,47 @@ app.post('/api/reset-password', async (req: Request, res: Response) => {
 });
 
 
+// --------------------------------------------------------------
+// GET /api/utenti  — lista dipendenti (solo admin)
+// --------------------------------------------------------------
+app.get('/api/utenti', async (_req: Request, res: Response) => {
+  try {
+    const [rows] = await db.execute<UtenteRow[]>(
+      "SELECT IdUtente, Nome, Cognome, Email, Ruolo FROM utente WHERE Ruolo = 'dipendente' ORDER BY Cognome, Nome"
+    );
+    res.json(rows);
+  } catch (err: any) {
+    console.error('Errore DB /api/utenti:', err.message);
+    res.status(500).json({ message: 'Errore nel recupero degli utenti.' });
+  }
+});
+
+// --------------------------------------------------------------
+// PATCH /api/utenti/:id/promuovi  — promuove a admin (solo admin)
+// --------------------------------------------------------------
+app.patch('/api/utenti/:id/promuovi', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
+  // Verifica che chi esegue la promozione sia un admin
+  if (req.user?.role !== 'admin') {
+    res.status(403).json({ message: 'Azione consentita solo agli amministratori.' });
+    return;
+  }
+
+  const id = parseInt(String(req.params.id), 10);
+  if (isNaN(id)) {
+    res.status(400).json({ message: 'ID non valido.' });
+    return;
+  }
+  try {
+    await db.execute(
+      "UPDATE utente SET Ruolo = 'admin', PromossoIl = NOW(), PromossoDa = ? WHERE IdUtente = ? AND Ruolo = 'dipendente'",
+      [req.user.userId, id]
+    );
+    res.json({ message: 'Utente promosso ad amministratore.' });
+  } catch (err: any) {
+    console.error('Errore DB /api/utenti/:id/promuovi:', err.message);
+    res.status(500).json({ message: 'Errore durante la promozione.' });
+  }
+});
 
 // --------------------------------------------------------------
 // GET /api/dashboard
@@ -336,6 +470,73 @@ app.get('/api/dashboard', async (_req: Request, res: Response) => {
   }
 });
 
+// --------------------------------------------------------------
+// GET /api/utente/log  — recupera i log dell'utente corrente
+// --------------------------------------------------------------
+app.get('/api/utente/log', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
+  const userId = req.user?.userId;
+  if (!userId) {
+    res.status(401).json({ message: 'Utente non autenticato.' });
+    return;
+  }
+
+  try {
+    // 1. Recupera informazioni utente (CreatoIl, UltimoLogin, PromossoIl, PromossoDa, Ruolo)
+    const [userRows]: any = await db.execute(
+      'SELECT IdUtente, Ruolo, CreatoIl, UltimoLogin, PromossoIl, PromossoDa FROM utente WHERE IdUtente = ? LIMIT 1',
+      [userId]
+    );
+
+    const user = userRows[0];
+    if (!user) {
+      res.status(404).json({ message: 'Utente non trovato.' });
+      return;
+    }
+
+    // 2. Conta quanti visitatori sono stati invitati da questo utente
+    const [invitiRows]: any = await db.execute(
+      'SELECT COUNT(*) as count FROM visitatore WHERE IdUtente = ?',
+      [userId]
+    );
+    const invitiConteggio = invitiRows[0]?.count ?? 0;
+
+    // 3. Se l'utente è stato promosso, recupera il nome dell'amministratore che lo ha promosso
+    let promossoDaNome = null;
+    if (user.PromossoDa) {
+      const [adminRows]: any = await db.execute(
+        'SELECT Nome, Cognome FROM utente WHERE IdUtente = ? LIMIT 1',
+        [user.PromossoDa]
+      );
+      if (adminRows[0]) {
+        promossoDaNome = `${adminRows[0].Nome} ${adminRows[0].Cognome}`.trim();
+      }
+    }
+
+    // 4. Se l'utente è un admin, conta quanti dipendenti ha promosso
+    let promossiConteggio = 0;
+    if (user.Ruolo === 'admin') {
+      const [promossiRows]: any = await db.execute(
+        'SELECT COUNT(*) as count FROM utente WHERE PromossoDa = ?',
+        [userId]
+      );
+      promossiConteggio = promossiRows[0]?.count ?? 0;
+    }
+
+    res.json({
+      creatoIl: user.CreatoIl,
+      ultimoLogin: user.UltimoLogin,
+      promossoIl: user.PromossoIl,
+      promossoDaNome,
+      invitiConteggio,
+      promossiConteggio,
+      ruolo: user.Ruolo
+    });
+  } catch (err: any) {
+    console.error('Errore DB /api/utente/log:', err.message);
+    res.status(500).json({ message: 'Errore nel recupero dei log attività.' });
+  }
+});
+
 // ──────────────────────────────────────────────
 // GET /api/visite?periodo=oggi|mese|anno
 // ──────────────────────────────────────────────
@@ -383,10 +584,11 @@ app.get('/api/visite', async (req: Request, res: Response) => {
   }
 });
 
+
 // ──────────────────────────────────────────────
 // POST /api/invita-visitatore
 // ──────────────────────────────────────────────
-app.post('/api/invita-visitatore', async (req: Request, res: Response) => {
+app.post('/api/invita-visitatore', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { nome, cognome, dataNascita, email } = req.body;
 
@@ -405,8 +607,8 @@ app.post('/api/invita-visitatore', async (req: Request, res: Response) => {
 
     // 1. Inserisci in visitatore (VisitaAttiva = 0 poichè è solo un invito)
     const [result]: any = await db.execute(
-      'INSERT INTO visitatore (Nome, Cognome, DataNascita, Email, VisitaAttiva) VALUES (?, ?, ?, ?, ?)',
-      [nome, cognome, dataNascita || null, email, 0]
+      'INSERT INTO visitatore (Nome, Cognome, DataNascita, Email, VisitaAttiva, IdUtente) VALUES (?, ?, ?, ?, ?, ?)',
+      [nome, cognome, dataNascita || null, email, 0, req.user?.userId ?? null]
     );
     const idVisitatore = result.insertId;
 
@@ -452,6 +654,121 @@ app.post('/api/invita-visitatore', async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Errore invito visitatore:", error);
     res.status(500).json({ message: getInviteErrorMessage(error) });
+  }
+});
+
+// ──────────────────────────────────────────────
+// GDPR API Endpoints
+// ──────────────────────────────────────────────
+
+// 1. GET /api/gdpr/settings
+app.get('/api/gdpr/settings', authenticateToken, async (req: Request, res: Response) => {
+  try {
+    const [rows]: any = await db.execute('SELECT Chiave, Valore FROM gdpr_settings');
+    const settings: Record<string, string> = {};
+    rows.forEach((r: any) => {
+      settings[r.Chiave] = r.Valore;
+    });
+
+    const [visitatoriRow]: any = await db.execute('SELECT COUNT(*) AS total FROM visitatore');
+    const totalVisitors = visitatoriRow[0]?.total ?? 0;
+
+    res.json({
+      totalVisitors,
+      totalDeletions: parseInt(settings['eliminazioni_totali'] || '0', 10),
+      retentionDays: parseInt(settings['conservazione_giorni'] || '90', 10),
+      autoDelete: settings['cancellazione_automatica'] === 'true'
+    });
+  } catch (err: any) {
+    console.error('Errore GET /api/gdpr/settings:', err.message);
+    res.status(500).json({ error: 'Errore nel recupero delle impostazioni GDPR.' });
+  }
+});
+
+// 2. POST /api/gdpr/settings
+app.post('/api/gdpr/settings', authenticateToken, async (req: Request, res: Response) => {
+  const { retentionDays, autoDelete } = req.body;
+  if (retentionDays === undefined || autoDelete === undefined) {
+    res.status(400).json({ error: 'Campi incompleti: retentionDays e autoDelete sono richiesti.' });
+    return;
+  }
+
+  try {
+    await db.execute('UPDATE gdpr_settings SET Valore = ? WHERE Chiave = ?', [retentionDays.toString(), 'conservazione_giorni']);
+    await db.execute('UPDATE gdpr_settings SET Valore = ? WHERE Chiave = ?', [autoDelete ? 'true' : 'false', 'cancellazione_automatica']);
+    res.json({ message: 'Impostazioni GDPR aggiornate con successo.' });
+  } catch (err: any) {
+    console.error('Errore POST /api/gdpr/settings:', err.message);
+    res.status(500).json({ error: 'Errore nell\'aggiornamento delle impostazioni GDPR.' });
+  }
+});
+
+// 3. GET /api/gdpr/visitatori
+app.get('/api/gdpr/visitatori', authenticateToken, async (req: Request, res: Response) => {
+  const cerca = req.query['cerca'] as string;
+  const dataDal = req.query['dataDal'] as string;
+  const dataAl = req.query['dataAl'] as string;
+
+  let whereClauses: string[] = ['1 = 1'];
+  let params: any[] = [];
+
+  if (cerca) {
+    whereClauses.push('(v.Nome LIKE ? OR v.Cognome LIKE ?)');
+    params.push(`%${cerca}%`, `%${cerca}%`);
+  }
+
+  if (dataDal) {
+    whereClauses.push('EXISTS (SELECT 1 FROM visita WHERE IdVisitatore = v.IdVisitatore AND DataOraIngresso >= ?)');
+    params.push(dataDal);
+  }
+  if (dataAl) {
+    whereClauses.push('EXISTS (SELECT 1 FROM visita WHERE IdVisitatore = v.IdVisitatore AND DataOraIngresso <= ?)');
+    params.push(dataAl.includes(' ') ? dataAl : `${dataAl} 23:59:59`);
+  }
+
+  const sql = `
+    SELECT 
+      v.IdVisitatore,
+      v.Nome,
+      v.Cognome,
+      v.Azienda,
+      v.Email,
+      (SELECT NomeReferente FROM visita WHERE IdVisitatore = v.IdVisitatore ORDER BY DataOraIngresso DESC LIMIT 1) AS Referente,
+      (SELECT DataOraIngresso FROM visita WHERE IdVisitatore = v.IdVisitatore ORDER BY DataOraIngresso DESC LIMIT 1) AS DataOraIngresso,
+      (SELECT DataOraUscita FROM visita WHERE IdVisitatore = v.IdVisitatore ORDER BY DataOraIngresso DESC LIMIT 1) AS DataOraUscita
+    FROM visitatore v
+    WHERE ${whereClauses.join(' AND ')}
+    ORDER BY IdVisitatore DESC
+  `;
+
+  try {
+    const [rows] = await db.execute(sql, params);
+    res.json(rows);
+  } catch (err: any) {
+    console.error('Errore GET /api/gdpr/visitatori:', err.message);
+    res.status(500).json({ error: 'Errore nel recupero della lista visitatori GDPR.' });
+  }
+});
+
+// 4. POST /api/gdpr/delete
+app.post('/api/gdpr/delete', authenticateToken, async (req: Request, res: Response) => {
+  const { ids } = req.body;
+  if (!ids || !Array.isArray(ids) || ids.length === 0) {
+    res.status(400).json({ error: 'Nessun identificativo fornito per l\'eliminazione.' });
+    return;
+  }
+
+  try {
+    const placeholders = ids.map(() => '?').join(',');
+    const [result]: any = await db.execute(`DELETE FROM visitatore WHERE IdVisitatore IN (${placeholders})`, ids);
+    const deletedCount = result.affectedRows ?? ids.length;
+
+    await db.execute('UPDATE gdpr_settings SET Valore = CAST(Valore AS UNSIGNED) + ? WHERE Chiave = ?', [deletedCount, 'eliminazioni_totali']);
+
+    res.json({ message: `${deletedCount} record visitatori rimossi con successo.`, deletedCount });
+  } catch (err: any) {
+    console.error('Errore POST /api/gdpr/delete:', err.message);
+    res.status(500).json({ error: 'Errore durante la cancellazione dei dati GDPR.' });
   }
 });
 

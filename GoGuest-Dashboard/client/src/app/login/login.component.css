@@ -2,7 +2,6 @@
    LOGIN PAGE - GoGuest Dashboard
    ============================================ */
 
-/* Brand color: GoGuest Red */
 :host {
   display: block;
   width: 100%;
@@ -15,27 +14,27 @@
 
 .login-page {
   min-height: 100vh;
-  background-color: #eee8dc;
+  background-color: var(--bg-page);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 2rem 1rem;
   font-family: 'Inter', sans-serif;
+  transition: background-color 0.3s ease;
 }
 
 /* ---- Card ---- */
 .login-card {
-  background: #f7f3ed;
+  background: var(--bg-card);
   border-radius: 2rem;
   width: 100%;
   max-width: 400px;
   padding: 2.5rem 2.25rem 2rem;
-  box-shadow:
-    0 4px 6px rgba(0, 0, 0, 0.04),
-    0 20px 60px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
   gap: 0;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* ---- Brand Header ---- */
@@ -59,15 +58,17 @@
 
 .brand-tagline {
   font-size: 1.05rem;
-  color: #444;
+  color: var(--text-secondary);
   line-height: 1.45;
   margin: 0;
   font-weight: 400;
+  transition: color 0.3s ease;
 }
 
 .brand-tagline strong {
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--text-primary);
+  transition: color 0.3s ease;
 }
 
 /* ---- Form Section ---- */
@@ -88,18 +89,19 @@
 .form-label-title {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--text-primary);
   letter-spacing: 0.02em;
+  transition: color 0.3s ease;
 }
 
 .create-account-btn {
   background: transparent;
-  border: 1px solid #c8c0b4;
+  border: 1px solid var(--border-color);
   border-radius: 999px;
   padding: 0.3rem 0.85rem;
   font-size: 0.78rem;
   font-weight: 500;
-  color: #555;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s, color 0.2s;
   font-family: inherit;
@@ -116,15 +118,16 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: #fdf2f2;
-  border: 1px solid #f5c6c6;
+  background: var(--feedback-error-bg);
+  border: 1px solid var(--feedback-error-border);
   border-radius: 0.6rem;
   padding: 0.6rem 0.9rem;
-  color: #c0392b;
+  color: var(--feedback-error-text);
   font-size: 0.82rem;
   font-weight: 500;
   margin-bottom: 1rem;
   animation: slideIn 0.2s ease;
+  transition: background 0.3s, border-color 0.3s, color 0.3s;
 }
 
 .error-banner svg, .success-banner svg {
@@ -137,17 +140,17 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: #f0fdf4;
-  border: 1px solid #bcf0da;
+  background: var(--feedback-success-bg);
+  border: 1px solid var(--feedback-success-border);
   border-radius: 0.6rem;
   padding: 0.6rem 0.9rem;
-  color: #27ae60;
+  color: var(--feedback-success-text);
   font-size: 0.82rem;
   font-weight: 500;
   margin-bottom: 1rem;
   animation: slideIn 0.2s ease;
+  transition: background 0.3s, border-color 0.3s, color 0.3s;
 }
-
 
 @keyframes slideIn {
   from { opacity: 0; transform: translateY(-4px); }
@@ -163,29 +166,31 @@
   display: block;
   font-size: 0.78rem;
   font-weight: 600;
-  color: #888;
+  color: var(--text-muted);
   margin-bottom: 0.35rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+  transition: color 0.3s ease;
 }
 
 .input-field {
   width: 100%;
   background: transparent;
   border: none;
-  border-bottom: 1.5px solid #c8c0b4;
+  border-bottom: 1.5px solid var(--border-color);
   border-radius: 0;
   padding: 0.5rem 0;
   font-size: 0.95rem;
-  color: #1a1a1a;
+  color: var(--text-primary);
   font-family: inherit;
   outline: none;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, color 0.3s ease;
   box-sizing: border-box;
 }
 
 .input-field::placeholder {
-  color: #bbb;
+  color: var(--text-muted);
+  opacity: 0.6;
 }
 
 .input-field:focus {
@@ -218,7 +223,7 @@
   padding: 0;
   display: flex;
   align-items: center;
-  color: #aaa;
+  color: var(--text-muted);
   transition: color 0.2s;
 }
 
@@ -313,9 +318,10 @@
   align-items: center;
   gap: 0.75rem;
   margin: 1rem 0;
-  color: #bbb;
+  color: var(--text-muted);
   font-size: 0.8rem;
   font-weight: 500;
+  transition: color 0.3s ease;
 }
 
 .divider::before,
@@ -323,15 +329,16 @@
   content: '';
   flex: 1;
   height: 1px;
-  background: #d8d2c9;
+  background: var(--border-color);
+  transition: background 0.3s ease;
 }
 
 /* ---- Social Button ---- */
 .btn-social {
   width: 100%;
-  background: #fff;
-  color: #333;
-  border: 1.5px solid #e2dcd5;
+  background: var(--bg-btn-social, #fff);
+  color: var(--text-btn-social, #333);
+  border: 1.5px solid var(--border-btn-social, #e2dcd5);
   border-radius: 999px;
   padding: 0.8rem 1.5rem;
   font-size: 0.93rem;
@@ -342,13 +349,13 @@
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
-  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.15s, color 0.3s;
   letter-spacing: 0.01em;
 }
 
 .btn-social:hover:not(:disabled) {
-  background: #fafafa;
-  border-color: #c8c0b4;
+  background: var(--hover-btn-social, #fafafa);
+  border-color: var(--border-color);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
   transform: translateY(-1px);
 }
@@ -367,6 +374,38 @@
   width: 20px;
   height: 20px;
   flex-shrink: 0;
+}
+
+/* ---- Theme Toggle inside login card ---- */
+.theme-toggle-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.btn-theme-toggle {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.btn-theme-toggle:hover {
+  background: var(--border-subtle);
+  color: var(--text-primary);
+}
+
+.btn-theme-toggle svg {
+  width: 14px;
+  height: 14px;
 }
 
 /* ---- Responsive ---- */

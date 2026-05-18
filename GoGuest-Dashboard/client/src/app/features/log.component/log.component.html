@@ -1,0 +1,99 @@
+<div class="modal-overlay" (click)="onClose()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="header-title">
+        <span class="pulse-dot"></span>
+        <h2>Log Attività Utente</h2>
+      </div>
+      <button class="close-btn" (click)="onClose()">&times;</button>
+    </div>
+
+    <div class="modal-body">
+      @if (isLoading()) {
+        <div class="loader-container">
+          <div class="glass-loader"></div>
+          <p>Caricamento attività in corso...</p>
+        </div>
+      } @else if (errorMsg()) {
+        <div class="error-container">
+          <span class="error-icon">⚠️</span>
+          <p>{{ errorMsg() }}</p>
+          <button class="btn-retry" (click)="fetchUserLogs()">Riprova</button>
+        </div>
+      } @else {
+        @if (logData(); as log) {
+          <div class="log-dashboard">
+            <!-- Grid delle statistiche principali -->
+            <div class="log-grid">
+              
+              <!-- Card 1: Creazione Account -->
+              <div class="log-tile highlight-purple">
+                <div class="tile-icon">
+                  <span class="emoji-icon">📅</span>
+                </div>
+                <div class="tile-content">
+                  <span class="tile-label">Account Creato il</span>
+                  <span class="tile-value">{{ log.creatoIl | date: 'dd/MM/yyyy HH:mm' }}</span>
+                </div>
+              </div>
+
+              <!-- Card 2: Ultimo Login -->
+              <div class="log-tile highlight-blue">
+                <div class="tile-icon">
+                  <span class="emoji-icon">🔐</span>
+                </div>
+                <div class="tile-content">
+                  <span class="tile-label">Ultimo Accesso</span>
+                  <span class="tile-value">{{ log.ultimoLogin ? (log.ultimoLogin | date: 'dd/MM/yyyy HH:mm') : 'N/D' }}</span>
+                </div>
+              </div>
+
+              <!-- Card 3: Utenti Invitati -->
+              <div class="log-tile highlight-green">
+                <div class="tile-icon">
+                  <span class="emoji-icon">✉️</span>
+                </div>
+                <div class="tile-content">
+                  <span class="tile-label">Visitatori Invitati</span>
+                  <span class="tile-value">{{ log.invitiConteggio }}</span>
+                </div>
+              </div>
+
+              <!-- Card 4 (Admin): Lavoratori Promossi -->
+              @if (log.ruolo === 'admin') {
+                <div class="log-tile highlight-gold">
+                  <div class="tile-icon">
+                    <span class="emoji-icon">👑</span>
+                  </div>
+                  <div class="tile-content">
+                    <span class="tile-label">Dipendenti Promossi</span>
+                    <span class="tile-value">{{ log.promossiConteggio }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <!-- Card Dettaglio Promozione per Lavoratori Promossi -->
+            @if (log.promossoIl) {
+              <div class="promotion-banner">
+                <div class="banner-badge">Promozione Ricevuta!</div>
+                <div class="banner-body">
+                  <p>
+                    Sei stato promosso al ruolo di <strong>Amministratore</strong> il giorno 
+                    <strong>{{ log.promossoIl | date: 'dd/MM/yyyy' }}</strong> alle ore 
+                    <strong>{{ log.promossoIl | date: 'HH:mm' }}</strong>.
+                  </p>
+                  @if (log.promossoDaNome) {
+                    <p class="promoted-by">
+                      Promozione concessa da: <span>{{ log.promossoDaNome }}</span>
+                    </p>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+      }
+    </div>
+  </div>
+</div>

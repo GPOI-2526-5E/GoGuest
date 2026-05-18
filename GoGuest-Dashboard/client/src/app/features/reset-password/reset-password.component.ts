@@ -22,6 +22,7 @@ export class ResetPasswordComponent implements OnInit {
   
   isLoading = signal(false);
   showPassword = signal(false);
+  showConfirmPassword = signal(false);
   errorMessage = signal('');
   successMessage = signal('');
 
@@ -37,6 +38,10 @@ export class ResetPasswordComponent implements OnInit {
 
   togglePasswordVisibility() {
     this.showPassword.set(!this.showPassword());
+  }
+
+  toggleConfirmPasswordVisibility() {
+    this.showConfirmPassword.set(!this.showConfirmPassword());
   }
 
   onPasswordChange(value: string) {

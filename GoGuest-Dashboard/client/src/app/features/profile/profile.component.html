@@ -15,7 +15,7 @@
       
       <div class="user-meta">
         <h1 class="user-name">{{ userDisplayName }}</h1>
-        <p class="user-role-badge">Admin Dashboard</p>
+        <p class="user-role-badge">{{ userRole() }}</p>
       </div>
     </header>
 
@@ -46,7 +46,7 @@
 
       <!-- Card Statistiche / Badge -->
       <section class="stats-container">
-        @for (stat of stats; track stat.label) {
+        @for (stat of stats(); track stat.label) {
           <div class="glass-card stat-tile">
             <span class="tile-icon">{{ stat.icon }}</span>
             <div class="tile-content">
@@ -63,10 +63,14 @@
         <p>Gestisci le tue credenziali e la protezione dell'account.</p>
         <div class="action-buttons">
           <button class="btn-outline">Cambia Password</button>
-          <button class="btn-outline">Log Attività</button>
+          <button class="btn-outline" (click)="showLogModal.set(true)">Log Attività</button>
         </div>
       </section>
 
     </main>
   </div>
 </div>
+
+@if (showLogModal()) {
+  <app-log (close)="showLogModal.set(false)"></app-log>
+}

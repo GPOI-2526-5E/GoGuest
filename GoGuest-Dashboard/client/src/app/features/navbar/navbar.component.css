@@ -21,16 +21,13 @@
   width: 152px;
   height: calc(100vh - 24px);
 
-  background: #ffffff;
+  background: var(--bg-sidebar);
   border-radius: 20px;
-  border: 1px solid rgba(0,0,0,0.07);
-  box-shadow:
-    0 4px 24px rgba(0,0,0,0.08),
-    0 1px 4px rgba(0,0,0,0.04),
-    inset 0 1px 0 rgba(255,255,255,0.9);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-sidebar);
 
   font-family: 'Inter', sans-serif;
-  transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s, border-color 0.3s, box-shadow 0.3s;
   overflow: hidden;
   user-select: none;
 }
@@ -48,8 +45,9 @@
   justify-content: space-between;
   padding: 0 8px 0 14px;
   height: 50px;
-  border-bottom: 1px solid #f0f2f5;
+  border-bottom: 1px solid var(--border-header);
   flex-shrink: 0;
+  transition: border-bottom-color 0.3s;
 }
 
 .brand {
@@ -74,11 +72,12 @@
 .brand-name {
   font-size: 0.875rem;
   font-weight: 700;
-  color: #1a1d2e;
+  color: var(--text-sidebar-brand);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   letter-spacing: -0.3px;
+  transition: color 0.3s;
 }
 
 .collapse-btn {
@@ -91,15 +90,15 @@
   background: transparent;
   border-radius: 7px;
   cursor: pointer;
-  color: #c0c8d0;
+  color: var(--text-muted);
   flex-shrink: 0;
   transition: background 0.15s, color 0.15s;
   padding: 0;
 }
 
 .collapse-btn:hover {
-  background: #f1f3f5;
-  color: #495057;
+  background: var(--bg-sidebar-hover);
+  color: var(--text-sidebar-hover);
 }
 
 .collapse-btn svg {
@@ -146,7 +145,7 @@
   border-radius: 10px;
   font-size: 0.79rem;
   font-weight: 500;
-  color: #5a6171;
+  color: var(--text-sidebar-item);
   text-decoration: none;
   border: 1px solid transparent;
   background: transparent;
@@ -159,8 +158,8 @@
 }
 
 .nav-item:hover:not(.active) {
-  background: #f5f6f8;
-  color: #1a1d2e;
+  background: var(--bg-sidebar-hover);
+  color: var(--text-sidebar-hover);
 }
 
 /* ── ACTIVE: glass rosso ─────────── */
@@ -210,12 +209,12 @@
   flex-shrink: 0;
   width: 18px;
   height: 18px;
-  color: #9ca3af;
+  color: var(--text-muted);
   transition: color 0.12s;
 }
 
 .nav-item:hover:not(.active) .nav-icon {
-  color: #374151;
+  color: var(--text-sidebar-hover);
 }
 
 /* ==============================
@@ -244,14 +243,14 @@
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  color: #d1d5db;
+  color: var(--text-muted);
   transition: transform 0.2s ease, color 0.12s;
   margin-left: auto;
 }
 
 .nav-group-toggle.open .chevron {
   transform: rotate(180deg);
-  color: #9ca3af;
+  color: var(--text-sidebar-item);
 }
 
 .nav-group-toggle.group-active .chevron {
@@ -277,7 +276,7 @@
   border-radius: 8px;
   font-size: 0.76rem;
   font-weight: 500;
-  color: #6b7280;
+  color: var(--text-sidebar-item);
   text-decoration: none;
   border: 1px solid transparent;
   transition: background 0.12s, color 0.12s, border-color 0.12s;
@@ -285,8 +284,8 @@
 }
 
 .sub-item:hover:not(.active) {
-  background: #f5f6f8;
-  color: #1a1d2e;
+  background: var(--bg-sidebar-hover);
+  color: var(--text-sidebar-hover);
 }
 
 /* ── ACTIVE sub-item: glass rosso ── */
@@ -308,13 +307,13 @@
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #d1d5db;
+  background: var(--border-color);
   flex-shrink: 0;
   transition: background 0.12s;
 }
 
 .sub-item:hover:not(.active) .sub-dot {
-  background: #9ca3af;
+  background: var(--text-sidebar-hover);
 }
 
 /* ==============================
@@ -322,14 +321,16 @@
    ============================== */
 .sidebar-footer {
   padding: 8px 14px;
-  border-top: 1px solid #f0f2f5;
+  border-top: 1px solid var(--border-header);
   flex-shrink: 0;
+  transition: border-top-color 0.3s;
 }
 
 .version {
   font-size: 0.63rem;
-  color: #b0b8c4;
+  color: var(--text-muted);
   white-space: nowrap;
   font-weight: 400;
   letter-spacing: 0.1px;
+  transition: color 0.3s;
 }

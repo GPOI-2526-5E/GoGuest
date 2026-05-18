@@ -1,0 +1,86 @@
+<div class="promuovi-container">
+  <div class="mesh-gradient"></div>
+
+  <div class="promuovi-wrapper">
+
+    <!-- Header -->
+    <div class="page-header">
+      <div class="header-icon">🛡️</div>
+      <div class="header-text">
+        <h2>Gestione Ruoli</h2>
+        <p>Promuovi i dipendenti al ruolo di <strong>Amministratore</strong></p>
+      </div>
+    </div>
+
+    <!-- Messaggi di feedback -->
+    <div class="alert alert-success" *ngIf="successMsg()">
+      <span class="alert-icon">✅</span>
+      {{ successMsg() }}
+    </div>
+    <div class="alert alert-error" *ngIf="errorMsg()">
+      <span class="alert-icon">⚠️</span>
+      {{ errorMsg() }}
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-state" *ngIf="isLoading()">
+      <div class="spinner"></div>
+      <p>Caricamento utenti in corso…</p>
+    </div>
+
+    <!-- Tabella -->
+    <div class="table-card" *ngIf="!isLoading()">
+
+      <!-- Empty state -->
+      <div class="empty-state" *ngIf="dipendenti().length === 0">
+        <div class="empty-icon">👥</div>
+        <p>Nessun dipendente disponibile per la promozione.</p>
+      </div>
+
+      <!-- Table -->
+      <table *ngIf="dipendenti().length > 0">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nome</th>
+            <th>Cognome</th>
+            <th>Email</th>
+            <th>Ruolo attuale</th>
+            <th>Azione</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let d of dipendenti(); let i = index">
+            <td class="col-id">{{ i + 1 }}</td>
+            <td class="col-name">{{ d.Nome }}</td>
+            <td class="col-name">{{ d.Cognome }}</td>
+            <td class="col-email">{{ d.Email }}</td>
+            <td>
+              <span class="badge badge-dipendente">{{ d.Ruolo }}</span>
+            </td>
+            <td>
+              <button
+                class="btn-promuovi"
+                [disabled]="promotingId() === d.IdUtente"
+                (click)="promuovi(d)"
+                [id]="'btn-promuovi-' + d.IdUtente"
+              >
+                <span *ngIf="promotingId() !== d.IdUtente">⬆️ Promuovi ad Admin</span>
+                <span *ngIf="promotingId() === d.IdUtente" class="btn-loading">
+                  <span class="mini-spinner"></span> In corso…
+                </span>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+
+    <!-- Counter -->
+    <div class="counter-row" *ngIf="!isLoading() && dipendenti().length > 0">
+      <span class="counter-badge">{{ dipendenti().length }} dipendente{{ dipendenti().length !== 1 ? 'i' : '' }}</span>
+    </div>
+
+  </div>
+</div>
